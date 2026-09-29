@@ -4,11 +4,10 @@
  * Units only go between two paragraphs or before a subheading, never as the
  * last block, and never in articles flagged `sensitive`.
  *
- * `mode`:
- *  - 'live':        real <ins class="adsbygoogle"> markup (AdSense client configured)
- *  - 'placeholder': dashed box with reserved height, to review layouts in dev
- *  - 'off':         nothing is inserted
+ * `mode` comes from resolveAdsMode() (see ./ads.ts).
  */
+
+import { AD_LABEL, adUnitAttributes, type AdsMode } from './ads';
 
 interface HastNode {
   type: string;
@@ -19,9 +18,7 @@ interface HastNode {
 }
 
 interface Options {
-  mode: 'live' | 'placeholder' | 'off';
-  client?: string;
-  slot?: string;
+  mode: AdsMode;
   max?: number;
   everyWords?: number;
 }
@@ -35,37 +32,20 @@ const textOf = (node: HastNode): string =>
 
 const words = (node: HastNode) => textOf(node).split(/\s+/).filter(Boolean).length;
 
-function adNode(opts: Options): HastNode {
+const text = (value: string): HastNode => ({ type: 'text', value });
+
+/** Same markup as <AdSlot placement="in-article">, built as a hast tree. */
+function adNode(mode: AdsMode): HastNode {
   const unit: HastNode =
-    opts.mode === 'live'
-      ? {
-          type: 'element',
-          tagName: 'ins',
-          properties: {
-            className: ['adsbygoogle'],
-            style: 'display:block;text-align:center',
-            dataAdLayout: 'in-article',
-            dataAdFormat: 'fluid',
-            dataAdClient: opts.client,
-            dataAdSlot: opts.slot,
-          },
-          children: [],
-        }
-      : {
-          type: 'element',
-          tagName: 'div',
-          properties: { className: ['ad__placeholder'] },
-          children: [{ type: 'text', value: 'Anuncio · in-article' }],
-        };
+    mode === 'live'
+      ? { type: 'element', tagName: 'ins', properties: { className: ['adsbygoogle'], ...adUnitAttributes('in-article') }, children: [] }
+      : { type: 'element', tagName: 'div', properties: { className: ['ad__placeholder'] }, children: [text('Anuncio · in-article')] };
 
   return {
     type: 'element',
     tagName: 'aside',
-    properties: { className: ['ad', 'ad--in-article'], ariaLabel: 'Publicidad' },
-    children: [
-      { type: 'element', tagName: 'span', properties: { className: ['ad__label'] }, children: [{ type: 'text', value: 'Publicidad' }] },
-      unit,
-    ],
+    properties: { className: ['ad', 'ad--in-article'], ariaLabel: AD_LABEL },
+    children: [{ type: 'element', tagName: 'span', properties: { className: ['ad__label'] }, children: [text(AD_LABEL)] }, unit],
   };
 }
 
@@ -100,7 +80,7 @@ export default function rehypeInArticleAds(opts: Options) {
       const due = inserted === 0 ? paragraphs >= 2 : sinceLast >= everyWords;
 
       if (due && goodBreak && inserted < max) {
-        out.push(adNode(opts));
+        out.push(adNode(opts.mode));
         inserted++;
         sinceLast = 0;
       }

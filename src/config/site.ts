@@ -116,9 +116,9 @@ export const TYPE_LABEL: Record<ArticleType, string> = {
 
 /**
  * Crisis helplines. IMPORTANT: verify they are current before every launch/review.
- * `tel` is used in the href (digits only).
+ * `tel` holds digits only; use the derived `href` for links.
  */
-export const HELPLINES = [
+const HELPLINE_DATA = [
   {
     name: 'Centro de Asistencia al Suicida',
     number: '135',
@@ -142,6 +142,8 @@ export const HELPLINES = [
   },
 ] as const;
 
+export const HELPLINES = HELPLINE_DATA.map((line) => ({ ...line, href: `tel:${line.tel}` }));
+export type Helpline = (typeof HELPLINES)[number];
 export const HELPLINE_LINES = HELPLINES.filter((l) => l.kind === 'line');
 export const EMERGENCY = HELPLINES.find((l) => l.kind === 'emergency')!;
 

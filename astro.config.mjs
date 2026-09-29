@@ -7,13 +7,13 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 
-import { ADSENSE } from './src/config/site.ts';
+import { ADSENSE, SITE } from './src/config/site.ts';
+import { resolveAdsMode } from './src/lib/ads.ts';
 import rehypeInArticleAds from './src/lib/rehype-in-article-ads.ts';
 
 import tailwindcss from '@tailwindcss/vite';
 
-const isDev = process.argv.includes('dev');
-const adsMode = ADSENSE.client ? 'live' : isDev ? 'placeholder' : 'off';
+const adsMode = resolveAdsMode(process.argv.includes('dev'));
 
 /**
  * Reads a page already rendered to dist/. The sitemap integration runs after the
@@ -39,7 +39,7 @@ function lastModified(page) {
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://imperaresibi.com.ar',
+  site: SITE.url,
   trailingSlash: 'always',
   output: 'static',
   adapter: vercel(),
@@ -56,13 +56,7 @@ export default defineConfig({
       rehypePlugins: [
         [
           rehypeInArticleAds,
-          {
-            mode: adsMode,
-            client: ADSENSE.client,
-            slot: ADSENSE.slots.inArticle,
-            max: ADSENSE.inArticleMax,
-            everyWords: ADSENSE.inArticleEveryWords,
-          },
+          { mode: adsMode, max: ADSENSE.inArticleMax, everyWords: ADSENSE.inArticleEveryWords },
         ],
       ],
     }),
