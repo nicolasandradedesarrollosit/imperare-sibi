@@ -8,7 +8,7 @@ export const SITE = {
   name: 'Imperare Sibi',
   tagline: 'Salud mental en Argentina, con rigor y cercanía.',
   description:
-    'Medio especializado en salud mental en Argentina: guías, noticias y entrevistas revisadas por profesionales. Ansiedad, depresión, vínculos, infancias y políticas públicas.',
+    'Blog de salud mental para toda la Argentina: guías claras, experiencias y novedades revisadas por profesionales. Ansiedad, depresión, vínculos, sueño y más.',
   url: 'https://imperaresibi.com.ar',
   locale: 'es-AR',
   ogLocale: 'es_AR',
@@ -71,14 +71,15 @@ export const SECTIONS = [
     slug: 'vinculos',
     name: 'Vínculos',
     color: '#9c3f22',
-    description: 'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental.',
+    description:
+      'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental y qué hacer para cuidarlos, con guías revisadas.',
   },
   {
     slug: 'infancias-y-adolescencias',
     name: 'Infancias y adolescencias',
     color: '#7a5200',
     description:
-      'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta.',
+      'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta, con guías para familias revisadas por profesionales.',
   },
   {
     slug: 'politicas-publicas',
@@ -91,7 +92,8 @@ export const SECTIONS = [
     slug: 'bienestar',
     name: 'Bienestar',
     color: '#1c6269',
-    description: 'Sueño, hábitos, estrés y autocuidado: herramientas basadas en evidencia para el día a día.',
+    description:
+      'Sueño, hábitos, estrés y autocuidado: herramientas simples y basadas en evidencia para sentirte mejor en el día a día, revisadas por profesionales.',
   },
 ] as const;
 
@@ -101,46 +103,6 @@ export const SECTION_SLUGS = SECTIONS.map((s) => s.slug) as [SectionSlug, ...Sec
 
 export function getSection(slug: string): Section | undefined {
   return SECTIONS.find((s) => s.slug === slug);
-}
-
-/**
- * Provincial editions. `active: true` generates /edicion/{slug}/.
- * Adding a province to the network = activate it here and tag articles with `province`.
- */
-export const PROVINCES = [
-  { slug: 'caba', name: 'Ciudad de Buenos Aires', region: 'AMBA', active: true },
-  { slug: 'buenos-aires', name: 'Buenos Aires', region: 'AMBA', active: true },
-  { slug: 'cordoba', name: 'Córdoba', region: 'Centro', active: true },
-  { slug: 'santa-fe', name: 'Santa Fe', region: 'Centro', active: true },
-  { slug: 'entre-rios', name: 'Entre Ríos', region: 'Centro', active: false },
-  { slug: 'la-pampa', name: 'La Pampa', region: 'Centro', active: false },
-  { slug: 'mendoza', name: 'Mendoza', region: 'Cuyo', active: true },
-  { slug: 'san-juan', name: 'San Juan', region: 'Cuyo', active: false },
-  { slug: 'san-luis', name: 'San Luis', region: 'Cuyo', active: false },
-  { slug: 'tucuman', name: 'Tucumán', region: 'NOA', active: false },
-  { slug: 'salta', name: 'Salta', region: 'NOA', active: false },
-  { slug: 'jujuy', name: 'Jujuy', region: 'NOA', active: false },
-  { slug: 'catamarca', name: 'Catamarca', region: 'NOA', active: false },
-  { slug: 'la-rioja', name: 'La Rioja', region: 'NOA', active: false },
-  { slug: 'santiago-del-estero', name: 'Santiago del Estero', region: 'NOA', active: false },
-  { slug: 'misiones', name: 'Misiones', region: 'NEA', active: false },
-  { slug: 'corrientes', name: 'Corrientes', region: 'NEA', active: false },
-  { slug: 'chaco', name: 'Chaco', region: 'NEA', active: false },
-  { slug: 'formosa', name: 'Formosa', region: 'NEA', active: false },
-  { slug: 'neuquen', name: 'Neuquén', region: 'Patagonia', active: false },
-  { slug: 'rio-negro', name: 'Río Negro', region: 'Patagonia', active: false },
-  { slug: 'chubut', name: 'Chubut', region: 'Patagonia', active: false },
-  { slug: 'santa-cruz', name: 'Santa Cruz', region: 'Patagonia', active: false },
-  { slug: 'tierra-del-fuego', name: 'Tierra del Fuego', region: 'Patagonia', active: false },
-] as const;
-
-export type Province = (typeof PROVINCES)[number];
-export type ProvinceSlug = Province['slug'];
-export const PROVINCE_SLUGS = PROVINCES.map((p) => p.slug) as [ProvinceSlug, ...ProvinceSlug[]];
-export const ACTIVE_PROVINCES = PROVINCES.filter((p) => p.active);
-
-export function getProvince(slug: string): Province | undefined {
-  return PROVINCES.find((p) => p.slug === slug);
 }
 
 export const ARTICLE_TYPES = ['news', 'guide', 'interview', 'opinion'] as const;
@@ -161,26 +123,33 @@ export const HELPLINES = [
     name: 'Centro de Asistencia al Suicida',
     number: '135',
     tel: '135',
-    detail: 'Gratuita desde CABA y Gran Buenos Aires',
+    detail: 'Gratuita desde CABA y Gran Buenos Aires, las 24 horas',
+    kind: 'line',
   },
   {
     name: 'Centro de Asistencia al Suicida (todo el país)',
     number: '0800 345 1435',
     tel: '08003451435',
-    detail: 'Gratuita desde cualquier provincia',
+    detail: 'Gratuita desde cualquier lugar del país, las 24 horas',
+    kind: 'line',
   },
   {
     name: 'Emergencias',
     number: '107 / 911',
     tel: '911',
-    detail: 'Si hay riesgo inmediato',
+    detail: 'Si hay riesgo inmediato para vos o para otra persona',
+    kind: 'emergency',
   },
 ] as const;
 
+export const HELPLINE_LINES = HELPLINES.filter((l) => l.kind === 'line');
+export const EMERGENCY = HELPLINES.find((l) => l.kind === 'emergency')!;
+
 export const INSTITUTIONAL_NAV = [
+  { href: '/notas/', label: 'Todas las notas' },
+  { href: '/temas/', label: 'Temas' },
   { href: '/sobre-nosotros/', label: 'Sobre nosotros' },
   { href: '/politica-editorial/', label: 'Política editorial' },
-  { href: '/ayuda/', label: 'Pedir ayuda' },
   { href: '/contacto/', label: 'Contacto' },
 ] as const;
 

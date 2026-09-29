@@ -1,7 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { ARTICLE_TYPES, PROVINCE_SLUGS, SECTION_SLUGS } from './config/site';
+import { ARTICLE_TYPES, SECTION_SLUGS } from './config/site';
 
 /**
  * Articles. The entry id (file name) is the URL slug: /{section}/{id}/.
@@ -19,7 +19,6 @@ const articles = defineCollection({
       section: z.enum(SECTION_SLUGS),
       type: z.enum(ARTICLE_TYPES).default('news'),
       tags: z.array(z.string()).default([]),
-      province: z.enum(PROVINCE_SLUGS).optional(),
       author: reference('authors'),
       /** Health professional who reviewed the piece (E-E-A-T for health topics). */
       reviewer: reference('authors').optional(),
@@ -50,7 +49,6 @@ const authors = defineCollection({
       /** Profession and licence (e.g. "Lic. en Psicología — M.N. 12345"). */
       credentials: z.string().optional(),
       photo: image().optional(),
-      province: z.enum(PROVINCE_SLUGS).optional(),
       social: z
         .object({
           x: z.url().optional(),

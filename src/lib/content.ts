@@ -17,13 +17,13 @@ export async function getArticles(): Promise<Article[]> {
 export const articleUrl = (a: Article) => `/${a.data.section}/${a.id}/`;
 export const authorUrl = (id: string) => `/autores/${id}/`;
 export const sectionUrl = (slug: string) => `/${slug}/`;
-export const provinceUrl = (slug: string) => `/edicion/${slug}/`;
+export const archiveUrl = '/notas/';
 
 export function slugify(text: string): string {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
@@ -32,9 +32,6 @@ export const tagUrl = (tag: string) => `/temas/${slugify(tag)}/`;
 
 export const bySection = (articles: Article[], section: string) =>
   articles.filter((a) => a.data.section === section);
-
-export const byProvince = (articles: Article[], province: string) =>
-  articles.filter((a) => a.data.province === province);
 
 /**
  * Related articles: scores shared tags (x2) and same section (x1).
@@ -68,3 +65,26 @@ export const wordCount = (body: string | undefined) => (body ?? '').split(/\s+/)
 
 /** Estimated reading time in minutes (~200 words/min). */
 export const readingTime = (body: string | undefined) => Math.max(1, Math.round(wordCount(body) / 200));
+
+export interface Tag {
+  slug: string;
+  name: string;
+  articles: Article[];
+}
+
+/** Every tag in use, with its articles, most used first. */
+export function collectTags(articles: Article[]): Tag[] {
+  const tags = new Map<string, Tag>();
+  for (const a of articles) {
+    for (const name of a.data.tags) {
+      const slug = slugify(name);
+      const tag = tags.get(slug) ?? { slug, name, articles: [] };
+      tag.articles.push(a);
+      tags.set(slug, tag);
+    }
+  }
+  return [...tags.values()].sort((a, b) => b.articles.length - a.articles.length || a.name.localeCompare(b.name, 'es'));
+}
+
+/** Topic pages with fewer articles than this stay out of the index (thin content). */
+export const MIN_ARTICLES_TO_INDEX_TAG = 3;
