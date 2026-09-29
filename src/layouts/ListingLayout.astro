@@ -20,8 +20,8 @@ interface Props {
   path: string;
   crumbs: Crumb[];
   articles: Article[];
-  /** Section colour and active nav item (category pages). */
-  section?: { slug: string; color: string };
+  /** Active nav item (category pages). */
+  section?: { slug: string };
   withLead?: boolean;
   showSection?: boolean;
   showDescription?: boolean;
@@ -58,9 +58,8 @@ const {
     title={heading}
     description={showDescription ? description : undefined}
     crumbs={showCrumbs ? crumbs : undefined}
-    color={section?.color}
   />
-  <div class="wrap" style={section ? `--c-section:${section.color}` : undefined}>
+  <div class="wrap">
     <ArticleListing articles={articles} withLead={withLead} showSection={showSection} />
     {pagination && <Pagination {...pagination} />}
   </div>

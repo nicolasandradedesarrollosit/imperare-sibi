@@ -1,23 +1,20 @@
 ---
 import Breadcrumbs from '../article/Breadcrumbs.astro';
 import type { Crumb } from '../../lib/seo';
+
 interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
   crumbs?: Crumb[];
-  /** Section colour for the accent rule and breadcrumbs. */
-  color?: string;
 }
-const { eyebrow, title, description, crumbs, color } = Astro.props;
+const { eyebrow, title, description, crumbs } = Astro.props;
 ---
 
-<header class="wrap grid justify-items-center gap-3 pt-10 pb-10 text-center" style={color ? `--c-section:${color}` : undefined}>
+<header class="wrap grid justify-items-center gap-3 pt-10 pb-10 text-center">
   {crumbs && crumbs.length > 1 && <Breadcrumbs items={crumbs} />}
-  {eyebrow && <p class="label text-muted">{eyebrow}</p>}
-  <h1 class="text-display tracking-tight after:mx-auto after:mt-4 after:block after:h-[3px] after:w-12 after:bg-(--c-section) after:content-['']">
-    {title}
-  </h1>
+  {eyebrow && <p class="kicker kicker--block">{eyebrow}</p>}
+  <h1 class="text-display tracking-tight">{title}</h1>
   {description && <p class="max-w-2xl font-serif text-lg leading-normal text-ink-2">{description}</p>}
   <slot />
 </header>

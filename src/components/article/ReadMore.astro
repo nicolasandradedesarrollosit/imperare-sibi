@@ -14,11 +14,11 @@ const { articles, section } = Astro.props;
 
 {
   articles.length > 0 && (
-    <section class="wrap mt-20" aria-labelledby="more-title">
+    <section class="wrap section" aria-labelledby="more-title">
       <SectionHeading
         id="more-title"
         title="Seguí leyendo"
-        more={{ href: sectionUrl(section.slug), label: `Más sobre ${section.name.toLowerCase()}` }}
+        more={{ href: sectionUrl(section.slug), label: `Más de ${section.name}` }}
       />
       <div class="ruled compact-mobile">
         {articles.map((a) => (

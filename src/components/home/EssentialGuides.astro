@@ -11,13 +11,9 @@ const { guides } = Astro.props;
 
 {
   guides.length > 0 && (
-    <section class="bg-paper-alt py-16" aria-labelledby="guides-title">
+    <section class="section bg-paper-alt py-(--space-tight)" aria-labelledby="guides-title">
       <div class="wrap">
-        <SectionHeading
-          id="guides-title"
-          title="Guías esenciales"
-          intro="Explicaciones claras, revisadas por profesionales, sobre los temas que más nos consultan."
-        />
+        <SectionHeading id="guides-title" title="Guías esenciales" />
         <div class="ruled ruled--2 max-sm:[&>*+*]:border-t max-sm:[&>*+*]:border-rule max-sm:[&>*+*]:pt-6">
           {guides.map((g) => (
             <ArticleCard article={g} variant="row" />

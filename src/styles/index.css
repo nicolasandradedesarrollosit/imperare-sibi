@@ -42,8 +42,9 @@
 :root {
   --gutter: clamp(1rem, 0.4rem + 2.4vw, 2rem);
   --col-gap: clamp(1rem, 0.5rem + 1.6vw, 1.75rem);
-  /* Per-section colour, overridden inline with style="--c-section: …" */
-  --c-section: var(--color-accent);
+  /* Vertical rhythm: space between page blocks */
+  --space-section: clamp(3rem, 2rem + 3vw, 5rem);
+  --space-tight: 2.5rem;
 }
 
 /* ---------------------------------------------------------------- base */
@@ -51,6 +52,8 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Keeps focused elements and anchor targets clear of the sticky nav (WCAG 2.4.11). */
+    scroll-padding-top: 4rem;
   }
   body {
     @apply bg-paper font-sans text-ink antialiased;
@@ -115,55 +118,55 @@
     top: 1rem;
   }
 
-  /* Small uppercase label (rails, footer column titles) */
+  /* Small uppercase label (footer column titles, rail) */
   .label {
     @apply font-sans text-2xs font-bold tracking-widest text-ink uppercase;
   }
 
-  /* Centered section heading with a short accent rule underneath */
+  /* Vertical rhythm between page blocks */
+  .section {
+    margin-top: var(--space-section);
+  }
+  .section-tight {
+    margin-top: var(--space-tight);
+  }
+
+  /* Block heading: hairline rule on top, title left, optional link right */
   .heading {
-    @apply mb-8 text-center;
+    @apply mb-7 flex items-baseline justify-between gap-4 border-t border-ink pt-3;
   }
   .heading__title {
     @apply text-heading;
   }
-  .heading__title::after {
-    content: '';
-    display: block;
-    width: 2.5rem;
-    height: 3px;
-    margin: 0.75rem auto 0;
-    background: var(--c-section);
-  }
-  .heading__intro {
-    @apply mx-auto mt-3 max-w-xl text-sm text-muted;
-  }
   .heading__more {
-    @apply mt-3 inline-block text-sm font-semibold text-accent-dark no-underline hover:text-ink;
+    @apply text-sm font-semibold whitespace-nowrap text-accent-dark no-underline hover:text-ink;
   }
 
-  /* Section name before a headline: "Ansiedad / Título…" */
+  /* Section name before a headline: "Ansiedad / Título…" (the slash is an aria-hidden span) */
   .kicker {
-    color: var(--c-section);
+    @apply text-accent;
   }
-  .kicker::after {
-    content: ' / ';
-    font-weight: 400;
-    color: var(--color-rule);
+  .kicker__sep {
+    @apply font-normal text-rule;
   }
+  /* Section name on its own line, in small caps */
   .kicker--block {
-    @apply mb-1.5 block font-sans text-xs font-bold tracking-wide uppercase;
+    @apply mb-1 block font-sans text-sm font-semibold;
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.03em;
   }
-  .kicker--block::after {
-    content: none;
+  .kicker--block .kicker__sep {
+    display: none;
   }
 
-  /* Byline/meta line: items separated by middots */
+  /* Byline/meta line: items separated by middots (empty alt text: not announced) */
   .meta {
     @apply flex flex-wrap gap-x-2 text-xs text-muted;
+    font-variant-numeric: tabular-nums;
   }
   .meta > * + *::before {
     content: '·';
+    content: '·' / '';
     margin-right: 0.5rem;
   }
 
@@ -176,13 +179,8 @@
     @apply font-semibold text-accent-dark no-underline hover:text-ink;
   }
 
-  /* Rounded outline pill (topic chips, "Pedir ayuda") */
-  .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-rule no-underline transition-colors hover:border-accent hover:text-accent-dark;
-  }
-
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-white no-underline transition-colors;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-white no-underline transition-colors;
   }
   .btn:hover {
     @apply border-accent-dark bg-accent-dark;
@@ -202,13 +200,10 @@
     @apply grid min-w-0 content-start gap-3;
   }
   .card__media {
-    @apply block overflow-hidden rounded-sm bg-paper-alt;
+    @apply block overflow-hidden bg-paper-alt;
   }
   .card__media img {
-    @apply aspect-[3/2] w-full object-cover transition-transform duration-500;
-  }
-  .card:hover .card__media img {
-    transform: scale(1.02);
+    @apply aspect-[3/2] w-full object-cover;
   }
   .card__body {
     @apply grid min-w-0 gap-2;
@@ -342,10 +337,12 @@
     }
     /* Narrow text column: the section name goes on its own line (as in .kicker--block) */
     .compact-mobile .kicker {
-      @apply mb-1 block font-sans text-xs font-bold tracking-wide uppercase;
+      @apply mb-1 block font-sans text-sm font-semibold;
+      font-variant-caps: all-small-caps;
+      letter-spacing: 0.03em;
     }
-    .compact-mobile .kicker::after {
-      content: none;
+    .compact-mobile .kicker__sep {
+      display: none;
     }
   }
 
@@ -387,6 +384,8 @@
     @apply font-serif text-ink-2;
     font-size: 1.1875rem;
     line-height: 1.7;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    hanging-punctuation: first;
   }
   .prose > * + * {
     margin-top: 1.1em;
@@ -432,7 +431,7 @@
   }
   .prose blockquote {
     @apply pl-5 text-ink italic;
-    border-left: 3px solid var(--c-section);
+    border-left: 3px solid var(--color-accent);
   }
   .prose hr {
     @apply my-10 border-rule;

@@ -17,7 +17,9 @@ const used = new Set<string>();
 const [lead] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
 const featured = take(articles, used, 2, (a) => a.data.featured);
 const secondary = [...featured, ...take(articles, used, 2 - featured.length)];
-const latest = take(articles, used, 6);
+// Whole rows only (3 columns): a ragged last row looks unfinished.
+const pool = articles.filter((a) => !used.has(a.id)).slice(0, 6);
+const latest = take(pool, used, pool.length >= 3 ? pool.length - (pool.length % 3) : pool.length);
 const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
 ---
 
@@ -28,8 +30,8 @@ const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
 
   {
     latest.length > 0 && (
-      <section class="wrap pt-14" aria-labelledby="latest-title">
-        <SectionHeading id="latest-title" title="Últimas notas" more={{ href: archiveUrl, label: 'Ver todas las notas' }} />
+      <section class="wrap section" aria-labelledby="latest-title">
+        <SectionHeading id="latest-title" title="Últimas notas" more={{ href: archiveUrl, label: 'Ver todas' }} />
         <div class="ruled">
           {latest.map((a) => (
             <ArticleCard article={a} variant="stack" showDek />
@@ -39,13 +41,11 @@ const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
     )
   }
 
-  <div class="wrap"><AdSlot placement="horizontal" class="my-14" /></div>
+  <div class="wrap section"><AdSlot placement="horizontal" class="my-0" /></div>
 
   <EssentialGuides guides={guides} />
 
-  <div class="py-16">
-    <CategoryGrid articles={articles} />
-  </div>
+  <CategoryGrid articles={articles} />
 
   <NewsletterStrip />
 </BaseLayout>

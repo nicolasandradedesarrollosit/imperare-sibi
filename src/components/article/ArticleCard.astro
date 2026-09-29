@@ -53,7 +53,7 @@ const IMAGE = {
 const blockKicker = variant === 'lead' || variant === 'row';
 ---
 
-<article class:list={['card', `card--${variant}`]} style={`--c-section:${section.color}`}>
+<article class:list={['card', `card--${variant}`]}>
   {
     IMAGE && (
       <a href={url} class="card__media" tabindex="-1" aria-hidden="true">
@@ -74,7 +74,16 @@ const blockKicker = variant === 'lead' || variant === 'row';
   <div class="card__body">
     <Heading class="card__title">
       <a href={url}>
-        {showSection && <span class:list={['kicker', { 'kicker--block': blockKicker }]}>{section.name}</span>}
+        {
+          showSection && (
+            <span class:list={['kicker', { 'kicker--block': blockKicker }]}>
+              {section.name}
+              <span class="kicker__sep" aria-hidden="true">
+                {' / '}
+              </span>
+            </span>
+          )
+        }
         {data.title}
       </a>
     </Heading>

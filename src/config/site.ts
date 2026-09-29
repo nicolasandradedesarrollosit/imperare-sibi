@@ -56,42 +56,36 @@ export const SECTIONS = [
   {
     slug: 'ansiedad',
     name: 'Ansiedad',
-    color: '#2f5d46',
     description:
       'Qué es la ansiedad, cómo se manifiesta y qué tratamientos existen. Guías y notas revisadas por profesionales de la salud mental.',
   },
   {
     slug: 'depresion',
     name: 'Depresión',
-    color: '#34467a',
     description:
       'Información confiable sobre depresión: síntomas, diagnóstico, tratamientos y cómo acompañar a alguien que la atraviesa.',
   },
   {
     slug: 'vinculos',
     name: 'Vínculos',
-    color: '#9c3f22',
     description:
       'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental y qué hacer para cuidarlos, con guías revisadas.',
   },
   {
     slug: 'infancias-y-adolescencias',
     name: 'Infancias y adolescencias',
-    color: '#7a5200',
     description:
       'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta, con guías para familias revisadas por profesionales.',
   },
   {
     slug: 'politicas-publicas',
     name: 'Políticas públicas',
-    color: '#6a2c5a',
     description:
       'Ley de Salud Mental, obras sociales, prepagas y sistema público: actualidad y análisis sobre el acceso a la salud mental en Argentina.',
   },
   {
     slug: 'bienestar',
     name: 'Bienestar',
-    color: '#1c6269',
     description:
       'Sueño, hábitos, estrés y autocuidado: herramientas simples y basadas en evidencia para sentirte mejor en el día a día, revisadas por profesionales.',
   },
