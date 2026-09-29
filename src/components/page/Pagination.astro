@@ -1,0 +1,39 @@
+---
+interface Props {
+  prev?: string | undefined;
+  next?: string | undefined;
+  current: number;
+  last: number;
+}
+const { prev, next, current, last } = Astro.props;
+---
+
+{
+  last > 1 && (
+    <nav class="pag" aria-label="Paginación">
+      {prev ? <a href={prev} rel="prev">← Más recientes</a> : <span />}
+      <span class="pag__n">
+        Página {current} de {last}
+      </span>
+      {next ? <a href={next} rel="next">Anteriores →</a> : <span />}
+    </nav>
+  )
+}
+
+<style>
+  .pag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--sp-6);
+    font-size: var(--fs-sm);
+  }
+  .pag a {
+    font-weight: 600;
+    color: var(--c-sage-strong);
+    text-decoration: none;
+  }
+  .pag__n {
+    color: var(--c-muted);
+  }
+</style>

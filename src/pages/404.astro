@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SECCIONES } from '../config/site';
+---
+
+<BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }}>
+  <section class="container nf">
+    <p class="kicker">Error 404</p>
+    <h1>No encontramos esta página</h1>
+    <p>Puede que se haya movido o que el enlace tenga un error. Probá con alguna de nuestras secciones:</p>
+    <ul role="list">
+      {
+        SECCIONES.map((s) => (
+          <li>
+            <a href={`/${s.slug}/`}>{s.nombre}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <a class="btn" href="/">Volver al inicio</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    display: grid;
+    gap: var(--sp-4);
+    justify-items: start;
+    padding-block: var(--sp-8);
+    max-width: 40rem;
+  }
+  h1 {
+    font-size: var(--fs-3xl);
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+  ul a {
+    color: var(--c-sage-strong);
+    font-weight: 600;
+  }
+</style>

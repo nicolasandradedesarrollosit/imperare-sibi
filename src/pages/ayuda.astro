@@ -1,0 +1,35 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { LINEAS_AYUDA } from '../config/site';
+---
+
+<PageLayout
+  kicker="Recursos"
+  title="Dónde pedir ayuda"
+  description="Líneas gratuitas y recursos de salud mental en Argentina. Si estás en riesgo, pedí ayuda ahora."
+>
+  <p><strong>Si vos o alguien cercano está en peligro inmediato, llamá al 911 o al 107.</strong></p>
+  <h2>Líneas de ayuda</h2>
+  <ul>
+    {
+      LINEAS_AYUDA.map((l) => (
+        <li>
+          <strong>
+            <a href={`tel:${l.tel}`}>{l.numero}</a>
+          </strong>{' '}
+          — {l.nombre}. {l.detalle}.
+        </li>
+      ))
+    }
+  </ul>
+  <h2>Otros recursos</h2>
+  <ul>
+    <li>Guardias de salud mental en hospitales públicos: atención gratuita las 24 horas.</li>
+    <li>Centros de salud y acción comunitaria (CeSAC / CAPS) de tu barrio.</li>
+    <li>Tu obra social o prepaga está obligada a cubrir prestaciones de salud mental (Ley 26.657).</li>
+  </ul>
+  <p>
+    <em>Estamos sumando recursos por provincia. La información se verifica periódicamente; si encontrás un dato
+    desactualizado, <a href="/contacto/">avisanos</a>.</em>
+  </p>
+</PageLayout>

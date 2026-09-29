@@ -1,0 +1,17 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<PageLayout
+  kicker="Institucional"
+  title="Contacto"
+  description="Escribinos para propuestas, correcciones, colaboraciones o para sumarte a la red de profesionales."
+>
+  <p>Redacción: <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+  <p>
+    Este no es un canal de atención en salud mental. Si estás atravesando una crisis, visitá nuestra página de <a
+      href="/ayuda/">recursos de ayuda</a
+    >.
+  </p>
+</PageLayout>

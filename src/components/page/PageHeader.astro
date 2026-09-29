@@ -1,0 +1,39 @@
+---
+import Breadcrumbs from '../article/Breadcrumbs.astro';
+interface Props {
+  kicker?: string;
+  title: string;
+  description?: string;
+  crumbs?: { name: string; href: string }[];
+}
+const { kicker, title, description, crumbs } = Astro.props;
+---
+
+<header class="container ph">
+  {crumbs && <Breadcrumbs items={crumbs} />}
+  {kicker && <p class="kicker">{kicker}</p>}
+  <h1>{title}</h1>
+  {description && <p class="ph__desc">{description}</p>}
+  <slot />
+</header>
+
+<style>
+  .ph {
+    display: grid;
+    gap: var(--sp-3);
+    padding-block: var(--sp-6) var(--sp-5);
+    border-bottom: 1px solid var(--c-line);
+    margin-bottom: var(--sp-6);
+  }
+  h1 {
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.02em;
+  }
+  .ph__desc {
+    max-width: 44rem;
+    font-family: var(--f-serif);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-snug);
+    color: var(--c-ink-soft);
+  }
+</style>

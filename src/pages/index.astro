@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroDestacado from '../components/home/HeroDestacado.astro';
+import SeccionBloque from '../components/home/SeccionBloque.astro';
+import GuiasEvergreen from '../components/home/GuiasEvergreen.astro';
+import NewsletterCTA from '../components/home/NewsletterCTA.astro';
+import EdicionesMapa from '../components/home/EdicionesMapa.astro';
+import { SECCIONES, SITE } from '../config/site';
+import { getArticulos, porSeccion } from '../lib/content';
+
+const articulos = await getArticulos();
+const principal = articulos.find((a) => a.data.destacado) ?? articulos[0];
+const resto = articulos.filter((a) => a !== principal);
+const secundarias = resto.filter((a) => a.data.destacado).concat(resto.filter((a) => !a.data.destacado)).slice(0, 3);
+const ultimas = resto.slice(0, 5);
+const guias = articulos.filter((a) => a.data.tipo === 'guia').slice(0, 6);
+const bloques = SECCIONES.map((s) => ({ seccion: s, articulos: porSeccion(articulos, s.slug).slice(0, 4) })).filter(
+  (b) => b.articulos.length > 0,
+);
+---
+
+<BaseLayout seo={{ title: SITE.name, description: SITE.description }}>
+  <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
+  {principal && <HeroDestacado principal={principal} secundarias={secundarias} ultimas={ultimas} />}
+
+  <GuiasEvergreen guias={guias} />
+
+  <div class="container home__bloques">
+    {bloques.map((b) => <SeccionBloque seccion={b.seccion} articulos={b.articulos} />)}
+  </div>
+
+  <NewsletterCTA />
+  <EdicionesMapa />
+</BaseLayout>
+
+<style>
+  .home__bloques {
+    display: grid;
+    gap: var(--sp-8);
+    padding-top: var(--sp-8);
+  }
+</style>

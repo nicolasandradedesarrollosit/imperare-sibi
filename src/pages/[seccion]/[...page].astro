@@ -1,0 +1,82 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/page/PageHeader.astro';
+import Pagination from '../../components/page/Pagination.astro';
+import ArticleCard from '../../components/article/ArticleCard.astro';
+import { SECCIONES, SITE } from '../../config/site';
+import { getArticulos, porSeccion, type Articulo } from '../../lib/content';
+import { breadcrumbLd } from '../../lib/seo';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const articulos = await getArticulos();
+  return SECCIONES.flatMap((seccion) =>
+    paginate(porSeccion(articulos, seccion.slug), {
+      params: { seccion: seccion.slug },
+      props: { seccion },
+      pageSize: SITE.pageSize,
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Articulo>;
+  seccion: (typeof SECCIONES)[number];
+}
+const { page, seccion } = Astro.props;
+const [primera, ...resto] = page.data;
+const esPrimera = page.currentPage === 1;
+const crumbs = [
+  { name: 'Inicio', href: '/' },
+  { name: seccion.nombre, href: `/${seccion.slug}/` },
+];
+---
+
+<BaseLayout
+  seccionActiva={seccion.slug}
+  seo={{
+    title: esPrimera ? `${seccion.nombre}: noticias y guías` : `${seccion.nombre} — página ${page.currentPage}`,
+    description: seccion.descripcion,
+    prev: page.url.prev,
+    next: page.url.next,
+  }}
+  jsonLd={[breadcrumbLd(crumbs)]}
+>
+  <PageHeader kicker="Sección" title={seccion.nombre} description={seccion.descripcion} crumbs={crumbs} />
+  <div class="container">
+    {
+      page.data.length === 0 ? (
+        <p class="vacio">Todavía no hay notas en esta sección.</p>
+      ) : (
+        <>
+          {esPrimera && primera && (
+            <div class="lead">
+              <ArticleCard articulo={primera} variant="large" as="h2" showSeccion={false} priority />
+            </div>
+          )}
+          <div class="grid">
+            {(esPrimera ? resto : page.data).map((a) => (
+              <ArticleCard articulo={a} variant="medium" as="h2" showSeccion={false} />
+            ))}
+          </div>
+        </>
+      )
+    }
+    <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
+  </div>
+</BaseLayout>
+
+<style>
+  .lead {
+    max-width: 48rem;
+    margin-bottom: var(--sp-7);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--sp-7) var(--sp-6);
+  }
+  .vacio {
+    color: var(--c-muted);
+  }
+</style>

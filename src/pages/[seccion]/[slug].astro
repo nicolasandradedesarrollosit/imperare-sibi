@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getArticulos } from '../../lib/content';
+
+/**
+ * Un único template genera un HTML estático independiente por nota,
+ * cada uno con su propio SEO (title, description, canonical, OG y JSON-LD).
+ */
+export const getStaticPaths = (async () => {
+  const articulos = await getArticulos();
+  return articulos.map((articulo) => ({
+    params: { seccion: articulo.data.seccion, slug: articulo.id },
+    props: { articulo },
+  }));
+}) satisfies GetStaticPaths;
+
+const { articulo } = Astro.props;
+const { Content, headings } = await render(articulo);
+---
+
+<ArticleLayout articulo={articulo} headings={headings}>
+  <Content />
+</ArticleLayout>

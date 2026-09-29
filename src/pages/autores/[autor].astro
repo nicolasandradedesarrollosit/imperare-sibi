@@ -1,0 +1,97 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/page/PageHeader.astro';
+import ArticleCard from '../../components/article/ArticleCard.astro';
+import { getArticulos, type Autor } from '../../lib/content';
+import { breadcrumbLd, personLd } from '../../lib/seo';
+
+export const getStaticPaths = (async () => {
+  const autores = await getCollection('autores');
+  return autores.map((autor) => ({ params: { autor: autor.id }, props: { autor } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  autor: Autor;
+}
+const { autor } = Astro.props;
+const todos = await getArticulos();
+const escritas = todos.filter((a) => a.data.autor.id === autor.id);
+const revisadas = todos.filter((a) => a.data.revisor?.id === autor.id);
+const crumbs = [
+  { name: 'Inicio', href: '/' },
+  { name: autor.data.nombre, href: `/autores/${autor.id}/` },
+];
+const redes = Object.entries(autor.data.redes).filter(([, url]) => url) as [string, string][];
+---
+
+<BaseLayout
+  seo={{ title: `${autor.data.nombre}, ${autor.data.rol}`, description: autor.data.bio.slice(0, 160), type: 'profile' }}
+  jsonLd={[{ ...personLd(autor), mainEntityOfPage: Astro.url.href }, breadcrumbLd(crumbs)]}
+>
+  <PageHeader kicker={autor.data.rol} title={autor.data.nombre} description={autor.data.bio} crumbs={crumbs}>
+    {autor.data.foto && <Image src={autor.data.foto} alt={autor.data.nombre} width={96} height={96} class="foto" />}
+    {autor.data.credenciales && <p class="cred">{autor.data.credenciales}</p>}
+    {
+      redes.length > 0 && (
+        <ul role="list" class="redes">
+          {redes.map(([red, url]) => (
+            <li>
+              <a href={url} rel="me noopener">
+                {red}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </PageHeader>
+  <div class="container listado">
+    {
+      escritas.length > 0 && (
+        <section>
+          <h2>Notas</h2>
+          {escritas.map((a) => (
+            <ArticleCard articulo={a} variant="list" as="h3" />
+          ))}
+        </section>
+      )
+    }
+    {
+      revisadas.length > 0 && (
+        <section>
+          <h2>Notas revisadas</h2>
+          {revisadas.map((a) => (
+            <ArticleCard articulo={a} variant="list" as="h3" />
+          ))}
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .foto {
+    border-radius: 50%;
+  }
+  .cred {
+    font-weight: 600;
+    color: var(--c-sage-strong);
+  }
+  .redes {
+    display: flex;
+    gap: var(--sp-4);
+    font-size: var(--fs-sm);
+    text-transform: capitalize;
+  }
+  .listado {
+    display: grid;
+    gap: var(--sp-7);
+    max-width: 52rem;
+  }
+  .listado h2 {
+    font-size: var(--fs-xl);
+  }
+</style>
