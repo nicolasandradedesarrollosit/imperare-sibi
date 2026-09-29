@@ -3,8 +3,7 @@ import type { GetStaticPaths, Page } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import Pagination from '../../components/page/Pagination.astro';
-import ArticleCard from '../../components/article/ArticleCard.astro';
-import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleListing from '../../components/page/ArticleListing.astro';
 import { SECTIONS, SITE, type Section } from '../../config/site';
 import { bySection, getArticles, sectionUrl, type Article } from '../../lib/content';
 import { breadcrumbLd, collectionLd } from '../../lib/seo';
@@ -26,13 +25,11 @@ interface Props {
 }
 const { page, section } = Astro.props;
 const isFirst = page.currentPage === 1;
-const [first, ...rest] = page.data;
-const listed = isFirst ? rest : page.data;
 const crumbs = [
-  { name: 'Portada', href: '/' },
+  { name: 'Inicio', href: '/' },
   { name: section.name, href: sectionUrl(section.slug) },
 ];
-const title = isFirst ? `${section.name}: noticias y guías` : `${section.name}, página ${page.currentPage}`;
+const title = isFirst ? `${section.name}: guías y notas` : `${section.name}, página ${page.currentPage}`;
 ---
 
 <BaseLayout
@@ -43,29 +40,9 @@ const title = isFirst ? `${section.name}: noticias y guías` : `${section.name},
     collectionLd({ name: title, description: section.description, path: page.url.current, articles: page.data }),
   ]}
 >
-  <PageHeader title={section.name} description={section.description} color={section.color} />
+  <PageHeader eyebrow="Categoría" title={section.name} description={section.description} color={section.color} />
   <div class="wrap" style={`--c-section:${section.color}`}>
-    {page.data.length === 0 && <p class="empty">Todavía no hay notas en esta sección.</p>}
-    {isFirst && first && <ArticleCard article={first} variant="wide" as="h2" showSection={false} priority />}
-    {isFirst && first && <AdSlot placement="horizontal" />}
-    {
-      listed.length > 0 && (
-        <div class:list={['ruled', 'ruled--3', { 'listing--after-lead': isFirst }]}>
-          {listed.map((a) => (
-            <ArticleCard article={a} variant="stack" as="h2" showSection={false} showDek />
-          ))}
-        </div>
-      )
-    }
+    <ArticleListing articles={page.data} withLead={isFirst} showSection={false} />
     <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
   </div>
 </BaseLayout>
-
-<style>
-  .listing--after-lead {
-    margin-top: var(--sp-8);
-  }
-  .empty {
-    color: var(--c-muted);
-  }
-</style>

@@ -1,0 +1,28 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import AdSlot from '../ads/AdSlot.astro';
+import type { Article } from '../../lib/content';
+
+/**
+ * Listing used by categories, the archive and topics: optional wide lead story,
+ * one ad, then a ruled three-column grid.
+ */
+interface Props {
+  articles: Article[];
+  withLead?: boolean;
+  showSection?: boolean;
+}
+const { articles, withLead = true, showSection = true } = Astro.props;
+const [lead, ...rest] = withLead ? articles : [undefined, ...articles];
+---
+
+{articles.length === 0 && <p class="text-center text-muted">Todavía no hay notas publicadas acá.</p>}
+{lead && <ArticleCard article={lead} variant="wide" as="h2" showSection={showSection} priority />}
+{lead && <AdSlot placement="horizontal" />}
+{
+  rest.length > 0 && (
+    <div class:list={['ruled', { 'mt-12': lead }]}>
+      {rest.map((a) => a && <ArticleCard article={a} variant="stack" as="h2" showSection={showSection} showDek />)}
+    </div>
+  )
+}

@@ -12,13 +12,13 @@ interface Props {
 const { author, publishedAt, updatedAt, minutes } = Astro.props;
 ---
 
-<div class="byline">
-  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="byline__photo" />}
-  <div class="byline__text">
+<div class="flex items-center justify-center gap-3 text-sm">
+  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="size-11 rounded-full object-cover" />}
+  <div class="grid justify-items-center gap-0.5">
     <p>
-      Por <a href={authorUrl(author.id)} rel="author">{author.data.name}</a>
+      Por <a class="font-bold no-underline hover:underline" href={authorUrl(author.id)} rel="author">{author.data.name}</a>
     </p>
-    <p class="byline__meta">
+    <p class="meta justify-center">
       <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
       {
         updatedAt && (
@@ -31,36 +31,3 @@ const { author, publishedAt, updatedAt, minutes } = Astro.props;
     </p>
   </div>
 </div>
-
-<style>
-  .byline {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    font-size: var(--fs-sm);
-  }
-  .byline__photo {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .byline a {
-    font-weight: 700;
-    text-decoration: none;
-  }
-  .byline a:hover {
-    text-decoration: underline;
-  }
-  .byline__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--sp-2);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .byline__meta > * + *::before {
-    content: '·';
-    margin-right: var(--sp-2);
-  }
-</style>

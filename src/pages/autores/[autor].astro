@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import ArticleCard from '../../components/article/ArticleCard.astro';
+import SectionHeading from '../../components/home/SectionHeading.astro';
 import { authorUrl, getArticles, type Author } from '../../lib/content';
 import { breadcrumbLd, profilePageLd } from '../../lib/seo';
 
@@ -18,11 +19,13 @@ interface Props {
 }
 const { author } = Astro.props;
 const all = await getArticles();
-const written = all.filter((a) => a.data.author.id === author.id);
-const reviewed = all.filter((a) => a.data.reviewer?.id === author.id);
+const lists = [
+  { id: 'written', title: 'Notas', articles: all.filter((a) => a.data.author.id === author.id) },
+  { id: 'reviewed', title: 'Notas revisadas', articles: all.filter((a) => a.data.reviewer?.id === author.id) },
+].filter((l) => l.articles.length > 0);
 const path = authorUrl(author.id);
 const crumbs = [
-  { name: 'Portada', href: '/' },
+  { name: 'Inicio', href: '/' },
   { name: author.data.name, href: path },
 ];
 const social = Object.entries(author.data.social).filter(([, url]) => url) as [string, string][];
@@ -34,11 +37,11 @@ const social = Object.entries(author.data.social).filter(([, url]) => url) as [s
   ads={false}
 >
   <PageHeader eyebrow={author.data.role} title={author.data.name} description={author.data.bio}>
-    {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="photo" />}
-    {author.data.credentials && <p class="credentials">{author.data.credentials}</p>}
+    {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="rounded-full" />}
+    {author.data.credentials && <p class="font-bold text-accent-dark">{author.data.credentials}</p>}
     {
       social.length > 0 && (
-        <ul role="list" class="social">
+        <ul role="list" class="flex gap-4 text-sm capitalize">
           {social.map(([network, url]) => (
             <li>
               <a href={url} rel="me noopener">
@@ -50,60 +53,18 @@ const social = Object.entries(author.data.social).filter(([, url]) => url) as [s
       )
     }
   </PageHeader>
-  <div class="wrap lists">
+  <div class="wrap grid gap-16">
     {
-      written.length > 0 && (
-        <section aria-labelledby="written">
-          <div class="rubric">
-            <h2 id="written" class="rubric__title">
-              Notas
-            </h2>
-          </div>
+      lists.map((list) => (
+        <section class="mx-auto w-full max-w-3xl" aria-labelledby={list.id}>
+          <SectionHeading id={list.id} title={list.title} />
           <div class="stacked">
-            {written.map((a) => (
+            {list.articles.map((a) => (
               <ArticleCard article={a} variant="row" showDek />
             ))}
           </div>
         </section>
-      )
-    }
-    {
-      reviewed.length > 0 && (
-        <section aria-labelledby="reviewed">
-          <div class="rubric">
-            <h2 id="reviewed" class="rubric__title">
-              Notas revisadas
-            </h2>
-          </div>
-          <div class="stacked">
-            {reviewed.map((a) => (
-              <ArticleCard article={a} variant="row" showDek />
-            ))}
-          </div>
-        </section>
-      )
+      ))
     }
   </div>
 </BaseLayout>
-
-<style>
-  .photo {
-    border-radius: 50%;
-  }
-  .credentials {
-    font-weight: 700;
-    color: var(--c-accent-dark);
-  }
-  .social {
-    display: flex;
-    gap: var(--sp-4);
-    font-size: var(--fs-sm);
-    text-transform: capitalize;
-  }
-  .lists {
-    display: grid;
-    gap: var(--sp-8);
-    max-width: calc(48rem + 2 * var(--gutter));
-    margin-inline: 0;
-  }
-</style>

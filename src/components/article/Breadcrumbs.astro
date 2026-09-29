@@ -1,43 +1,28 @@
 ---
 interface Props {
   items: { name: string; href: string }[];
+  class?: string;
 }
-const { items } = Astro.props;
+const { items, class: className } = Astro.props;
 // The current page is already the <h1>; only ancestors are shown as links.
 const trail = items.slice(0, -1);
 ---
 
-<nav aria-label="Ruta de navegación" class="crumbs">
-  <ol role="list">
+<nav aria-label="Ruta de navegación" class={className}>
+  <ol role="list" class="flex flex-wrap justify-center gap-2 text-sm font-semibold">
     {
-      trail.map((it) => (
-        <li>
-          <a href={it.href}>{it.name}</a>
+      trail.map((it, i) => (
+        <li class="flex gap-2">
+          {i > 0 && (
+            <span class="font-normal text-muted" aria-hidden="true">
+              ›
+            </span>
+          )}
+          <a href={it.href} class="text-(--c-section) no-underline hover:underline">
+            {it.name}
+          </a>
         </li>
       ))
     }
   </ol>
 </nav>
-
-<style>
-  .crumbs ol {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2);
-    font-size: var(--fs-sm);
-    font-weight: 600;
-  }
-  .crumbs li + li::before {
-    content: '›';
-    margin-right: var(--sp-2);
-    color: var(--c-muted);
-    font-weight: 400;
-  }
-  .crumbs a {
-    color: var(--c-section, var(--c-accent));
-    text-decoration: none;
-  }
-  .crumbs a:hover {
-    text-decoration: underline;
-  }
-</style>

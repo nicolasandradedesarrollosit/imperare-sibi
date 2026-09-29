@@ -1,8 +1,8 @@
 ---
 import Logo from './Logo.astro';
-import { ACTIVE_PROVINCES, SECTIONS } from '../../config/site';
-import { provinceUrl, sectionUrl } from '../../lib/content';
-import { formatToday } from '../../lib/dates';
+import PhoneIcon from '../help/PhoneIcon.astro';
+import { SECTIONS } from '../../config/site';
+import { sectionUrl } from '../../lib/content';
 
 interface Props {
   activeSection?: string;
@@ -10,39 +10,59 @@ interface Props {
 const { activeSection } = Astro.props;
 ---
 
-<header class="masthead">
-  <div class="wrap masthead__top">
-    <div class="masthead__left">
-      <p class="masthead__date">{formatToday(new Date())}</p>
-      <details class="editions" data-dismissable>
-        <summary>Ediciones</summary>
-        <ul role="list" class="editions__panel">
-          <li><a href="/">Nacional</a></li>
-          {
-            ACTIVE_PROVINCES.map((p) => (
-              <li>
-                <a href={provinceUrl(p.slug)}>{p.name}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </details>
-    </div>
-    <a href="/" class="masthead__logo" aria-label="Imperare Sibi, ir a la portada">
+<header>
+  <div class="wrap grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-5 md:py-7">
+    <!--
+      Today's date is filled in by the browser (the site is static, so a build-time
+      date would freeze on deploy day). Width is reserved to avoid layout shift.
+    -->
+    <time data-today class="hidden min-w-64 text-xs text-muted md:block"></time>
+    <script is:inline>
+      (function () {
+        var el = document.querySelector('[data-today]');
+        if (!el) return;
+        var now = new Date();
+        var text = new Intl.DateTimeFormat('es-AR', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'America/Argentina/Buenos_Aires',
+        }).format(now);
+        el.textContent = text.charAt(0).toUpperCase() + text.slice(1);
+        el.setAttribute('datetime', now.toISOString().slice(0, 10));
+      })();
+    </script>
+
+    <a href="/" class="col-start-2 text-2xl no-underline md:text-[2.125rem]" aria-label="Imperare Sibi, ir a la portada">
       <Logo />
     </a>
-    <div class="masthead__right">
-      <a href="/#newsletter">Newsletter</a>
-      <a href="/ayuda/">Pedir ayuda</a>
+
+    <!-- Hidden on phones: the helpline bar above already links to /ayuda, and the logo stays alone at the centre. -->
+    <div class="col-start-3 hidden justify-end sm:flex">
+      <a
+        href="/ayuda/"
+        class="inline-flex items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-xs font-semibold no-underline transition-colors hover:border-accent hover:text-accent-dark"
+      >
+        <PhoneIcon class="size-3.5" />
+        Pedir ayuda
+      </a>
     </div>
   </div>
-  <nav class="sections" aria-label="Secciones">
-    <div class="wrap sections__scroller">
-      <ul role="list" class="sections__list">
+
+  <nav class="sticky top-0 z-30 border-y border-rule bg-paper/95 backdrop-blur" aria-label="Categorías">
+    <div
+      class="wrap overflow-x-auto [scrollbar-width:none] max-md:pr-8 max-md:[mask-image:linear-gradient(to_right,#000_85%,transparent)] [&::-webkit-scrollbar]:hidden"
+    >
+      <ul role="list" class="mx-auto flex w-max min-w-full gap-6 md:justify-center">
         {
           SECTIONS.map((s) => (
             <li>
-              <a href={sectionUrl(s.slug)} aria-current={activeSection === s.slug ? 'page' : undefined}>
+              <a
+                href={sectionUrl(s.slug)}
+                aria-current={activeSection === s.slug ? 'page' : undefined}
+                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-rule aria-[current=page]:border-accent"
+              >
                 {s.name}
               </a>
             </li>
@@ -52,187 +72,3 @@ const { activeSection } = Astro.props;
     </div>
   </nav>
 </header>
-
-<script>
-  // Close dismissable <details> menus on outside click or Escape.
-  const openMenus = () => document.querySelectorAll<HTMLDetailsElement>('details[data-dismissable][open]');
-  document.addEventListener('click', (e) => {
-    openMenus().forEach((d) => {
-      if (!d.contains(e.target as Node)) d.open = false;
-    });
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    openMenus().forEach((d) => {
-      d.open = false;
-      d.querySelector('summary')?.focus();
-    });
-  });
-</script>
-
-<style>
-  .masthead__top {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: var(--sp-4);
-    padding-block: var(--sp-5);
-    font-size: var(--fs-xs);
-  }
-  .masthead__left {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-  }
-  .masthead__date {
-    color: var(--c-muted);
-  }
-  .masthead__logo {
-    text-decoration: none;
-  }
-  .masthead__right {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--sp-5);
-  }
-  .masthead__right a {
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .masthead__right a:hover {
-    text-decoration: underline;
-  }
-
-  /* Editions menu */
-  .editions {
-    position: relative;
-  }
-  .editions summary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35em;
-    padding-block: var(--sp-1);
-    font-weight: 700;
-    cursor: pointer;
-    list-style: none;
-    user-select: none;
-  }
-  .editions summary::-webkit-details-marker {
-    display: none;
-  }
-  .editions summary::after {
-    content: '';
-    width: 0.4em;
-    height: 0.4em;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
-    transform: translateY(-0.15em) rotate(45deg);
-  }
-  .editions[open] summary::after {
-    transform: translateY(0.1em) rotate(-135deg);
-  }
-  .editions__panel {
-    position: absolute;
-    top: calc(100% + var(--sp-2));
-    left: 0;
-    z-index: 40;
-    width: max-content;
-    min-width: 13rem;
-    max-width: calc(100vw - 2 * var(--gutter));
-    padding-block: var(--sp-2);
-    background: var(--c-bg);
-    border: 1px solid var(--c-ink);
-    box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
-  }
-  .editions__panel a {
-    display: block;
-    padding: var(--sp-2) var(--sp-4);
-    font-size: var(--fs-sm);
-    text-decoration: none;
-  }
-  .editions__panel a:hover {
-    background: var(--c-bg-alt);
-  }
-
-  /* Section nav */
-  .sections {
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    background: var(--c-bg);
-    border-top: 1px solid var(--c-ink);
-    border-bottom: 1px solid var(--c-rule);
-  }
-  .sections__scroller {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .sections__scroller::-webkit-scrollbar {
-    display: none;
-  }
-  .sections__list {
-    display: flex;
-    justify-content: center;
-    gap: var(--sp-6);
-    width: max-content;
-    min-width: 100%;
-  }
-  .sections__list a {
-    display: block;
-    padding-block: 0.8rem 0.7rem;
-    font-size: var(--fs-sm);
-    font-weight: 600;
-    white-space: nowrap;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
-  }
-  .sections__list a:hover {
-    border-bottom-color: var(--c-rule);
-  }
-  .sections__list a[aria-current='page'] {
-    border-bottom-color: var(--c-accent);
-  }
-
-  @media (max-width: 56rem) {
-    .masthead__top {
-      grid-template-columns: auto 1fr;
-      padding-block: var(--sp-3);
-    }
-    .masthead__logo {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .masthead__logo :global(.logo) {
-      font-size: 1.5rem;
-    }
-    .masthead__left {
-      grid-column: 2;
-      grid-row: 1;
-      justify-content: flex-end;
-    }
-    .masthead__date,
-    .masthead__right {
-      display: none;
-    }
-    .editions__panel {
-      left: auto;
-      right: 0;
-    }
-    .sections__list {
-      justify-content: flex-start;
-      gap: var(--sp-5);
-    }
-    /* Fade on the right edge hints that the nav scrolls. */
-    .sections__scroller {
-      padding-right: var(--sp-7);
-    }
-    .sections__scroller {
-      mask-image: linear-gradient(to right, #000 85%, transparent);
-    }
-  }
-  @media (max-width: 22.5rem) {
-    .masthead__logo :global(.logo) {
-      font-size: 1.3rem;
-    }
-  }
-</style>

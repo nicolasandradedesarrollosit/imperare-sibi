@@ -5,42 +5,21 @@ import { sectionUrl } from '../lib/content';
 ---
 
 <BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }} ads={false}>
-  <section class="wrap not-found">
-    <p class="label">Error 404</p>
-    <h1>No encontramos esta página</h1>
-    <p>Puede que se haya movido o que el enlace tenga un error. Probá con alguna de nuestras secciones:</p>
-    <ul role="list">
+  <section class="wrap grid justify-items-center gap-5 py-24 text-center">
+    <p class="label text-muted">Error 404</p>
+    <h1 class="text-display">No encontramos esta página</h1>
+    <p class="max-w-xl text-ink-2">Puede que se haya movido o que el enlace tenga un error. Probá con alguna de estas categorías:</p>
+    <ul role="list" class="flex flex-wrap justify-center gap-x-5 gap-y-2">
       {
         SECTIONS.map((s) => (
           <li>
-            <a href={sectionUrl(s.slug)}>{s.name}</a>
+            <a class="font-bold text-accent-dark" href={sectionUrl(s.slug)}>
+              {s.name}
+            </a>
           </li>
         ))
       }
     </ul>
-    <a class="btn" href="/">Ir a la portada</a>
+    <a class="btn mt-4" href="/">Volver al inicio</a>
   </section>
 </BaseLayout>
-
-<style>
-  .not-found {
-    display: grid;
-    justify-items: start;
-    gap: var(--sp-4);
-    padding-block: var(--sp-9);
-    max-width: calc(42rem + 2 * var(--gutter));
-    margin-inline: 0;
-  }
-  h1 {
-    font-size: var(--fs-3xl);
-  }
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-5);
-  }
-  ul a {
-    font-weight: 700;
-    color: var(--c-accent-dark);
-  }
-</style>

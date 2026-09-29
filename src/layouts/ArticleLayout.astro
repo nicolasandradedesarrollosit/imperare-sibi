@@ -7,16 +7,16 @@ import Breadcrumbs from '../components/article/Breadcrumbs.astro';
 import Byline from '../components/article/Byline.astro';
 import ReviewedBy from '../components/article/ReviewedBy.astro';
 import TagLinks from '../components/article/TagLinks.astro';
-import HelpBox from '../components/article/HelpBox.astro';
 import ArticleCard from '../components/article/ArticleCard.astro';
+import HelpBox from '../components/help/HelpBox.astro';
+import SectionHeading from '../components/home/SectionHeading.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
-import { getProvince, getSection, SITE, TYPE_LABEL } from '../config/site';
+import { getSection, SITE, TYPE_LABEL } from '../config/site';
 import {
   articleUrl,
   authorUrl,
   bySection,
   getArticles,
-  provinceUrl,
   readingTime,
   related,
   sectionUrl,
@@ -35,7 +35,6 @@ interface Props {
 const { article, headings } = Astro.props;
 const { data } = article;
 const section = getSection(data.section)!;
-const province = data.province ? getProvince(data.province) : undefined;
 const author = await getEntry(data.author);
 if (!author) throw new Error(`Unknown author in ${article.id}`);
 if (data.image.width < 1200) throw new Error(`${article.id}: article images must be at least 1200px wide.`);
@@ -48,15 +47,15 @@ const toc = headings.filter((h) => h.depth === 2);
 const all = await getArticles();
 const used = new Set([article.id]);
 const more = [
-  ...take(related(article, all, 4), used, 4),
-  ...take(bySection(all, data.section), used, 4),
-  ...take(all, used, 4),
-].slice(0, 4);
+  ...take(related(article, all, 3), used, 3),
+  ...take(bySection(all, data.section), used, 3),
+  ...take(all, used, 3),
+].slice(0, 3);
 
 const og = await ogImage(data.image);
 const images = await schemaImages(data.image);
 const crumbs = [
-  { name: 'Portada', href: '/' },
+  { name: 'Inicio', href: '/' },
   { name: section.name, href: sectionUrl(section.slug) },
   { name: data.title, href: articleUrl(article) },
 ];
@@ -86,256 +85,121 @@ const crumbs = [
     breadcrumbLd(crumbs),
   ]}
 >
-  <article class="wrap story" style={`--c-section:${section.color}`}>
-    <div class="story__main">
-      <header class="story__header">
-        <div class="story__eyebrow">
-          <Breadcrumbs items={crumbs} />
-          {data.type !== 'news' && <span class="story__type">{TYPE_LABEL[data.type]}</span>}
-          {province && <a class="story__province" href={provinceUrl(province.slug)}>{province.name}</a>}
-        </div>
-        <h1>{data.title}</h1>
-        <p class="story__dek">{data.description}</p>
-        <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
-        {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
-      </header>
+  <article style={`--c-section:${section.color}`}>
+    <header class="wrap grid justify-items-center gap-5 pt-10 pb-8 text-center">
+      <div class="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+        <Breadcrumbs items={crumbs} />
+        {data.type !== 'news' && <span class="text-sm font-bold">· {TYPE_LABEL[data.type]}</span>}
+      </div>
+      <h1 class="max-w-4xl text-display tracking-tight">{data.title}</h1>
+      <p class="max-w-2xl font-serif text-xl leading-snug text-ink-2">{data.description}</p>
+      <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
+      {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
+    </header>
 
-      <figure class="story__figure">
+    <figure class="wrap">
+      <div class="mx-auto max-w-5xl">
         <Image
           src={data.image}
           alt={data.imageAlt}
-          width={1200}
-          height={800}
-          widths={[480, 800, 1200]}
-          sizes="(max-width: 64rem) 100vw, 54rem"
+          width={1400}
+          height={788}
+          widths={[640, 960, 1400]}
+          sizes="(max-width: 64rem) 100vw, 64rem"
           fit="cover"
           loading="eager"
           fetchpriority="high"
+          class="aspect-video w-full rounded-sm bg-paper-alt object-cover"
         />
-        <figcaption>
-          {data.imageAlt}
-          {data.imageCredit && <span class="story__credit">{data.imageCredit}</span>}
+        <figcaption class="meta mt-2 justify-center text-center">
+          <span>{data.imageAlt}</span>
+          {data.imageCredit && <span>{data.imageCredit}</span>}
         </figcaption>
-      </figure>
-
-      {
-        toc.length > 2 && (
-          <details class="story__toc-mobile">
-            <summary>En esta nota</summary>
-            <ol>
-              {toc.map((h) => (
-                <li>
-                  <a href={`#${h.slug}`}>{h.text}</a>
-                </li>
-              ))}
-            </ol>
-          </details>
-        )
-      }
-
-      {data.sensitive && <HelpBox />}
-
-      <div class="prose story__body">
-        <slot />
       </div>
+    </figure>
 
-      <footer class="story__footer">
-        <TagLinks tags={data.tags} />
-        <p class="story__disclaimer">{SITE.disclaimer}</p>
-        {!data.sensitive && <HelpBox />}
-      </footer>
-    </div>
-
-    <aside class="story__rail" aria-label="Complementos">
-      <div class="story__rail-sticky">
+    <!--
+      Three equal-sided columns on very wide screens (≥88rem, where a 300px rail fits in
+      the margin): the reading column stays exactly centered and the rail (table of
+      contents + ad) sits in the right margin. Narrower screens show a single column.
+    -->
+    <div
+      class="mt-10 px-(--gutter) min-[88rem]:grid min-[88rem]:grid-cols-[minmax(0,1fr)_var(--container-read)_minmax(0,1fr)] min-[88rem]:gap-12"
+    >
+      <div class="mx-auto max-w-read min-[88rem]:col-start-2 min-[88rem]:mx-0">
         {
           toc.length > 2 && (
-            <nav class="story__toc" aria-labelledby="toc-title">
-              <h2 id="toc-title" class="label">
-                En esta nota
-              </h2>
-              <ol role="list">
+            <details class="mb-8 border-y border-rule text-sm min-[88rem]:hidden">
+              <summary class="cursor-pointer py-3 font-bold">En esta nota</summary>
+              <ol class="mb-3 list-decimal space-y-2 pl-5">
                 {toc.map((h) => (
                   <li>
-                    <a href={`#${h.slug}`}>{h.text}</a>
+                    <a class="no-underline hover:underline" href={`#${h.slug}`}>
+                      {h.text}
+                    </a>
                   </li>
                 ))}
               </ol>
-            </nav>
+            </details>
           )
         }
-        {ads && <AdSlot placement="rail" />}
+
+        {data.sensitive && <HelpBox class="mb-10" />}
+
+        <div class="prose">
+          <slot />
+        </div>
+
+        <footer class="mt-12 grid gap-8">
+          <TagLinks tags={data.tags} />
+          <p class="border-y border-rule py-4 text-sm text-muted italic">{SITE.disclaimer}</p>
+          {!data.sensitive && <HelpBox />}
+        </footer>
       </div>
-    </aside>
+
+      <aside class="hidden min-[88rem]:col-start-3 min-[88rem]:block" aria-label="Complementos">
+        <div class="sticky top-16 grid w-(--container-rail) gap-8">
+          {
+            toc.length > 2 && (
+              <nav aria-labelledby="toc-title">
+                <h2 id="toc-title" class="label border-b border-ink pb-2">
+                  En esta nota
+                </h2>
+                <ol role="list" class="text-sm">
+                  {toc.map((h) => (
+                    <li class="border-b border-rule">
+                      <a class="block py-2 no-underline hover:text-accent" href={`#${h.slug}`}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+          {ads && <AdSlot placement="rail" />}
+        </div>
+      </aside>
+    </div>
   </article>
 
   {
     more.length > 0 && (
-      <section class="wrap more" aria-labelledby="more-title">
-        <div class="rubric">
-          <h2 id="more-title" class="rubric__title">
-            Seguí leyendo
-          </h2>
-          <a class="rubric__more" href={sectionUrl(section.slug)}>
-            Más en {section.name}
-          </a>
-        </div>
+      <section class="wrap mt-20" aria-labelledby="more-title">
+        <SectionHeading id="more-title" title="Seguí leyendo" more={{ href: sectionUrl(section.slug), label: `Más sobre ${section.name.toLowerCase()}` }} />
         <div class="ruled compact-mobile">
           {more.map((a) => (
-            <ArticleCard article={a} variant="stack" />
+            <ArticleCard article={a} variant="stack" showDek />
           ))}
         </div>
       </section>
     )
   }
-  {ads && <div class="wrap"><AdSlot placement="horizontal" /></div>}
+  {
+    ads && (
+      <div class="wrap">
+        <AdSlot placement="horizontal" />
+      </div>
+    )
+  }
 </BaseLayout>
-
-<style>
-  .story {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--w-rail);
-    gap: var(--sp-8);
-    padding-top: var(--sp-6);
-  }
-  .story__main {
-    min-width: 0;
-    max-width: 54rem;
-  }
-  .story__header {
-    display: grid;
-    gap: var(--sp-4);
-    max-width: 46rem;
-    margin-bottom: var(--sp-6);
-  }
-  .story__eyebrow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--sp-2) var(--sp-4);
-    font-size: var(--fs-sm);
-  }
-  .story__type {
-    font-weight: 700;
-    color: var(--c-ink);
-  }
-  .story__province {
-    color: var(--c-muted);
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .story h1 {
-    font-size: var(--fs-3xl);
-    letter-spacing: -0.015em;
-  }
-  .story__dek {
-    font-family: var(--f-serif);
-    font-size: var(--fs-lg);
-    line-height: 1.4;
-    color: var(--c-ink-2);
-  }
-  .story__figure {
-    margin-bottom: var(--sp-7);
-  }
-  .story__figure img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    background: var(--c-bg-alt);
-  }
-  .story__figure figcaption {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--sp-2);
-    padding-top: var(--sp-2);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .story__credit::before {
-    content: '·';
-    margin-right: var(--sp-2);
-  }
-  .story__body,
-  .story__footer,
-  .story__main > :global(.help) {
-    max-width: var(--w-read);
-  }
-  .story__main > :global(.help) {
-    margin-bottom: var(--sp-7);
-  }
-  .story__disclaimer {
-    padding: var(--sp-4) 0;
-    border-block: 1px solid var(--c-rule);
-    font-size: var(--fs-sm);
-    font-style: italic;
-    color: var(--c-muted);
-  }
-  .story__footer {
-    display: grid;
-    gap: var(--sp-7);
-    margin-top: var(--sp-8);
-  }
-
-  /* Rail */
-  .story__rail-sticky {
-    position: sticky;
-    top: 4.5rem;
-    display: grid;
-    gap: var(--sp-7);
-  }
-  .story__toc .label {
-    padding-bottom: var(--sp-2);
-    border-bottom: 1px solid var(--c-ink);
-  }
-  .story__toc ol {
-    font-size: var(--fs-sm);
-  }
-  .story__toc li {
-    border-bottom: 1px solid var(--c-rule);
-  }
-  .story__toc a {
-    display: block;
-    padding-block: var(--sp-2);
-    text-decoration: none;
-  }
-  .story__toc a:hover {
-    color: var(--c-accent);
-  }
-
-  /* Mobile table of contents */
-  .story__toc-mobile {
-    display: none;
-    max-width: var(--w-read);
-    margin-bottom: var(--sp-6);
-    border-block: 1px solid var(--c-rule);
-    font-size: var(--fs-sm);
-  }
-  .story__toc-mobile summary {
-    padding-block: var(--sp-3);
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .story__toc-mobile ol {
-    margin: 0 0 var(--sp-3);
-    padding-left: 1.25em;
-  }
-  .story__toc-mobile li + li {
-    margin-top: var(--sp-2);
-  }
-
-  .more {
-    margin-top: var(--sp-9);
-  }
-
-  @media (max-width: 64rem) {
-    .story {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .story__rail {
-      display: none;
-    }
-    .story__toc-mobile {
-      display: block;
-    }
-  }
-</style>

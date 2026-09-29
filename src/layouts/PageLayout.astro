@@ -12,7 +12,7 @@ interface Props {
 }
 const { title, description, eyebrow, noindex, ads = false } = Astro.props;
 const crumbs = [
-  { name: 'Portada', href: '/' },
+  { name: 'Inicio', href: '/' },
   { name: title, href: Astro.url.pathname },
 ];
 ---
@@ -20,12 +20,6 @@ const crumbs = [
 <BaseLayout seo={{ title, description, noindex }} jsonLd={[breadcrumbLd(crumbs)]} ads={ads}>
   <PageHeader eyebrow={eyebrow} title={title} description={description} />
   <div class="wrap">
-    <div class="prose page-body"><slot /></div>
+    <div class="prose mx-auto max-w-read"><slot /></div>
   </div>
 </BaseLayout>
-
-<style>
-  .page-body {
-    max-width: var(--w-read);
-  }
-</style>

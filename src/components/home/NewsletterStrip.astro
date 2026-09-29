@@ -4,62 +4,26 @@ const enabled = SITE.newsletterAction.length > 0;
 ---
 
 <section id="newsletter" class="wrap" aria-labelledby="newsletter-title">
-  <div class="newsletter">
-  <div class="newsletter__copy">
-    <h2 id="newsletter-title">Un respiro semanal en tu correo</h2>
-    <p>Cada domingo: las notas de la semana, una guía práctica y recursos para cuidarte. Sin spam.</p>
-  </div>
-  <form class="newsletter__form" method="post" action={enabled ? SITE.newsletterAction : undefined}>
-    <label for="newsletter-email" class="sr-only">Correo electrónico</label>
-    <input
-      id="newsletter-email"
-      type="email"
-      name="email"
-      required
-      placeholder="tu@correo.com"
-      autocomplete="email"
-      disabled={!enabled}
-    />
-    <button class="btn" type="submit" disabled={!enabled}>{enabled ? 'Suscribirme' : 'Muy pronto'}</button>
-  </form>
+  <div class="mx-auto max-w-2xl border-y border-ink py-12 text-center">
+    <h2 id="newsletter-title" class="text-title">Un respiro semanal en tu correo</h2>
+    <p class="mt-3 text-ink-2">Cada domingo: las notas de la semana, una guía práctica y recursos para cuidarte. Sin spam.</p>
+    <form
+      class="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row"
+      method="post"
+      action={enabled ? SITE.newsletterAction : undefined}
+    >
+      <label for="newsletter-email" class="sr-only">Correo electrónico</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        name="email"
+        required
+        placeholder="tu@correo.com"
+        autocomplete="email"
+        disabled={!enabled}
+        class="min-w-0 flex-1 rounded-full border border-rule bg-paper px-5 py-2.5 text-ink disabled:bg-paper-alt"
+      />
+      <button class="btn" type="submit" disabled={!enabled}>{enabled ? 'Suscribirme' : 'Muy pronto'}</button>
+    </form>
   </div>
 </section>
-
-<style>
-  .newsletter {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    gap: var(--sp-5) var(--col-gap);
-    margin-block: var(--sp-9);
-    padding-block: var(--sp-6);
-    border-block: 1px solid var(--c-ink);
-  }
-  .newsletter h2 {
-    font-size: var(--fs-2xl);
-    margin-bottom: var(--sp-2);
-  }
-  .newsletter p {
-    color: var(--c-ink-2);
-  }
-  .newsletter__form {
-    display: flex;
-  }
-  .newsletter__form input {
-    flex: 1;
-    min-width: 0;
-    padding: 0.75em 1em;
-    border: 1px solid var(--c-ink);
-    border-right: 0;
-    background: var(--c-bg);
-    color: var(--c-ink);
-  }
-  .newsletter__form input:disabled {
-    background: var(--c-bg-alt);
-  }
-  @media (max-width: 48rem) {
-    .newsletter {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-</style>

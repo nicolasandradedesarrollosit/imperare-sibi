@@ -1,0 +1,17 @@
+---
+/** Centered block heading used across the front page and listings. */
+interface Props {
+  id: string;
+  title: string;
+  intro?: string;
+  more?: { href: string; label: string };
+  as?: 'h2' | 'h3';
+}
+const { id, title, intro, more, as: Tag = 'h2' } = Astro.props;
+---
+
+<div class="heading">
+  <Tag id={id} class="heading__title">{title}</Tag>
+  {intro && <p class="heading__intro">{intro}</p>}
+  {more && <a class="heading__more" href={more.href}>{more.label} →</a>}
+</div>

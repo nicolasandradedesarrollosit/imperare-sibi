@@ -1,0 +1,54 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { SECTIONS } from '../../config/site';
+import { articleUrl, bySection, sectionUrl, type Article } from '../../lib/content';
+
+/**
+ * "Explorá por tema": one card per category with its description and latest titles.
+ * Always renders every category, so the grid is complete whatever the content volume.
+ */
+interface Props {
+  articles: Article[];
+}
+const { articles } = Astro.props;
+const categories = SECTIONS.map((section) => ({ section, latest: bySection(articles, section.slug).slice(0, 3) }));
+---
+
+<section class="wrap" aria-labelledby="categories-title">
+  <SectionHeading id="categories-title" title="Explorá por tema" />
+  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      categories.map(({ section, latest }) => (
+        <article
+          class="flex flex-col rounded-xl border border-rule p-6 transition-colors hover:border-(--c-section)"
+          style={`--c-section:${section.color}`}
+        >
+          <h3 class="text-xl">
+            <a class="text-ink no-underline hover:underline" href={sectionUrl(section.slug)}>
+              {section.name}
+            </a>
+          </h3>
+          <span class="mt-2 block h-[3px] w-8 bg-(--c-section)" aria-hidden="true" />
+          <p class="mt-3 text-sm text-muted">{section.description}</p>
+          {latest.length > 0 && (
+            <ul role="list" class="mt-4 grid gap-2 border-t border-rule pt-4">
+              {latest.map((a) => (
+                <li>
+                  <a class="font-serif text-[0.95rem] leading-snug font-semibold no-underline hover:underline" href={articleUrl(a)}>
+                    {a.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+          <a
+            class="mt-auto pt-4 text-sm font-semibold text-(--c-section) no-underline hover:underline"
+            href={sectionUrl(section.slug)}
+          >
+            Ver notas de {section.name.toLowerCase()} →
+          </a>
+        </article>
+      ))
+    }
+  </div>
+</section>

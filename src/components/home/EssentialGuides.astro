@@ -1,6 +1,8 @@
 ---
 import ArticleCard from '../article/ArticleCard.astro';
+import SectionHeading from './SectionHeading.astro';
 import type { Article } from '../../lib/content';
+
 interface Props {
   guides: Article[];
 }
@@ -9,15 +11,14 @@ const { guides } = Astro.props;
 
 {
   guides.length > 0 && (
-    <section class="guides" aria-labelledby="guides-title">
+    <section class="bg-paper-alt py-16" aria-labelledby="guides-title">
       <div class="wrap">
-        <div class="rubric">
-          <h2 id="guides-title" class="rubric__title">
-            Guías esenciales
-          </h2>
-          <p class="guides__intro">Explicaciones claras, revisadas por profesionales.</p>
-        </div>
-        <div class="ruled ruled--3">
+        <SectionHeading
+          id="guides-title"
+          title="Guías esenciales"
+          intro="Explicaciones claras, revisadas por profesionales, sobre los temas que más nos consultan."
+        />
+        <div class="ruled ruled--2 max-sm:[&>*+*]:border-t max-sm:[&>*+*]:border-rule max-sm:[&>*+*]:pt-6">
           {guides.map((g) => (
             <ArticleCard article={g} variant="row" />
           ))}
@@ -26,26 +27,3 @@ const { guides } = Astro.props;
     </section>
   )
 }
-
-<style>
-  .guides {
-    padding-block: var(--sp-6) var(--sp-7);
-    background: var(--c-bg-alt);
-  }
-  .guides__intro {
-    font-size: var(--fs-sm);
-    color: var(--c-muted);
-  }
-  @media (max-width: 40rem) {
-    .guides__intro {
-      display: none;
-    }
-    .guides .ruled > * + * {
-      padding-top: var(--sp-4);
-      border-top: 1px solid var(--c-rule);
-    }
-    .guides .ruled {
-      row-gap: var(--sp-4);
-    }
-  }
-</style>

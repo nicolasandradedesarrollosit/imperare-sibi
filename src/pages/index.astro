@@ -1,95 +1,52 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FrontPage from '../components/home/FrontPage.astro';
-import SectionBlock from '../components/home/SectionBlock.astro';
-import SectionColumn from '../components/home/SectionColumn.astro';
+import ArticleCard from '../components/article/ArticleCard.astro';
+import SectionHeading from '../components/home/SectionHeading.astro';
 import EssentialGuides from '../components/home/EssentialGuides.astro';
+import CategoryGrid from '../components/home/CategoryGrid.astro';
 import NewsletterStrip from '../components/home/NewsletterStrip.astro';
-import EditionsIndex from '../components/home/EditionsIndex.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
-import { SECTIONS, SITE } from '../config/site';
-import { bySection, getArticles, take } from '../lib/content';
+import { SITE } from '../config/site';
+import { archiveUrl, getArticles, take } from '../lib/content';
 
 const articles = await getArticles();
 const used = new Set<string>();
-const [lead] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
-const featured = take(articles, used, 2, (a) => a.data.featured);
-const secondary = [...featured, ...take(articles, used, 2 - featured.length)];
-// The rail lists the newest stories not already on the front; nothing repeats side by side.
-const latest = articles.filter((a) => !used.has(a.id)).slice(0, 6);
+const [featured] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
+const latest = take(articles, used, 6);
 const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
-const blocks = SECTIONS.map((section) => ({
-  section,
-  articles: bySection(articles, section.slug)
-    .filter((a) => !used.has(a.id))
-    .slice(0, 4),
-})).filter((b) => b.articles.length > 0);
-// Sections with enough stories get a full-width block; thinner ones share a ruled row,
-// so the page never shows half-empty blocks whatever the content volume.
-const fullBlocks = blocks.filter((b) => b.articles.length >= 3);
-const columnBlocks = blocks.filter((b) => b.articles.length < 3);
-
-// Split the thin sections into rows that are always full: rows of 3, except a
-// remainder of 4 (one row of 4) or 2 (a pair). A lone section gets a wide block.
-type Block = (typeof blocks)[number];
-const columnRows: Block[][] = [];
-for (let i = 0; i < columnBlocks.length; ) {
-  const left = columnBlocks.length - i;
-  const size = left === 4 ? 4 : left === 2 ? 2 : left === 1 ? 1 : 3;
-  columnRows.push(columnBlocks.slice(i, i + size));
-  i += size;
-}
-const rowClass = { 2: 'ruled--2', 3: 'ruled--3', 4: '' } as Record<number, string>;
 ---
 
 <BaseLayout seo={{ title: SITE.name, description: SITE.description }}>
   <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
 
-  {lead && <FrontPage lead={lead} secondary={secondary} latest={latest} />}
+  {
+    featured && (
+      <section class="wrap pt-10" aria-label="Nota destacada">
+        <ArticleCard article={featured} variant="featured" as="h2" priority />
+      </section>
+    )
+  }
 
-  <div class="wrap"><AdSlot placement="horizontal" /></div>
+  <div class="wrap"><AdSlot placement="horizontal" class="mt-14" /></div>
+
+  {
+    latest.length > 0 && (
+      <section class="wrap py-14" aria-labelledby="latest-title">
+        <SectionHeading id="latest-title" title="Últimas notas" more={{ href: archiveUrl, label: 'Ver todas las notas' }} />
+        <div class="ruled">
+          {latest.map((a) => (
+            <ArticleCard article={a} variant="stack" showDek />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <EssentialGuides guides={guides} />
 
-  <div class="wrap blocks">
-    {
-      fullBlocks.map((b, i) => (
-        <>
-          <SectionBlock section={b.section} articles={b.articles} />
-          {i === 0 && <AdSlot placement="horizontal" class="blocks__ad" />}
-        </>
-      ))
-    }
-    {
-      columnRows.map((row) =>
-        row.length === 1 ? (
-          <SectionBlock section={row[0]!.section} articles={row[0]!.articles} />
-        ) : (
-          <div class:list={['ruled', rowClass[row.length], 'blocks__columns']}>
-            {row.map((b) => (
-              <SectionColumn section={b.section} articles={b.articles} />
-            ))}
-          </div>
-        ),
-      )
-    }
-    {fullBlocks.length === 0 && <AdSlot placement="horizontal" class="blocks__ad" />}
+  <div class="py-16">
+    <CategoryGrid articles={articles} />
   </div>
 
   <NewsletterStrip />
-  <EditionsIndex />
 </BaseLayout>
-
-<style>
-  .blocks {
-    display: grid;
-    gap: var(--sp-9);
-    padding-top: var(--sp-8);
-  }
-  .blocks :global(.blocks__ad) {
-    margin-block: 0;
-  }
-  .blocks__columns {
-    row-gap: var(--sp-8);
-  }
-</style>

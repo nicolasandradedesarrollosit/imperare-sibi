@@ -1,166 +1,64 @@
 ---
 import Logo from './Logo.astro';
-import { ACTIVE_PROVINCES, HELPLINES, INSTITUTIONAL_NAV, LEGAL_NAV, SECTIONS, SITE } from '../../config/site';
-import { provinceUrl, sectionUrl } from '../../lib/content';
+import { HELPLINES, INSTITUTIONAL_NAV, LEGAL_NAV, SECTIONS, SITE } from '../../config/site';
+import { sectionUrl } from '../../lib/content';
+
 const year = new Date().getFullYear();
+const columns = [
+  { title: 'Categorías', links: SECTIONS.map((s) => ({ href: sectionUrl(s.slug), label: s.name })) },
+  { title: 'El blog', links: [...INSTITUTIONAL_NAV, { href: '/rss.xml', label: 'RSS' }] },
+  { title: 'Legales', links: [...LEGAL_NAV] },
+];
 ---
 
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer__brand">
-      <a href="/" aria-label="Imperare Sibi, ir a la portada"><Logo /></a>
-      <p>{SITE.tagline}</p>
+<footer class="mt-24 border-t border-rule bg-paper-alt text-sm text-ink-2">
+  <div class="wrap py-12">
+    <div class="flex flex-col items-center gap-3 text-center">
+      <a href="/" class="text-2xl no-underline" aria-label="Imperare Sibi, ir a la portada"><Logo /></a>
+      <p class="font-serif text-muted italic">{SITE.tagline}</p>
     </div>
-    <div class="footer__grid">
-      <nav aria-labelledby="f-sections">
-        <h2 id="f-sections" class="label">Secciones</h2>
-        <ul role="list">
-          {
-            SECTIONS.map((s) => (
-              <li>
-                <a href={sectionUrl(s.slug)}>{s.name}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-      <nav aria-labelledby="f-editions">
-        <h2 id="f-editions" class="label">Ediciones</h2>
-        <ul role="list">
-          {
-            ACTIVE_PROVINCES.map((p) => (
-              <li>
-                <a href={provinceUrl(p.slug)}>{p.name}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-      <nav aria-labelledby="f-about">
-        <h2 id="f-about" class="label">El medio</h2>
-        <ul role="list">
-          {
-            INSTITUTIONAL_NAV.map((l) => (
-              <li>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))
-          }
-          <li><a href="/rss.xml">RSS</a></li>
-        </ul>
-      </nav>
+
+    <div class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-rule pt-10 md:grid-cols-4">
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <h2 class="label mb-3">{col.title}</h2>
+            <ul role="list" class="grid gap-2">
+              {col.links.map((l) => (
+                <li>
+                  <a class="no-underline hover:underline" href={l.href}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
       <div>
-        <h2 class="label">Líneas de ayuda</h2>
-        <ul role="list" class="footer__help">
+        <h2 class="label mb-3">Líneas de ayuda</h2>
+        <ul role="list" class="grid gap-2">
           {
             HELPLINES.map((l) => (
-              <li>
-                <a href={`tel:${l.tel}`}>{l.number}</a>
-                <span>{l.name}</span>
+              <li class="grid">
+                <a class="font-bold text-ink no-underline hover:underline" href={`tel:${l.tel}`}>
+                  {l.number}
+                </a>
+                <span class="text-xs text-muted">{l.name}</span>
               </li>
             ))
           }
         </ul>
       </div>
     </div>
-    <p class="footer__disclaimer">{SITE.disclaimer}</p>
-    <div class="footer__legal">
-      <p>© {year} {SITE.name}</p>
-      <ul role="list">
-        {
-          LEGAL_NAV.map((l) => (
-            <li>
-              <a href={l.href}>{l.label}</a>
-            </li>
-          ))
-        }
-        <li><a href={SITE.social.instagram} rel="me noopener">Instagram</a></li>
-        <li><a href={SITE.social.x} rel="me noopener">X</a></li>
-        <li><a href={SITE.social.linkedin} rel="me noopener">LinkedIn</a></li>
-      </ul>
+
+    <p class="mx-auto mt-10 max-w-2xl border-t border-rule pt-6 text-center text-xs text-muted">{SITE.disclaimer}</p>
+
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted">
+      <span>© {year} {SITE.name}</span>
+      <a class="no-underline hover:underline" href={SITE.social.instagram} rel="me noopener">Instagram</a>
+      <a class="no-underline hover:underline" href={SITE.social.x} rel="me noopener">X</a>
+      <a class="no-underline hover:underline" href={SITE.social.linkedin} rel="me noopener">LinkedIn</a>
     </div>
   </div>
 </footer>
-
-<style>
-  .footer {
-    margin-top: var(--sp-9);
-    padding-top: var(--sp-7);
-    border-top: 3px solid var(--c-ink);
-    font-size: var(--fs-sm);
-    color: var(--c-ink-2);
-  }
-  .footer a {
-    text-decoration: none;
-  }
-  .footer a:hover {
-    text-decoration: underline;
-  }
-  .footer__brand {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-3) var(--sp-6);
-    padding-bottom: var(--sp-6);
-    border-bottom: 1px solid var(--c-rule);
-  }
-  .footer__brand :global(.logo) {
-    font-size: 1.5rem;
-  }
-  .footer__brand p {
-    font-family: var(--f-serif);
-    font-style: italic;
-    color: var(--c-muted);
-  }
-  .footer__grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--sp-7) var(--col-gap);
-    padding-block: var(--sp-6);
-  }
-  .footer__grid .label {
-    margin-bottom: var(--sp-3);
-  }
-  .footer__grid ul {
-    display: grid;
-    gap: var(--sp-2);
-  }
-  .footer__help li {
-    display: grid;
-  }
-  .footer__help a {
-    font-weight: 700;
-    color: var(--c-ink);
-  }
-  .footer__help span {
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .footer__disclaimer {
-    padding-block: var(--sp-4);
-    border-top: 1px solid var(--c-rule);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .footer__legal {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--sp-3) var(--sp-6);
-    padding-block: var(--sp-4) var(--sp-6);
-    border-top: 1px solid var(--c-rule);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .footer__legal ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-2) var(--sp-5);
-  }
-  @media (max-width: 56rem) {
-    .footer__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-</style>

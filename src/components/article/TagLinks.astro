@@ -8,31 +8,16 @@ const { tags } = Astro.props;
 
 {
   tags.length > 0 && (
-    <p class="tags">
-      <span class="label">Temas</span>{' '}
+    <p class="text-sm">
+      <span class="label mr-2">Temas</span>
       {tags.map((t, i) => (
         <>
-          <a href={tagUrl(t)}>{t}</a>
+          <a class="font-semibold text-accent-dark no-underline hover:underline" href={tagUrl(t)}>
+            {t}
+          </a>
           {i < tags.length - 1 && ', '}
         </>
       ))}
     </p>
   )
 }
-
-<style>
-  .tags {
-    font-size: var(--fs-sm);
-  }
-  .tags .label {
-    margin-right: var(--sp-2);
-  }
-  .tags a {
-    color: var(--c-accent-dark);
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .tags a:hover {
-    text-decoration: underline;
-  }
-</style>

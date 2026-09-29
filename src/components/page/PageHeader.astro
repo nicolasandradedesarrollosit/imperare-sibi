@@ -5,40 +5,18 @@ interface Props {
   title: string;
   description?: string;
   crumbs?: { name: string; href: string }[];
-  /** Section colour for the top rule and breadcrumbs. */
+  /** Section colour for the accent rule and breadcrumbs. */
   color?: string;
 }
 const { eyebrow, title, description, crumbs, color } = Astro.props;
 ---
 
-<header class="wrap page-header" style={color ? `--c-section:${color}` : undefined}>
+<header class="wrap grid justify-items-center gap-3 pt-10 pb-10 text-center" style={color ? `--c-section:${color}` : undefined}>
   {crumbs && crumbs.length > 1 && <Breadcrumbs items={crumbs} />}
-  {eyebrow && <p class="label page-header__eyebrow">{eyebrow}</p>}
-  <h1>{title}</h1>
-  {description && <p class="page-header__desc">{description}</p>}
+  {eyebrow && <p class="label text-muted">{eyebrow}</p>}
+  <h1 class="text-display tracking-tight after:mx-auto after:mt-4 after:block after:h-[3px] after:w-12 after:bg-(--c-section) after:content-['']">
+    {title}
+  </h1>
+  {description && <p class="max-w-2xl font-serif text-lg leading-normal text-ink-2">{description}</p>}
   <slot />
 </header>
-
-<style>
-  .page-header {
-    display: grid;
-    gap: var(--sp-3);
-    padding-block: var(--sp-6) var(--sp-6);
-  }
-  .page-header h1 {
-    padding-top: var(--sp-3);
-    border-top: 4px solid var(--c-section, var(--c-ink));
-    font-size: var(--fs-3xl);
-    letter-spacing: -0.015em;
-  }
-  .page-header__eyebrow {
-    color: var(--c-muted);
-  }
-  .page-header__desc {
-    max-width: 46rem;
-    font-family: var(--f-serif);
-    font-size: var(--fs-md);
-    line-height: 1.5;
-    color: var(--c-ink-2);
-  }
-</style>

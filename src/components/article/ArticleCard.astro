@@ -6,13 +6,14 @@ import { articleUrl, type Article } from '../../lib/content';
 import { formatShortDate } from '../../lib/dates';
 
 /**
- * lead:  big photo, large headline, standfirst.
- * stack: photo on top, headline below.
- * row:   headline left, thumbnail right (dense lists).
- * wide:  photo left, headline and standfirst right (single-story blocks).
- * text:  no photo.
+ * featured: big centered story (front page lead).
+ * stack:    photo on top, headline below.
+ * row:      headline left, thumbnail right (dense lists).
+ * wide:     photo left, headline and standfirst right.
+ * text:     no photo.
+ * Variant styles live in src/styles/index.css (.card--*).
  */
-type Variant = 'lead' | 'stack' | 'row' | 'wide' | 'text';
+type Variant = 'featured' | 'stack' | 'row' | 'wide' | 'text';
 
 interface Props {
   article: Article;
@@ -32,7 +33,7 @@ const {
   variant = 'stack',
   as: Heading = 'h3',
   priority = false,
-  showDek = variant === 'lead' || variant === 'wide',
+  showDek = variant === 'featured' || variant === 'wide',
   showSection = true,
   sizes,
 } = Astro.props;
@@ -43,12 +44,13 @@ const section = getSection(data.section)!;
 const author = await getEntry(data.author);
 
 const IMAGE = {
-  lead: { width: 1200, widths: [480, 800, 1200], sizes: '(max-width: 56rem) 100vw, 45vw' },
-  stack: { width: 640, widths: [320, 480, 640], sizes: '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 25vw' },
-  row: { width: 320, widths: [200, 320], sizes: '8.5rem' },
-  wide: { width: 960, widths: [480, 720, 960], sizes: '(max-width: 48rem) 100vw, 55vw' },
+  featured: { width: 1400, height: 788, widths: [640, 960, 1400], sizes: '(max-width: 74rem) 100vw, 74rem' },
+  stack: { width: 640, height: 427, widths: [320, 480, 640], sizes: '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 24rem' },
+  row: { width: 320, height: 213, widths: [200, 320], sizes: '8.5rem' },
+  wide: { width: 960, height: 640, widths: [480, 720, 960], sizes: '(max-width: 48rem) 100vw, 42rem' },
   text: undefined,
 }[variant];
+const blockKicker = variant === 'featured' || variant === 'row';
 ---
 
 <article class:list={['card', `card--${variant}`]} style={`--c-section:${section.color}`}>
@@ -59,7 +61,7 @@ const IMAGE = {
           src={data.image}
           alt=""
           width={IMAGE.width}
-          height={Math.round((IMAGE.width * 2) / 3)}
+          height={IMAGE.height}
           widths={IMAGE.widths}
           sizes={sizes ?? IMAGE.sizes}
           fit="cover"
@@ -72,167 +74,15 @@ const IMAGE = {
   <div class="card__body">
     <Heading class="card__title">
       <a href={url}>
-        {showSection && <span class="card__kicker">{section.name}</span>}
+        {showSection && <span class:list={['kicker', { 'kicker--block': blockKicker }]}>{section.name}</span>}
         {data.title}
       </a>
     </Heading>
     {showDek && <p class="card__dek">{data.description}</p>}
-    <p class="card__meta">
+    <p class="meta">
       {data.type !== 'news' && <span class="card__type">{TYPE_LABEL[data.type]}</span>}
       {author && variant !== 'row' && <span>{author.data.name}</span>}
       <time datetime={data.publishedAt.toISOString()}>{formatShortDate(data.publishedAt)}</time>
     </p>
   </div>
 </article>
-
-<style>
-  .card {
-    display: grid;
-    gap: var(--sp-3);
-    align-content: start;
-    min-width: 0;
-  }
-  .card__media {
-    display: block;
-    overflow: hidden;
-    background: var(--c-bg-alt);
-  }
-  .card__media img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    transition: opacity 0.2s;
-  }
-  .card:hover .card__media img {
-    opacity: 0.92;
-  }
-  .card__body {
-    display: grid;
-    gap: var(--sp-2);
-    min-width: 0;
-  }
-  .card__title {
-    font-size: var(--fs-md);
-    line-height: var(--lh-snug);
-    font-weight: 600;
-  }
-  .card__title a {
-    text-decoration: none;
-  }
-  .card__title a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-  }
-  /* Guardian-style inline kicker: coloured section name + slash before the headline. */
-  .card__kicker {
-    color: var(--c-section);
-  }
-  .card__kicker::after {
-    content: ' / ';
-    color: var(--c-rule);
-    font-weight: 400;
-  }
-  .card__dek {
-    font-family: var(--f-serif);
-    font-size: var(--fs-base);
-    line-height: 1.5;
-    color: var(--c-ink-2);
-  }
-  .card__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--sp-2);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-  }
-  .card__meta > * + *::before {
-    content: '·';
-    margin-right: var(--sp-2);
-  }
-  .card__type {
-    font-weight: 700;
-    color: var(--c-ink);
-  }
-
-  /* lead */
-  .card--lead {
-    gap: var(--sp-4);
-  }
-  .card--lead .card__title {
-    font-size: var(--fs-3xl);
-    letter-spacing: -0.015em;
-    line-height: var(--lh-tight);
-  }
-  .card--lead .card__kicker {
-    display: block;
-    margin-bottom: var(--sp-2);
-    font-family: var(--f-sans);
-    font-size: var(--fs-sm);
-    font-weight: 700;
-    letter-spacing: 0;
-  }
-  .card--lead .card__kicker::after {
-    content: none;
-  }
-  .card--lead .card__dek {
-    font-size: var(--fs-md);
-  }
-
-  /* row: text left, thumbnail right */
-  .card--row {
-    grid-template-columns: minmax(0, 1fr) 8.5rem;
-    align-items: start;
-    gap: var(--sp-4);
-  }
-  .card--row .card__media {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .card--row .card__body {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .card--row .card__title {
-    font-size: var(--fs-base);
-  }
-  /* Narrow text column: kicker on its own line instead of inline. */
-  .card--row .card__kicker {
-    display: block;
-    margin-bottom: 0.15em;
-    font-family: var(--f-sans);
-    font-size: var(--fs-xs);
-    font-weight: 700;
-  }
-  .card--row .card__kicker::after {
-    content: none;
-  }
-  @media (max-width: 40rem) {
-    .card--row {
-      grid-template-columns: minmax(0, 1fr) 6.5rem;
-    }
-  }
-
-  /* wide: photo left, text right */
-  .card--wide {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: var(--col-gap);
-    align-items: start;
-  }
-  .card--wide .card__title {
-    font-size: var(--fs-2xl);
-    line-height: var(--lh-tight);
-  }
-  .card--wide .card__dek {
-    font-size: var(--fs-md);
-  }
-  @media (max-width: 48rem) {
-    .card--wide {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-
-  /* text */
-  .card--text .card__title {
-    font-size: var(--fs-md);
-  }
-</style>
