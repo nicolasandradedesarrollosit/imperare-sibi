@@ -10,6 +10,8 @@ import { unified } from '@astrojs/markdown-remark';
 import { ADSENSE } from './src/config/site.ts';
 import rehypeInArticleAds from './src/lib/rehype-in-article-ads.ts';
 
+import tailwindcss from '@tailwindcss/vite';
+
 const isDev = process.argv.includes('dev');
 const adsMode = ADSENSE.client ? 'live' : isDev ? 'placeholder' : 'off';
 
@@ -41,10 +43,12 @@ export default defineConfig({
   trailingSlash: 'always',
   output: 'static',
   adapter: vercel(),
+
   image: {
     // Optimised at build time with sharp (static output); AVIF/WebP with real srcsets.
     responsiveStyles: false,
   },
+
   markdown: {
     // unified (remark/rehype) instead of the default Sätteri processor, which
     // does not run rehype plugins. MDX inherits this processor.
@@ -63,11 +67,12 @@ export default defineConfig({
       ],
     }),
   },
+
   fonts: [
     {
       provider: fontProviders.fontsource(),
       name: 'Newsreader',
-      cssVariable: '--font-serif',
+      cssVariable: '--font-newsreader',
       // Static weights: the variable build (with optical-size axis) is ~140 KB per file.
       weights: [400, 600],
       styles: ['normal', 'italic'],
@@ -77,13 +82,14 @@ export default defineConfig({
     {
       provider: fontProviders.fontsource(),
       name: 'Libre Franklin',
-      cssVariable: '--font-sans',
+      cssVariable: '--font-franklin',
       weights: [400, 600, 700],
       styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['Arial', 'sans-serif'],
     },
   ],
+
   integrations: [
     mdx(),
     sitemap({
@@ -94,7 +100,13 @@ export default defineConfig({
       },
     }),
   ],
+
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
+
   // ~18 KB of CSS in total: inlining it removes render-blocking requests (faster FCP/LCP).
   build: { inlineStylesheets: 'always' },
+
+  vite: {
+    plugins: [tailwindcss()]
+  }
 });
