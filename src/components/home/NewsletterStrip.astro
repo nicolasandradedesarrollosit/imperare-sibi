@@ -1,29 +1,36 @@
 ---
 import { SITE } from '../../config/site';
+
+/** Rendered only once a newsletter provider is configured (SITE.newsletterAction). */
 const enabled = SITE.newsletterAction.length > 0;
 ---
 
-<section id="newsletter" class="wrap" aria-labelledby="newsletter-title">
-  <div class="mx-auto max-w-2xl border-y border-ink py-12 text-center">
-    <h2 id="newsletter-title" class="text-title">Un respiro semanal en tu correo</h2>
-    <p class="mt-3 text-ink-2">Cada domingo: las notas de la semana, una guía práctica y recursos para cuidarte. Sin spam.</p>
-    <form
-      class="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row"
-      method="post"
-      action={enabled ? SITE.newsletterAction : undefined}
-    >
-      <label for="newsletter-email" class="sr-only">Correo electrónico</label>
-      <input
-        id="newsletter-email"
-        type="email"
-        name="email"
-        required
-        placeholder="tu@correo.com"
-        autocomplete="email"
-        disabled={!enabled}
-        class="min-w-0 flex-1 rounded-full border border-rule bg-paper px-5 py-2.5 text-ink disabled:bg-paper-alt"
-      />
-      <button class="btn" type="submit" disabled={!enabled}>{enabled ? 'Suscribirme' : 'Muy pronto'}</button>
-    </form>
-  </div>
-</section>
+{
+  enabled && (
+    <section id="newsletter" class="wrap section" aria-labelledby="newsletter-title">
+      <div class="mx-auto max-w-2xl border-y border-ink py-10 text-center">
+        <h2 id="newsletter-title" class="text-title">
+          Newsletter
+        </h2>
+        <p class="mt-2 text-ink-2">Las notas de la semana, cada domingo en tu correo.</p>
+        <form class="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row" method="post" action={SITE.newsletterAction}>
+          <label for="newsletter-email" class="sr-only">
+            Correo electrónico
+          </label>
+          <input
+            id="newsletter-email"
+            type="email"
+            name="email"
+            required
+            placeholder="tu@correo.com"
+            autocomplete="email"
+            class="min-w-0 flex-1 rounded border border-muted bg-paper px-4 py-2.5 text-ink"
+          />
+          <button class="btn" type="submit">
+            Suscribirme
+          </button>
+        </form>
+      </div>
+    </section>
+  )
+}
