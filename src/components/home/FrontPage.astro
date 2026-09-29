@@ -1,0 +1,75 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import LatestRail from './LatestRail.astro';
+import type { Article } from '../../lib/content';
+
+interface Props {
+  lead: Article;
+  secondary: Article[];
+  latest: Article[];
+}
+const { lead, secondary, latest } = Astro.props;
+---
+
+<section class="wrap front" aria-label="Portada">
+  <div class="front__lead">
+    <ArticleCard article={lead} variant="lead" as="h2" priority />
+  </div>
+  {
+    secondary.length > 0 && (
+      <div class="front__secondary stacked">
+        {secondary.map((a) => (
+          <ArticleCard article={a} variant="stack" sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 22vw" />
+        ))}
+      </div>
+    )
+  }
+  <div class="front__rail">
+    <LatestRail articles={latest} />
+  </div>
+</section>
+
+<style>
+  .front {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr);
+    padding-top: var(--sp-6);
+  }
+  .front > * + * {
+    margin-left: calc(var(--col-gap) / 2);
+    padding-left: calc(var(--col-gap) / 2);
+    border-left: 1px solid var(--c-rule);
+  }
+  .front__lead {
+    padding-right: calc(var(--col-gap) / 2);
+  }
+  @media (max-width: 64rem) {
+    .front {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      row-gap: var(--sp-7);
+    }
+    .front__lead {
+      grid-column: 1 / -1;
+      padding-right: 0;
+    }
+    .front__secondary {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      border-left: 0 !important;
+      padding-right: calc(var(--col-gap) / 2);
+    }
+  }
+  @media (max-width: 40rem) {
+    .front {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .front__secondary {
+      padding-right: 0;
+    }
+    .front__rail {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      border-left: 0 !important;
+    }
+  }
+</style>

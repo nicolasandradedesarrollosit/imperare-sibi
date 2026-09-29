@@ -1,10 +1,10 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
-import { LINEAS_AYUDA } from '../config/site';
+import { HELPLINES } from '../config/site';
 ---
 
 <PageLayout
-  kicker="Recursos"
+  eyebrow="Recursos"
   title="Dónde pedir ayuda"
   description="Líneas gratuitas y recursos de salud mental en Argentina. Si estás en riesgo, pedí ayuda ahora."
 >
@@ -12,12 +12,13 @@ import { LINEAS_AYUDA } from '../config/site';
   <h2>Líneas de ayuda</h2>
   <ul>
     {
-      LINEAS_AYUDA.map((l) => (
+      HELPLINES.map((l) => (
         <li>
           <strong>
-            <a href={`tel:${l.tel}`}>{l.numero}</a>
-          </strong>{' '}
-          — {l.nombre}. {l.detalle}.
+            <a href={`tel:${l.tel}`}>{l.number}</a>
+          </strong>
+          {': '}
+          {l.name}. {l.detail}.
         </li>
       ))
     }
@@ -25,11 +26,13 @@ import { LINEAS_AYUDA } from '../config/site';
   <h2>Otros recursos</h2>
   <ul>
     <li>Guardias de salud mental en hospitales públicos: atención gratuita las 24 horas.</li>
-    <li>Centros de salud y acción comunitaria (CeSAC / CAPS) de tu barrio.</li>
-    <li>Tu obra social o prepaga está obligada a cubrir prestaciones de salud mental (Ley 26.657).</li>
+    <li>Centros de salud y acción comunitaria de tu barrio (CeSAC, CAPS).</li>
+    <li>Tu obra social o prepaga tiene que cubrir prestaciones de salud mental (Ley 26.657).</li>
   </ul>
   <p>
-    <em>Estamos sumando recursos por provincia. La información se verifica periódicamente; si encontrás un dato
-    desactualizado, <a href="/contacto/">avisanos</a>.</em>
+    <em
+      >Estamos sumando recursos por provincia. Verificamos esta información periódicamente; si encontrás un dato
+      desactualizado, <a href="/contacto/">avisanos</a>.</em
+    >
   </p>
 </PageLayout>

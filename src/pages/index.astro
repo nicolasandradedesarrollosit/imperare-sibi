@@ -1,42 +1,95 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroDestacado from '../components/home/HeroDestacado.astro';
-import SeccionBloque from '../components/home/SeccionBloque.astro';
-import GuiasEvergreen from '../components/home/GuiasEvergreen.astro';
-import NewsletterCTA from '../components/home/NewsletterCTA.astro';
-import EdicionesMapa from '../components/home/EdicionesMapa.astro';
-import { SECCIONES, SITE } from '../config/site';
-import { getArticulos, porSeccion } from '../lib/content';
+import FrontPage from '../components/home/FrontPage.astro';
+import SectionBlock from '../components/home/SectionBlock.astro';
+import SectionColumn from '../components/home/SectionColumn.astro';
+import EssentialGuides from '../components/home/EssentialGuides.astro';
+import NewsletterStrip from '../components/home/NewsletterStrip.astro';
+import EditionsIndex from '../components/home/EditionsIndex.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import { SECTIONS, SITE } from '../config/site';
+import { bySection, getArticles, take } from '../lib/content';
 
-const articulos = await getArticulos();
-const principal = articulos.find((a) => a.data.destacado) ?? articulos[0];
-const resto = articulos.filter((a) => a !== principal);
-const secundarias = resto.filter((a) => a.data.destacado).concat(resto.filter((a) => !a.data.destacado)).slice(0, 3);
-const ultimas = resto.slice(0, 5);
-const guias = articulos.filter((a) => a.data.tipo === 'guia').slice(0, 6);
-const bloques = SECCIONES.map((s) => ({ seccion: s, articulos: porSeccion(articulos, s.slug).slice(0, 4) })).filter(
-  (b) => b.articulos.length > 0,
-);
+const articles = await getArticles();
+const used = new Set<string>();
+const [lead] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
+const featured = take(articles, used, 2, (a) => a.data.featured);
+const secondary = [...featured, ...take(articles, used, 2 - featured.length)];
+// The rail lists the newest stories not already on the front; nothing repeats side by side.
+const latest = articles.filter((a) => !used.has(a.id)).slice(0, 6);
+const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
+const blocks = SECTIONS.map((section) => ({
+  section,
+  articles: bySection(articles, section.slug)
+    .filter((a) => !used.has(a.id))
+    .slice(0, 4),
+})).filter((b) => b.articles.length > 0);
+// Sections with enough stories get a full-width block; thinner ones share a ruled row,
+// so the page never shows half-empty blocks whatever the content volume.
+const fullBlocks = blocks.filter((b) => b.articles.length >= 3);
+const columnBlocks = blocks.filter((b) => b.articles.length < 3);
+
+// Split the thin sections into rows that are always full: rows of 3, except a
+// remainder of 4 (one row of 4) or 2 (a pair). A lone section gets a wide block.
+type Block = (typeof blocks)[number];
+const columnRows: Block[][] = [];
+for (let i = 0; i < columnBlocks.length; ) {
+  const left = columnBlocks.length - i;
+  const size = left === 4 ? 4 : left === 2 ? 2 : left === 1 ? 1 : 3;
+  columnRows.push(columnBlocks.slice(i, i + size));
+  i += size;
+}
+const rowClass = { 2: 'ruled--2', 3: 'ruled--3', 4: '' } as Record<number, string>;
 ---
 
 <BaseLayout seo={{ title: SITE.name, description: SITE.description }}>
   <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
-  {principal && <HeroDestacado principal={principal} secundarias={secundarias} ultimas={ultimas} />}
 
-  <GuiasEvergreen guias={guias} />
+  {lead && <FrontPage lead={lead} secondary={secondary} latest={latest} />}
 
-  <div class="container home__bloques">
-    {bloques.map((b) => <SeccionBloque seccion={b.seccion} articulos={b.articulos} />)}
+  <div class="wrap"><AdSlot placement="horizontal" /></div>
+
+  <EssentialGuides guides={guides} />
+
+  <div class="wrap blocks">
+    {
+      fullBlocks.map((b, i) => (
+        <>
+          <SectionBlock section={b.section} articles={b.articles} />
+          {i === 0 && <AdSlot placement="horizontal" class="blocks__ad" />}
+        </>
+      ))
+    }
+    {
+      columnRows.map((row) =>
+        row.length === 1 ? (
+          <SectionBlock section={row[0]!.section} articles={row[0]!.articles} />
+        ) : (
+          <div class:list={['ruled', rowClass[row.length], 'blocks__columns']}>
+            {row.map((b) => (
+              <SectionColumn section={b.section} articles={b.articles} />
+            ))}
+          </div>
+        ),
+      )
+    }
+    {fullBlocks.length === 0 && <AdSlot placement="horizontal" class="blocks__ad" />}
   </div>
 
-  <NewsletterCTA />
-  <EdicionesMapa />
+  <NewsletterStrip />
+  <EditionsIndex />
 </BaseLayout>
 
 <style>
-  .home__bloques {
+  .blocks {
     display: grid;
-    gap: var(--sp-8);
+    gap: var(--sp-9);
     padding-top: var(--sp-8);
+  }
+  .blocks :global(.blocks__ad) {
+    margin-block: 0;
+  }
+  .blocks__columns {
+    row-gap: var(--sp-8);
   }
 </style>

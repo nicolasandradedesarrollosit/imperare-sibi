@@ -4,62 +4,57 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import Pagination from '../../components/page/Pagination.astro';
 import ArticleCard from '../../components/article/ArticleCard.astro';
-import { SECCIONES, SITE } from '../../config/site';
-import { getArticulos, porSeccion, type Articulo } from '../../lib/content';
-import { breadcrumbLd } from '../../lib/seo';
+import AdSlot from '../../components/ads/AdSlot.astro';
+import { SECTIONS, SITE, type Section } from '../../config/site';
+import { bySection, getArticles, sectionUrl, type Article } from '../../lib/content';
+import { breadcrumbLd, collectionLd } from '../../lib/seo';
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const articulos = await getArticulos();
-  return SECCIONES.flatMap((seccion) =>
-    paginate(porSeccion(articulos, seccion.slug), {
-      params: { seccion: seccion.slug },
-      props: { seccion },
+  const articles = await getArticles();
+  return SECTIONS.flatMap((section) =>
+    paginate(bySection(articles, section.slug), {
+      params: { seccion: section.slug },
+      props: { section },
       pageSize: SITE.pageSize,
     }),
   );
 }) satisfies GetStaticPaths;
 
 interface Props {
-  page: Page<Articulo>;
-  seccion: (typeof SECCIONES)[number];
+  page: Page<Article>;
+  section: Section;
 }
-const { page, seccion } = Astro.props;
-const [primera, ...resto] = page.data;
-const esPrimera = page.currentPage === 1;
+const { page, section } = Astro.props;
+const isFirst = page.currentPage === 1;
+const [first, ...rest] = page.data;
+const listed = isFirst ? rest : page.data;
 const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: seccion.nombre, href: `/${seccion.slug}/` },
+  { name: 'Portada', href: '/' },
+  { name: section.name, href: sectionUrl(section.slug) },
 ];
+const title = isFirst ? `${section.name}: noticias y guías` : `${section.name}, página ${page.currentPage}`;
 ---
 
 <BaseLayout
-  seccionActiva={seccion.slug}
-  seo={{
-    title: esPrimera ? `${seccion.nombre}: noticias y guías` : `${seccion.nombre} — página ${page.currentPage}`,
-    description: seccion.descripcion,
-    prev: page.url.prev,
-    next: page.url.next,
-  }}
-  jsonLd={[breadcrumbLd(crumbs)]}
+  activeSection={section.slug}
+  seo={{ title, description: section.description, prev: page.url.prev, next: page.url.next }}
+  jsonLd={[
+    breadcrumbLd(crumbs),
+    collectionLd({ name: title, description: section.description, path: page.url.current, articles: page.data }),
+  ]}
 >
-  <PageHeader kicker="Sección" title={seccion.nombre} description={seccion.descripcion} crumbs={crumbs} />
-  <div class="container">
+  <PageHeader title={section.name} description={section.description} color={section.color} />
+  <div class="wrap" style={`--c-section:${section.color}`}>
+    {page.data.length === 0 && <p class="empty">Todavía no hay notas en esta sección.</p>}
+    {isFirst && first && <ArticleCard article={first} variant="wide" as="h2" showSection={false} priority />}
+    {isFirst && first && <AdSlot placement="horizontal" />}
     {
-      page.data.length === 0 ? (
-        <p class="vacio">Todavía no hay notas en esta sección.</p>
-      ) : (
-        <>
-          {esPrimera && primera && (
-            <div class="lead">
-              <ArticleCard articulo={primera} variant="large" as="h2" showSeccion={false} priority />
-            </div>
-          )}
-          <div class="grid">
-            {(esPrimera ? resto : page.data).map((a) => (
-              <ArticleCard articulo={a} variant="medium" as="h2" showSeccion={false} />
-            ))}
-          </div>
-        </>
+      listed.length > 0 && (
+        <div class:list={['ruled', 'ruled--3', { 'listing--after-lead': isFirst }]}>
+          {listed.map((a) => (
+            <ArticleCard article={a} variant="stack" as="h2" showSection={false} showDek />
+          ))}
+        </div>
       )
     }
     <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
@@ -67,16 +62,10 @@ const crumbs = [
 </BaseLayout>
 
 <style>
-  .lead {
-    max-width: 48rem;
-    margin-bottom: var(--sp-7);
+  .listing--after-lead {
+    margin-top: var(--sp-8);
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    gap: var(--sp-7) var(--sp-6);
-  }
-  .vacio {
+  .empty {
     color: var(--c-muted);
   }
 </style>

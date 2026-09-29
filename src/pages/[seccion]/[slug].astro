@@ -2,24 +2,24 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
-import { getArticulos } from '../../lib/content';
+import { getArticles } from '../../lib/content';
 
 /**
- * Un único template genera un HTML estático independiente por nota,
- * cada uno con su propio SEO (title, description, canonical, OG y JSON-LD).
+ * A single template renders one independent static HTML file per article,
+ * each with its own SEO (title, description, canonical, Open Graph, JSON-LD).
  */
 export const getStaticPaths = (async () => {
-  const articulos = await getArticulos();
-  return articulos.map((articulo) => ({
-    params: { seccion: articulo.data.seccion, slug: articulo.id },
-    props: { articulo },
+  const articles = await getArticles();
+  return articles.map((article) => ({
+    params: { seccion: article.data.section, slug: article.id },
+    props: { article },
   }));
 }) satisfies GetStaticPaths;
 
-const { articulo } = Astro.props;
-const { Content, headings } = await render(articulo);
+const { article } = Astro.props;
+const { Content, headings } = await render(article);
 ---
 
-<ArticleLayout articulo={articulo} headings={headings}>
+<ArticleLayout article={article} headings={headings}>
   <Content />
 </ArticleLayout>

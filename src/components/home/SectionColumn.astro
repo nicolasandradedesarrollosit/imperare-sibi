@@ -1,0 +1,36 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import type { Section } from '../../config/site';
+import { sectionUrl, type Article } from '../../lib/content';
+
+/** Compact block for sections with 1–2 stories, laid out side by side in a ruled row. */
+interface Props {
+  section: Section;
+  articles: Article[];
+}
+const { section, articles } = Astro.props;
+const [first, second] = articles;
+const id = `column-${section.slug}`;
+---
+
+<section class="column" aria-labelledby={id} style={`--c-section:${section.color}`}>
+  <div class="rubric column__rubric">
+    <h2 id={id} class="rubric__title">
+      <a href={sectionUrl(section.slug)}>{section.name}</a>
+    </h2>
+    <a class="rubric__more" href={sectionUrl(section.slug)}>Ver todo</a>
+  </div>
+  <div class="stacked">
+    {first && <ArticleCard article={first} variant="stack" showSection={false} />}
+    {second && <ArticleCard article={second} variant="text" showSection={false} />}
+  </div>
+</section>
+
+<style>
+  .column__rubric {
+    border-top-color: var(--c-section);
+  }
+  .column__rubric .rubric__title {
+    font-size: var(--fs-lg);
+  }
+</style>

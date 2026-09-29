@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/page/PageHeader.astro';
+import ArticleCard from '../../components/article/ArticleCard.astro';
+import { SITE } from '../../config/site';
+import { getArticles, slugify, tagUrl, type Article } from '../../lib/content';
+import { breadcrumbLd, collectionLd } from '../../lib/seo';
+
+export const getStaticPaths = (async () => {
+  const articles = await getArticles();
+  const tags = new Map<string, { name: string; articles: Article[] }>();
+  for (const a of articles) {
+    for (const t of a.data.tags) {
+      const slug = slugify(t);
+      const entry = tags.get(slug) ?? { name: t, articles: [] };
+      entry.articles.push(a);
+      tags.set(slug, entry);
+    }
+  }
+  return [...tags].map(([tag, { name, articles }]) => ({ params: { tag }, props: { name, articles } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  name: string;
+  articles: Article[];
+}
+const { name, articles } = Astro.props;
+const path = tagUrl(name);
+const description = `Notas, guías y entrevistas de ${SITE.name} sobre ${name.toLowerCase()}, revisadas por profesionales de la salud mental.`;
+const crumbs = [
+  { name: 'Portada', href: '/' },
+  { name, href: path },
+];
+// Topic pages with little content stay out of the index (thin content).
+const noindex = articles.length < 3;
+---
+
+<BaseLayout
+  seo={{ title: `${name}: notas y guías`, description, noindex }}
+  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name, description, path, articles })]}
+>
+  <PageHeader eyebrow="Tema" title={name} />
+  <div class="wrap">
+    <div class="ruled ruled--3">
+      {articles.map((a) => <ArticleCard article={a} variant="stack" as="h2" showDek />)}
+    </div>
+  </div>
+</BaseLayout>

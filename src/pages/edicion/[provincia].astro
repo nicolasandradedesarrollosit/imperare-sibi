@@ -3,128 +3,127 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import ArticleCard from '../../components/article/ArticleCard.astro';
-import { LINEAS_AYUDA, PROVINCIAS } from '../../config/site';
-import { getArticulos, porProvincia } from '../../lib/content';
-import { breadcrumbLd } from '../../lib/seo';
+import { ACTIVE_PROVINCES, HELPLINES, type Province } from '../../config/site';
+import { byProvince, getArticles, provinceUrl } from '../../lib/content';
+import { breadcrumbLd, collectionLd } from '../../lib/seo';
 
 export const getStaticPaths = (() =>
-  PROVINCIAS.filter((p) => p.activa).map((provincia) => ({
-    params: { provincia: provincia.slug },
-    props: { provincia },
+  ACTIVE_PROVINCES.map((province) => ({
+    params: { provincia: province.slug },
+    props: { province },
   }))) satisfies GetStaticPaths;
 
 interface Props {
-  provincia: (typeof PROVINCIAS)[number];
+  province: Province;
 }
-const { provincia } = Astro.props;
-const todos = await getArticulos();
-const locales = porProvincia(todos, provincia.slug);
-const nacionales = todos.filter((a) => !a.data.provincia).slice(0, 6);
+const { province } = Astro.props;
+const all = await getArticles();
+const local = byProvince(all, province.slug);
+const national = all.filter((a) => !a.data.province).slice(0, 4);
+const path = provinceUrl(province.slug);
+const title = `Salud mental en ${province.name}`;
+const description = `Noticias, recursos de ayuda y guías sobre salud mental en ${province.name}. Edición provincial de Imperare Sibi.`;
 const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: `Edición ${provincia.nombre}`, href: `/edicion/${provincia.slug}/` },
+  { name: 'Portada', href: '/' },
+  { name: `Edición ${province.name}`, href: path },
 ];
 ---
 
 <BaseLayout
   seo={{
-    title: `Salud mental en ${provincia.nombre}`,
-    description: `Noticias, recursos de ayuda y guías sobre salud mental en ${provincia.nombre}. Edición provincial de Imperare Sibi.`,
-    // Sin notas locales la página es "thin content": no indexar hasta tener contenido propio.
-    noindex: locales.length === 0,
+    title,
+    description,
+    // No local stories yet = thin content: keep it out of the index until there are.
+    noindex: local.length === 0,
   }}
-  jsonLd={[breadcrumbLd(crumbs)]}
+  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path, articles: local })]}
 >
-  <PageHeader
-    kicker={`Edición ${provincia.region}`}
-    title={`Salud mental en ${provincia.nombre}`}
-    description={`Noticias locales, recursos y profesionales de ${provincia.nombre}.`}
-    crumbs={crumbs}
-  />
-  <div class="container edicion">
-    <section aria-labelledby="locales">
-      <div class="section-title"><h2 id="locales">Noticias de {provincia.nombre}</h2></div>
+  <PageHeader eyebrow={`Edición ${province.region}`} title={title} description={description} />
+  <div class="wrap edition">
+    <section class="edition__local" aria-labelledby="local-title">
+      <div class="rubric">
+        <h2 id="local-title" class="rubric__title">Noticias de {province.name}</h2>
+      </div>
       {
-        locales.length > 0 ? (
-          <div class="grid">
-            {locales.map((a) => (
-              <ArticleCard articulo={a} variant="medium" as="h3" />
+        local.length === 1 ? (
+          <ArticleCard article={local[0]!} variant="wide" />
+        ) : local.length > 1 ? (
+          <div class="ruled ruled--2">
+            {local.map((a) => (
+              <ArticleCard article={a} variant="stack" showDek />
             ))}
           </div>
         ) : (
-          <p class="vacio">Estamos preparando la cobertura local de {provincia.nombre}.</p>
+          <p class="empty">Estamos preparando la cobertura local de {province.name}.</p>
         )
       }
     </section>
 
-    <aside class="recursos" aria-labelledby="recursos">
-      <h2 id="recursos">Dónde pedir ayuda</h2>
+    <aside class="edition__help" aria-labelledby="help-title">
+      <h2 id="help-title" class="label">Dónde pedir ayuda</h2>
       <ul role="list">
         {
-          LINEAS_AYUDA.map((l) => (
+          HELPLINES.map((l) => (
             <li>
-              <a href={`tel:${l.tel}`}>{l.numero}</a> <span>{l.nombre}</span>
+              <a href={`tel:${l.tel}`}>{l.number}</a>
+              <span>{l.name}</span>
             </li>
           ))
         }
       </ul>
-      <p>Próximamente: directorio de profesionales y centros de salud mental en {provincia.nombre}.</p>
+      <p>Muy pronto: directorio de profesionales y centros de salud mental en {province.name}.</p>
     </aside>
 
-    <section aria-labelledby="nacional" class="nacional">
-      <div class="section-title">
-        <h2 id="nacional">Lo último en el país</h2><a href="/">Ir a la edición nacional</a>
+    <section class="edition__national" aria-labelledby="national-title">
+      <div class="rubric">
+        <h2 id="national-title" class="rubric__title">Lo último en el país</h2>
+        <a class="rubric__more" href="/">Edición nacional</a>
       </div>
-      <div class="grid">
-        {nacionales.map((a) => <ArticleCard articulo={a} variant="medium" as="h3" />)}
+      <div class="ruled compact-mobile">
+        {national.map((a) => <ArticleCard article={a} variant="stack" />)}
       </div>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .edicion {
+  .edition {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 18rem;
-    gap: var(--sp-7);
+    grid-template-columns: minmax(0, 1fr) var(--w-rail);
+    gap: var(--sp-8) var(--sp-8);
   }
-  .nacional {
+  .edition__national {
     grid-column: 1 / -1;
   }
-  .grid {
+  .edition__help {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: var(--sp-6);
-  }
-  .recursos {
-    align-self: start;
-    display: grid;
+    align-content: start;
     gap: var(--sp-3);
-    padding: var(--sp-5);
-    background: var(--c-sage-tint);
-    border-radius: var(--radius);
+    padding-top: var(--sp-2);
+    border-top: 3px solid var(--c-accent);
     font-size: var(--fs-sm);
   }
-  .recursos h2 {
-    font-size: var(--fs-lg);
-  }
-  .recursos ul {
-    display: grid;
-    gap: var(--sp-2);
-  }
-  .recursos li {
+  .edition__help ul {
     display: grid;
   }
-  .recursos a {
+  .edition__help li {
+    display: grid;
+    padding-block: var(--sp-2);
+    border-bottom: 1px solid var(--c-rule);
+  }
+  .edition__help a {
     font-weight: 700;
-    color: var(--c-sage-strong);
+    font-size: var(--fs-md);
+    color: var(--c-accent-dark);
+    text-decoration: none;
   }
-  .recursos span,
-  .vacio {
+  .edition__help span,
+  .edition__help p,
+  .empty {
     color: var(--c-muted);
   }
-  @media (max-width: 56rem) {
-    .edicion {
+  @media (max-width: 64rem) {
+    .edition {
       grid-template-columns: minmax(0, 1fr);
     }
   }

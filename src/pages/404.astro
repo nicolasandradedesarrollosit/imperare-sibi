@@ -1,33 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SECCIONES } from '../config/site';
+import { SECTIONS } from '../config/site';
+import { sectionUrl } from '../lib/content';
 ---
 
-<BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }}>
-  <section class="container nf">
-    <p class="kicker">Error 404</p>
+<BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }} ads={false}>
+  <section class="wrap not-found">
+    <p class="label">Error 404</p>
     <h1>No encontramos esta página</h1>
     <p>Puede que se haya movido o que el enlace tenga un error. Probá con alguna de nuestras secciones:</p>
     <ul role="list">
       {
-        SECCIONES.map((s) => (
+        SECTIONS.map((s) => (
           <li>
-            <a href={`/${s.slug}/`}>{s.nombre}</a>
+            <a href={sectionUrl(s.slug)}>{s.name}</a>
           </li>
         ))
       }
     </ul>
-    <a class="btn" href="/">Volver al inicio</a>
+    <a class="btn" href="/">Ir a la portada</a>
   </section>
 </BaseLayout>
 
 <style>
-  .nf {
+  .not-found {
     display: grid;
-    gap: var(--sp-4);
     justify-items: start;
-    padding-block: var(--sp-8);
-    max-width: 40rem;
+    gap: var(--sp-4);
+    padding-block: var(--sp-9);
+    max-width: calc(42rem + 2 * var(--gutter));
+    margin-inline: 0;
   }
   h1 {
     font-size: var(--fs-3xl);
@@ -35,10 +37,10 @@ import { SECCIONES } from '../config/site';
   ul {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-3);
+    gap: var(--sp-2) var(--sp-5);
   }
   ul a {
-    color: var(--c-sage-strong);
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--c-accent-dark);
   }
 </style>

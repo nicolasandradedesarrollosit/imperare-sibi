@@ -5,42 +5,44 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import ArticleCard from '../../components/article/ArticleCard.astro';
-import { getArticulos, type Autor } from '../../lib/content';
-import { breadcrumbLd, personLd } from '../../lib/seo';
+import { authorUrl, getArticles, type Author } from '../../lib/content';
+import { breadcrumbLd, profilePageLd } from '../../lib/seo';
 
 export const getStaticPaths = (async () => {
-  const autores = await getCollection('autores');
-  return autores.map((autor) => ({ params: { autor: autor.id }, props: { autor } }));
+  const authors = await getCollection('authors');
+  return authors.map((author) => ({ params: { autor: author.id }, props: { author } }));
 }) satisfies GetStaticPaths;
 
 interface Props {
-  autor: Autor;
+  author: Author;
 }
-const { autor } = Astro.props;
-const todos = await getArticulos();
-const escritas = todos.filter((a) => a.data.autor.id === autor.id);
-const revisadas = todos.filter((a) => a.data.revisor?.id === autor.id);
+const { author } = Astro.props;
+const all = await getArticles();
+const written = all.filter((a) => a.data.author.id === author.id);
+const reviewed = all.filter((a) => a.data.reviewer?.id === author.id);
+const path = authorUrl(author.id);
 const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: autor.data.nombre, href: `/autores/${autor.id}/` },
+  { name: 'Portada', href: '/' },
+  { name: author.data.name, href: path },
 ];
-const redes = Object.entries(autor.data.redes).filter(([, url]) => url) as [string, string][];
+const social = Object.entries(author.data.social).filter(([, url]) => url) as [string, string][];
 ---
 
 <BaseLayout
-  seo={{ title: `${autor.data.nombre}, ${autor.data.rol}`, description: autor.data.bio.slice(0, 160), type: 'profile' }}
-  jsonLd={[{ ...personLd(autor), mainEntityOfPage: Astro.url.href }, breadcrumbLd(crumbs)]}
+  seo={{ title: `${author.data.name}, ${author.data.role}`, description: author.data.bio.slice(0, 160), type: 'profile' }}
+  jsonLd={[profilePageLd(author, path), breadcrumbLd(crumbs)]}
+  ads={false}
 >
-  <PageHeader kicker={autor.data.rol} title={autor.data.nombre} description={autor.data.bio} crumbs={crumbs}>
-    {autor.data.foto && <Image src={autor.data.foto} alt={autor.data.nombre} width={96} height={96} class="foto" />}
-    {autor.data.credenciales && <p class="cred">{autor.data.credenciales}</p>}
+  <PageHeader eyebrow={author.data.role} title={author.data.name} description={author.data.bio}>
+    {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="photo" />}
+    {author.data.credentials && <p class="credentials">{author.data.credentials}</p>}
     {
-      redes.length > 0 && (
-        <ul role="list" class="redes">
-          {redes.map(([red, url]) => (
+      social.length > 0 && (
+        <ul role="list" class="social">
+          {social.map(([network, url]) => (
             <li>
               <a href={url} rel="me noopener">
-                {red}
+                {network}
               </a>
             </li>
           ))}
@@ -48,24 +50,36 @@ const redes = Object.entries(autor.data.redes).filter(([, url]) => url) as [stri
       )
     }
   </PageHeader>
-  <div class="container listado">
+  <div class="wrap lists">
     {
-      escritas.length > 0 && (
-        <section>
-          <h2>Notas</h2>
-          {escritas.map((a) => (
-            <ArticleCard articulo={a} variant="list" as="h3" />
-          ))}
+      written.length > 0 && (
+        <section aria-labelledby="written">
+          <div class="rubric">
+            <h2 id="written" class="rubric__title">
+              Notas
+            </h2>
+          </div>
+          <div class="stacked">
+            {written.map((a) => (
+              <ArticleCard article={a} variant="row" showDek />
+            ))}
+          </div>
         </section>
       )
     }
     {
-      revisadas.length > 0 && (
-        <section>
-          <h2>Notas revisadas</h2>
-          {revisadas.map((a) => (
-            <ArticleCard articulo={a} variant="list" as="h3" />
-          ))}
+      reviewed.length > 0 && (
+        <section aria-labelledby="reviewed">
+          <div class="rubric">
+            <h2 id="reviewed" class="rubric__title">
+              Notas revisadas
+            </h2>
+          </div>
+          <div class="stacked">
+            {reviewed.map((a) => (
+              <ArticleCard article={a} variant="row" showDek />
+            ))}
+          </div>
         </section>
       )
     }
@@ -73,25 +87,23 @@ const redes = Object.entries(autor.data.redes).filter(([, url]) => url) as [stri
 </BaseLayout>
 
 <style>
-  .foto {
+  .photo {
     border-radius: 50%;
   }
-  .cred {
-    font-weight: 600;
-    color: var(--c-sage-strong);
+  .credentials {
+    font-weight: 700;
+    color: var(--c-accent-dark);
   }
-  .redes {
+  .social {
     display: flex;
     gap: var(--sp-4);
     font-size: var(--fs-sm);
     text-transform: capitalize;
   }
-  .listado {
+  .lists {
     display: grid;
-    gap: var(--sp-7);
-    max-width: 52rem;
-  }
-  .listado h2 {
-    font-size: var(--fs-xl);
+    gap: var(--sp-8);
+    max-width: calc(48rem + 2 * var(--gutter));
+    margin-inline: 0;
   }
 </style>

@@ -1,0 +1,80 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import type { Section } from '../../config/site';
+import { sectionUrl, type Article } from '../../lib/content';
+
+interface Props {
+  section: Section;
+  articles: Article[];
+}
+const { section, articles } = Astro.props;
+const [first, ...rest] = articles;
+const id = `block-${section.slug}`;
+// Layout adapts to how many stories the section has, so a block never looks half empty.
+const layout = articles.length >= 3 ? 'many' : articles.length === 2 ? 'pair' : 'single';
+---
+
+{
+  first && (
+    <section class="block" aria-labelledby={id} style={`--c-section:${section.color}`}>
+      <div class="rubric block__rubric">
+        <h2 id={id} class="rubric__title">
+          <a href={sectionUrl(section.slug)}>{section.name}</a>
+        </h2>
+        <a class="rubric__more" href={sectionUrl(section.slug)}>
+          Ver todo
+        </a>
+      </div>
+
+      {layout === 'single' && <ArticleCard article={first} variant="wide" showSection={false} />}
+
+      {layout === 'pair' && (
+        <div class="ruled ruled--2">
+          {articles.map((a) => (
+            <ArticleCard article={a} variant="stack" showSection={false} showDek />
+          ))}
+        </div>
+      )}
+
+      {layout === 'many' && (
+        <div class="block__many">
+          <ArticleCard article={first} variant="stack" showSection={false} showDek />
+          <div class="stacked">
+            {rest.map((a) => (
+              <ArticleCard article={a} variant="row" showSection={false} />
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  )
+}
+
+<style>
+  .block__rubric {
+    border-top-color: var(--c-section);
+  }
+  .block__rubric .rubric__title a {
+    color: var(--c-ink);
+  }
+  .block__many {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--col-gap);
+  }
+  .block__many > .stacked {
+    padding-left: var(--col-gap);
+    border-left: 1px solid var(--c-rule);
+  }
+  @media (max-width: 48rem) {
+    .block__many {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .block__many > .stacked {
+      padding-left: 0;
+      border-left: 0;
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--c-rule);
+    }
+  }
+</style>
