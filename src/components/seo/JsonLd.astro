@@ -3,7 +3,7 @@ interface Props {
   data: Record<string, unknown>;
 }
 const { data } = Astro.props;
-// Escapa "<" para que ningún string del contenido pueda cerrar el <script>.
+// Escape "<" so no content string can close the <script> element.
 const json = JSON.stringify(data).replace(/</g, '\\u003c');
 ---
 
