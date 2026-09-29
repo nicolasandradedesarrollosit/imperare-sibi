@@ -17,7 +17,7 @@ const description =
   <div class="wrap grid gap-12">
     <!-- Emergency first -->
     <section
-      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 rounded border-l-4 border-alert bg-[#fbf3ef] p-6 text-center sm:flex-row sm:text-left"
+      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 border-y border-ink py-6 text-center sm:flex-row sm:text-left"
       aria-labelledby="emergency-title"
     >
       <div class="flex-1">
@@ -39,10 +39,11 @@ const description =
         Personas capacitadas te escuchan de forma anónima y confidencial. No hace falta estar en una situación extrema para
         llamar.
       </p>
-      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      <div class="mt-8 border-y border-rule py-6">
+        <div class="ruled ruled--2 max-sm:[&>*+*]:border-t max-sm:[&>*+*]:border-rule max-sm:[&>*+*]:pt-6">
         {
           HELPLINE_LINES.map((l) => (
-            <article class="flex flex-col rounded bg-calm p-6">
+            <article class="flex flex-col">
               <p class="kicker kicker--block text-accent-dark">{l.name}</p>
               <p class="mt-2 font-serif text-4xl font-semibold text-ink tabular-nums">{l.number}</p>
               <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
@@ -52,6 +53,7 @@ const description =
             </article>
           ))
         }
+        </div>
       </div>
     </section>
 
