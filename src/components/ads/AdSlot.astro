@@ -1,0 +1,50 @@
+---
+import { ADSENSE, adsEnabled } from '../../config/site';
+
+interface Props {
+  placement: 'horizontal' | 'rail' | 'in-article';
+  class?: string;
+}
+
+const { placement, class: className } = Astro.props;
+const slotId = {
+  horizontal: ADSENSE.slots.horizontal,
+  rail: ADSENSE.slots.rail,
+  'in-article': ADSENSE.slots.inArticle,
+}[placement];
+
+// Live units only with a configured client; dashed placeholders in dev to review layout;
+// nothing at all in production builds without AdSense.
+const mode = adsEnabled ? 'live' : import.meta.env.DEV ? 'placeholder' : 'off';
+---
+
+{
+  mode !== 'off' && (
+    <aside class:list={['ad', `ad--${placement}`, className]} aria-label="Publicidad">
+      <span class="ad__label">Publicidad</span>
+      {mode === 'live' ? (
+        placement === 'in-article' ? (
+          <ins
+            class="adsbygoogle"
+            style="display:block;text-align:center"
+            data-ad-layout="in-article"
+            data-ad-format="fluid"
+            data-ad-client={ADSENSE.client}
+            data-ad-slot={slotId}
+          />
+        ) : (
+          <ins
+            class="adsbygoogle"
+            style="display:block"
+            data-ad-client={ADSENSE.client}
+            data-ad-slot={slotId}
+            data-ad-format={placement === 'rail' ? 'vertical' : 'horizontal'}
+            data-full-width-responsive="true"
+          />
+        )
+      ) : (
+        <div class="ad__placeholder">Anuncio · {placement}</div>
+      )}
+    </aside>
+  )
+}
