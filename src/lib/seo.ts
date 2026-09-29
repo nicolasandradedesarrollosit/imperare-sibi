@@ -55,7 +55,15 @@ export function personLd(author: Author): JsonLd {
   };
 }
 
-export function breadcrumbLd(items: { name: string; href: string }[]): JsonLd {
+export interface Crumb {
+  name: string;
+  href: string;
+}
+
+/** Breadcrumb trail that always starts at the home page. */
+export const crumbs = (...items: Crumb[]): Crumb[] => [{ name: 'Inicio', href: '/' }, ...items];
+
+export function breadcrumbLd(items: Crumb[]): JsonLd {
   return {
     '@type': 'BreadcrumbList',
     itemListElement: items.map((it, i) => ({

@@ -1,5 +1,5 @@
 ---
-import Logo from './Logo.astro';
+import Logo from '../ui/Logo.astro';
 import { HELPLINES, INSTITUTIONAL_NAV, LEGAL_NAV, SECTIONS, SITE } from '../../config/site';
 import { sectionUrl } from '../../lib/content';
 
@@ -26,7 +26,7 @@ const columns = [
             <ul role="list" class="grid gap-2">
               {col.links.map((l) => (
                 <li>
-                  <a class="no-underline hover:underline" href={l.href}>
+                  <a class="link" href={l.href}>
                     {l.label}
                   </a>
                 </li>
@@ -41,7 +41,7 @@ const columns = [
           {
             HELPLINES.map((l) => (
               <li class="grid">
-                <a class="font-bold text-ink no-underline hover:underline" href={`tel:${l.tel}`}>
+                <a class="font-bold text-ink link" href={l.href}>
                   {l.number}
                 </a>
                 <span class="text-xs text-muted">{l.name}</span>
@@ -56,9 +56,9 @@ const columns = [
 
     <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted">
       <span>© {year} {SITE.name}</span>
-      <a class="no-underline hover:underline" href={SITE.social.instagram} rel="me noopener">Instagram</a>
-      <a class="no-underline hover:underline" href={SITE.social.x} rel="me noopener">X</a>
-      <a class="no-underline hover:underline" href={SITE.social.linkedin} rel="me noopener">LinkedIn</a>
+      <a class="link" href={SITE.social.instagram} rel="me noopener">Instagram</a>
+      <a class="link" href={SITE.social.x} rel="me noopener">X</a>
+      <a class="link" href={SITE.social.linkedin} rel="me noopener">LinkedIn</a>
     </div>
   </div>
 </footer>

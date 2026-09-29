@@ -1,0 +1,49 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+/**
+ * "En esta nota" index built from the article's H2s. Rendered only with 3+ sections.
+ * - collapsible: <details> above the body (phones and narrow screens)
+ * - rail:        list in the right-margin rail (wide screens)
+ */
+interface Props {
+  headings: MarkdownHeading[];
+  variant: 'collapsible' | 'rail';
+  class?: string;
+}
+const { headings, variant, class: className } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+
+{
+  items.length > 2 &&
+    (variant === 'collapsible' ? (
+      <details class:list={['border-y border-rule text-sm', className]}>
+        <summary class="cursor-pointer py-3 font-bold">En esta nota</summary>
+        <ol class="mb-3 list-decimal space-y-2 pl-5">
+          {items.map((h) => (
+            <li>
+              <a class="link" href={`#${h.slug}`}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    ) : (
+      <nav class={className} aria-labelledby="toc-title">
+        <h2 id="toc-title" class="label border-b border-ink pb-2">
+          En esta nota
+        </h2>
+        <ol role="list" class="text-sm">
+          {items.map((h) => (
+            <li class="border-b border-rule">
+              <a class="block py-2 no-underline hover:text-accent" href={`#${h.slug}`}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    ))
+}

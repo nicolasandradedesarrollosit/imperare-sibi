@@ -1,5 +1,5 @@
 ---
-import SectionHeading from './SectionHeading.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
 import { SECTIONS } from '../../config/site';
 import { articleUrl, bySection, sectionUrl, type Article } from '../../lib/content';
 
@@ -24,7 +24,7 @@ const categories = SECTIONS.map((section) => ({ section, latest: bySection(artic
           style={`--c-section:${section.color}`}
         >
           <h3 class="text-xl">
-            <a class="text-ink no-underline hover:underline" href={sectionUrl(section.slug)}>
+            <a class="text-ink link" href={sectionUrl(section.slug)}>
               {section.name}
             </a>
           </h3>
@@ -34,7 +34,7 @@ const categories = SECTIONS.map((section) => ({ section, latest: bySection(artic
             <ul role="list" class="mt-4 grid gap-2 border-t border-rule pt-4">
               {latest.map((a) => (
                 <li>
-                  <a class="font-serif text-[0.95rem] leading-snug font-semibold no-underline hover:underline" href={articleUrl(a)}>
+                  <a class="font-serif text-[0.95rem] leading-snug font-semibold link" href={articleUrl(a)}>
                     {a.data.title}
                   </a>
                 </li>
@@ -42,7 +42,7 @@ const categories = SECTIONS.map((section) => ({ section, latest: bySection(artic
             </ul>
           )}
           <a
-            class="mt-auto pt-4 text-sm font-semibold text-(--c-section) no-underline hover:underline"
+            class="mt-auto pt-4 text-sm font-semibold text-(--c-section) link"
             href={sectionUrl(section.slug)}
           >
             Ver notas de {section.name.toLowerCase()} →

@@ -5,9 +5,9 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/page/PageHeader.astro';
 import ArticleCard from '../../components/article/ArticleCard.astro';
-import SectionHeading from '../../components/home/SectionHeading.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
 import { authorUrl, getArticles, type Author } from '../../lib/content';
-import { breadcrumbLd, profilePageLd } from '../../lib/seo';
+import { breadcrumbLd, crumbs, profilePageLd } from '../../lib/seo';
 
 export const getStaticPaths = (async () => {
   const authors = await getCollection('authors');
@@ -24,16 +24,13 @@ const lists = [
   { id: 'reviewed', title: 'Notas revisadas', articles: all.filter((a) => a.data.reviewer?.id === author.id) },
 ].filter((l) => l.articles.length > 0);
 const path = authorUrl(author.id);
-const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: author.data.name, href: path },
-];
+
 const social = Object.entries(author.data.social).filter(([, url]) => url) as [string, string][];
 ---
 
 <BaseLayout
   seo={{ title: `${author.data.name}, ${author.data.role}`, description: author.data.bio.slice(0, 160), type: 'profile' }}
-  jsonLd={[profilePageLd(author, path), breadcrumbLd(crumbs)]}
+  jsonLd={[profilePageLd(author, path), breadcrumbLd(crumbs({ name: author.data.name, href: path }))]}
   ads={false}
 >
   <PageHeader eyebrow={author.data.role} title={author.data.name} description={author.data.bio}>

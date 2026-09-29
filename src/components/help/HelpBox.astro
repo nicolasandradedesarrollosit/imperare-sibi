@@ -1,5 +1,5 @@
 ---
-import PhoneIcon from './PhoneIcon.astro';
+import PhoneIcon from '../ui/PhoneIcon.astro';
 import { EMERGENCY, HELPLINE_LINES } from '../../config/site';
 
 interface Props {
@@ -20,7 +20,7 @@ const { showMore = true, class: className } = Astro.props;
       HELPLINE_LINES.map((l) => (
         <li>
           <a
-            href={`tel:${l.tel}`}
+            href={l.href}
             class="group flex min-h-14 items-center gap-4 rounded-xl bg-paper px-4 py-3 no-underline transition-colors hover:bg-white hover:ring-1 hover:ring-accent/40"
           >
             <span class="grid size-10 flex-none place-items-center rounded-full bg-accent text-white">
@@ -39,7 +39,7 @@ const { showMore = true, class: className } = Astro.props;
   </ul>
   <p class="mt-4 text-sm text-ink-2">
     Si hay riesgo inmediato, llamá al{' '}
-    <a class="font-bold text-alert" href={`tel:${EMERGENCY.tel}`}>{EMERGENCY.number}</a>.
+    <a class="font-bold text-alert" href={EMERGENCY.href}>{EMERGENCY.number}</a>.
     {
       showMore && (
         <>

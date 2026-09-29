@@ -16,7 +16,7 @@ const { reviewer, date } = Astro.props;
       fill="currentColor"></path>
   </svg>
   <span>
-    Revisado por <a class="font-bold text-ink no-underline hover:underline" href={authorUrl(reviewer.id)}>{reviewer.data.name}</a
+    Revisado por <a class="font-bold text-ink link" href={authorUrl(reviewer.id)}>{reviewer.data.name}</a
     >{reviewer.data.credentials && <>, {reviewer.data.credentials}</>}{date && <>, el {formatDate(date)}</>}
   </span>
 </p>

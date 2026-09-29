@@ -12,7 +12,7 @@ const { prev, next, current, last } = Astro.props;
   last > 1 && (
     <nav class="mt-14 grid grid-cols-[1fr_auto_1fr] items-center border-t border-rule pt-5 text-sm" aria-label="Paginación">
       {prev ? (
-        <a class="font-bold no-underline hover:underline" href={prev} rel="prev">
+        <a class="font-bold link" href={prev} rel="prev">
           ← Más recientes
         </a>
       ) : (
@@ -22,7 +22,7 @@ const { prev, next, current, last } = Astro.props;
         Página {current} de {last}
       </span>
       {next ? (
-        <a class="text-right font-bold no-underline hover:underline" href={next} rel="next">
+        <a class="text-right font-bold link" href={next} rel="next">
           Anteriores →
         </a>
       ) : (

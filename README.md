@@ -57,16 +57,28 @@ src/
   content.config.ts       # collection schemas (frontmatter validation)
   content/                # articles (.mdx + img/, _template.mdx) and authors (.json)
   styles/index.css        # Tailwind v4: @theme tokens + shared component classes
-  layouts/                # BaseLayout (SEO, masthead, footer, ads script), ArticleLayout, PageLayout
+  layouts/
+    BaseLayout.astro      # <head> (SEO, fonts, JSON-LD, AdSense script), masthead, footer
+    ArticleLayout.astro   # article page: composes the article/* components
+    ListingLayout.astro   # categories, archive and topics: header + listing + pagination + CollectionPage
+    PageLayout.astro      # institutional and legal pages
   components/
+    ui/                   # generic building blocks: Logo, SectionHeading, PhoneIcon
+    layout/               # Header (centered masthead, live date, category nav), Footer
     seo/                  # meta tags, Open Graph, JSON-LD
-    layout/               # Header (centered masthead, live date, category nav), Footer, Logo
-    help/                 # HelplineBar, HelpBox, PhoneIcon
-    article/              # ArticleCard (featured | stack | row | wide | text), byline, reviewer, tags
-    home/                 # SectionHeading, EssentialGuides, CategoryGrid, NewsletterStrip
+    article/              # ArticleCard (featured | stack | row | wide | text), ArticleHeader, ArticleFigure,
+                          # TableOfContents, ReadMore, Byline, ReviewedBy, TagLinks, Breadcrumbs
+    home/                 # EssentialGuides, CategoryGrid, NewsletterStrip
     page/                 # PageHeader, ArticleListing, Pagination
+    help/                 # HelplineBar, HelpBox
     ads/AdSlot.astro      # reserved-height ad containers
-  lib/                    # content queries, JSON-LD builders, image crops, dates, rehype ads plugin
+  lib/
+    content.ts            # queries: getArticles, related, readMore, collectTags, URL builders…
+    seo.ts                # JSON-LD builders and the crumbs() breadcrumb helper
+    ads.ts                # AdSense mode + <ins> attributes, shared by AdSlot and the rehype plugin
+    images.ts             # social/schema image crops
+    dates.ts              # es-AR date formatting
+    rehype-in-article-ads.ts
   pages/                  # routes; folder names are URLs, so they stay in Spanish
     [seccion]/[...page].astro   # paginated category page
     [seccion]/[slug].astro      # one static HTML file per article
@@ -76,7 +88,7 @@ src/
 public/brand/             # logo and mark (regenerate PNGs with scripts/generate-brand-assets.mjs)
 ```
 
-**Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. Newsreader for headlines and body, Libre Franklin for UI; light theme only. Article paragraphs are indented book-style.
+**Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.link`, `.link-accent`, `.chip`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. Newsreader for headlines and body, Libre Franklin for UI; light theme only. Article paragraphs are indented book-style.
 
 **Live date**: the masthead date is filled in by a tiny inline script in the browser, because a static build would otherwise freeze it on deploy day.
 

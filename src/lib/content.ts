@@ -88,3 +88,13 @@ export function collectTags(articles: Article[]): Tag[] {
 
 /** Topic pages with fewer articles than this stay out of the index (thin content). */
 export const MIN_ARTICLES_TO_INDEX_TAG = 3;
+
+/** "Seguí leyendo": related by tags first, then same section, then latest. */
+export function readMore(current: Article, articles: Article[], limit = 3): Article[] {
+  const used = new Set([current.id]);
+  return [
+    ...take(related(current, articles, limit), used, limit),
+    ...take(bySection(articles, current.data.section), used, limit),
+    ...take(articles, used, limit),
+  ].slice(0, limit);
+}

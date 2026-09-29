@@ -1,20 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/page/PageHeader.astro';
-import PhoneIcon from '../components/help/PhoneIcon.astro';
+import PhoneIcon from '../components/ui/PhoneIcon.astro';
 import { HELPLINE_LINES } from '../config/site';
-import { breadcrumbLd } from '../lib/seo';
+import { breadcrumbLd, crumbs } from '../lib/seo';
 
 const title = 'Dónde pedir ayuda';
 const description =
   'Líneas gratuitas y recursos de salud mental en toda la Argentina. Si estás pasando por un momento difícil, no tenés que atravesarlo en soledad.';
-const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: title, href: '/ayuda/' },
-];
+
 ---
 
-<BaseLayout seo={{ title, description }} jsonLd={[breadcrumbLd(crumbs)]} ads={false}>
+<BaseLayout seo={{ title, description }} jsonLd={[breadcrumbLd(crumbs({ name: title, href: '/ayuda/' }))]} ads={false}>
   <PageHeader eyebrow="Recursos" title={title} description={description} />
 
   <div class="wrap grid gap-12">
@@ -49,7 +46,7 @@ const crumbs = [
               <p class="text-xs font-bold tracking-wide text-accent-dark uppercase">{l.name}</p>
               <p class="mt-2 font-serif text-4xl font-semibold text-ink">{l.number}</p>
               <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
-              <a class="btn mt-auto self-start" href={`tel:${l.tel}`}>
+              <a class="btn mt-auto self-start" href={l.href}>
                 <PhoneIcon /> Llamar al {l.number}
               </a>
             </article>

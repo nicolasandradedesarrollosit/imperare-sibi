@@ -1,31 +1,18 @@
 ---
 import type { MarkdownHeading } from 'astro';
-import { Image } from 'astro:assets';
 import { getEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
-import Breadcrumbs from '../components/article/Breadcrumbs.astro';
-import Byline from '../components/article/Byline.astro';
-import ReviewedBy from '../components/article/ReviewedBy.astro';
+import ArticleHeader from '../components/article/ArticleHeader.astro';
+import ArticleFigure from '../components/article/ArticleFigure.astro';
+import TableOfContents from '../components/article/TableOfContents.astro';
 import TagLinks from '../components/article/TagLinks.astro';
-import ArticleCard from '../components/article/ArticleCard.astro';
+import ReadMore from '../components/article/ReadMore.astro';
 import HelpBox from '../components/help/HelpBox.astro';
-import SectionHeading from '../components/home/SectionHeading.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
-import { getSection, SITE, TYPE_LABEL } from '../config/site';
-import {
-  articleUrl,
-  authorUrl,
-  bySection,
-  getArticles,
-  readingTime,
-  related,
-  sectionUrl,
-  take,
-  wordCount,
-  type Article,
-} from '../lib/content';
+import { getSection, SITE } from '../config/site';
+import { articleUrl, authorUrl, getArticles, readMore, sectionUrl, wordCount, type Article } from '../lib/content';
 import { ogImage, schemaImages } from '../lib/images';
-import { articleLd, breadcrumbLd } from '../lib/seo';
+import { articleLd, breadcrumbLd, crumbs as trail } from '../lib/seo';
 
 interface Props {
   article: Article;
@@ -40,25 +27,15 @@ if (!author) throw new Error(`Unknown author in ${article.id}`);
 if (data.image.width < 1200) throw new Error(`${article.id}: article images must be at least 1200px wide.`);
 const reviewer = data.reviewer ? await getEntry(data.reviewer) : undefined;
 
+// Sensitive coverage (suicide, self-harm) never carries ads.
 const ads = !data.sensitive;
-const toc = headings.filter((h) => h.depth === 2);
-
-// "Seguí leyendo": related by tags first, then same section, then latest.
-const all = await getArticles();
-const used = new Set([article.id]);
-const more = [
-  ...take(related(article, all, 3), used, 3),
-  ...take(bySection(all, data.section), used, 3),
-  ...take(all, used, 3),
-].slice(0, 3);
-
+const more = readMore(article, await getArticles());
 const og = await ogImage(data.image);
 const images = await schemaImages(data.image);
-const crumbs = [
-  { name: 'Inicio', href: '/' },
+const crumbs = trail(
   { name: section.name, href: sectionUrl(section.slug) },
   { name: data.title, href: articleUrl(article) },
-];
+);
 ---
 
 <BaseLayout
@@ -86,37 +63,8 @@ const crumbs = [
   ]}
 >
   <article style={`--c-section:${section.color}`}>
-    <header class="wrap grid justify-items-center gap-5 pt-10 pb-8 text-center">
-      <div class="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-        <Breadcrumbs items={crumbs} />
-        {data.type !== 'news' && <span class="text-sm font-bold">· {TYPE_LABEL[data.type]}</span>}
-      </div>
-      <h1 class="max-w-4xl text-display tracking-tight">{data.title}</h1>
-      <p class="max-w-2xl font-serif text-xl leading-snug text-ink-2">{data.description}</p>
-      <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
-      {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
-    </header>
-
-    <figure class="wrap">
-      <div class="mx-auto max-w-5xl">
-        <Image
-          src={data.image}
-          alt={data.imageAlt}
-          width={1400}
-          height={788}
-          widths={[640, 960, 1400]}
-          sizes="(max-width: 64rem) 100vw, 64rem"
-          fit="cover"
-          loading="eager"
-          fetchpriority="high"
-          class="aspect-video w-full rounded-sm bg-paper-alt object-cover"
-        />
-        <figcaption class="meta mt-2 justify-center text-center">
-          <span>{data.imageAlt}</span>
-          {data.imageCredit && <span>{data.imageCredit}</span>}
-        </figcaption>
-      </div>
-    </figure>
+    <ArticleHeader article={article} author={author} reviewer={reviewer} crumbs={crumbs} />
+    <ArticleFigure article={article} />
 
     <!--
       Three equal-sided columns on very wide screens (≥88rem, where a 300px rail fits in
@@ -127,23 +75,7 @@ const crumbs = [
       class="mt-10 px-(--gutter) min-[88rem]:grid min-[88rem]:grid-cols-[minmax(0,1fr)_var(--container-read)_minmax(0,1fr)] min-[88rem]:gap-12"
     >
       <div class="mx-auto max-w-read min-[88rem]:col-start-2 min-[88rem]:mx-0">
-        {
-          toc.length > 2 && (
-            <details class="mb-8 border-y border-rule text-sm min-[88rem]:hidden">
-              <summary class="cursor-pointer py-3 font-bold">En esta nota</summary>
-              <ol class="mb-3 list-decimal space-y-2 pl-5">
-                {toc.map((h) => (
-                  <li>
-                    <a class="no-underline hover:underline" href={`#${h.slug}`}>
-                      {h.text}
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </details>
-          )
-        }
-
+        <TableOfContents headings={headings} variant="collapsible" class="mb-8 min-[88rem]:hidden" />
         {data.sensitive && <HelpBox class="mb-10" />}
 
         <div class="prose">
@@ -159,42 +91,14 @@ const crumbs = [
 
       <aside class="hidden min-[88rem]:col-start-3 min-[88rem]:block" aria-label="Complementos">
         <div class="sticky top-16 grid w-(--container-rail) gap-8">
-          {
-            toc.length > 2 && (
-              <nav aria-labelledby="toc-title">
-                <h2 id="toc-title" class="label border-b border-ink pb-2">
-                  En esta nota
-                </h2>
-                <ol role="list" class="text-sm">
-                  {toc.map((h) => (
-                    <li class="border-b border-rule">
-                      <a class="block py-2 no-underline hover:text-accent" href={`#${h.slug}`}>
-                        {h.text}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </nav>
-            )
-          }
+          <TableOfContents headings={headings} variant="rail" />
           {ads && <AdSlot placement="rail" />}
         </div>
       </aside>
     </div>
   </article>
 
-  {
-    more.length > 0 && (
-      <section class="wrap mt-20" aria-labelledby="more-title">
-        <SectionHeading id="more-title" title="Seguí leyendo" more={{ href: sectionUrl(section.slug), label: `Más sobre ${section.name.toLowerCase()}` }} />
-        <div class="ruled compact-mobile">
-          {more.map((a) => (
-            <ArticleCard article={a} variant="stack" showDek />
-          ))}
-        </div>
-      </section>
-    )
-  }
+  <ReadMore articles={more} section={section} />
   {
     ads && (
       <div class="wrap">

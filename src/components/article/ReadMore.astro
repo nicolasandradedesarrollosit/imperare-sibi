@@ -1,0 +1,30 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import type { Section } from '../../config/site';
+import { sectionUrl, type Article } from '../../lib/content';
+
+/** "Seguí leyendo" block at the end of an article. */
+interface Props {
+  articles: Article[];
+  section: Section;
+}
+const { articles, section } = Astro.props;
+---
+
+{
+  articles.length > 0 && (
+    <section class="wrap mt-20" aria-labelledby="more-title">
+      <SectionHeading
+        id="more-title"
+        title="Seguí leyendo"
+        more={{ href: sectionUrl(section.slug), label: `Más sobre ${section.name.toLowerCase()}` }}
+      />
+      <div class="ruled compact-mobile">
+        {articles.map((a) => (
+          <ArticleCard article={a} variant="stack" showDek />
+        ))}
+      </div>
+    </section>
+  )
+}

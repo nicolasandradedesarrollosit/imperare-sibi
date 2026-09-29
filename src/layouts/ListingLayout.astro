@@ -1,0 +1,67 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/page/PageHeader.astro';
+import ArticleListing from '../components/page/ArticleListing.astro';
+import Pagination from '../components/page/Pagination.astro';
+import type { Article } from '../lib/content';
+import { breadcrumbLd, collectionLd, type Crumb } from '../lib/seo';
+
+/**
+ * Shared shell for article listings (categories, archive, topics): header,
+ * listing, optional pagination, and CollectionPage + BreadcrumbList JSON-LD.
+ */
+interface Props {
+  /** <title> text (the visible H1 is `heading`). */
+  title: string;
+  heading: string;
+  description: string;
+  eyebrow?: string;
+  /** Page path, used for the CollectionPage URL. */
+  path: string;
+  crumbs: Crumb[];
+  articles: Article[];
+  /** Section colour and active nav item (category pages). */
+  section?: { slug: string; color: string };
+  withLead?: boolean;
+  showSection?: boolean;
+  showDescription?: boolean;
+  showCrumbs?: boolean;
+  noindex?: boolean;
+  pagination?: { prev?: string | undefined; next?: string | undefined; current: number; last: number };
+}
+
+const {
+  title,
+  heading,
+  description,
+  eyebrow,
+  path,
+  crumbs,
+  articles,
+  section,
+  withLead = true,
+  showSection = true,
+  showDescription = true,
+  showCrumbs = false,
+  noindex,
+  pagination,
+} = Astro.props;
+---
+
+<BaseLayout
+  activeSection={section?.slug}
+  seo={{ title, description, noindex, prev: pagination?.prev, next: pagination?.next }}
+  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path, articles })]}
+>
+  <PageHeader
+    eyebrow={eyebrow}
+    title={heading}
+    description={showDescription ? description : undefined}
+    crumbs={showCrumbs ? crumbs : undefined}
+    color={section?.color}
+  />
+  <div class="wrap" style={section ? `--c-section:${section.color}` : undefined}>
+    <ArticleListing articles={articles} withLead={withLead} showSection={showSection} />
+    {pagination && <Pagination {...pagination} />}
+  </div>
+</BaseLayout>

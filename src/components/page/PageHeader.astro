@@ -1,10 +1,11 @@
 ---
 import Breadcrumbs from '../article/Breadcrumbs.astro';
+import type { Crumb } from '../../lib/seo';
 interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
-  crumbs?: { name: string; href: string }[];
+  crumbs?: Crumb[];
   /** Section colour for the accent rule and breadcrumbs. */
   color?: string;
 }

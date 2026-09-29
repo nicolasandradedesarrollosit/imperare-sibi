@@ -1,12 +1,9 @@
 ---
 import type { GetStaticPaths, Page } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeader from '../../components/page/PageHeader.astro';
-import Pagination from '../../components/page/Pagination.astro';
-import ArticleListing from '../../components/page/ArticleListing.astro';
+import ListingLayout from '../../layouts/ListingLayout.astro';
 import { SECTIONS, SITE, type Section } from '../../config/site';
 import { bySection, getArticles, sectionUrl, type Article } from '../../lib/content';
-import { breadcrumbLd, collectionLd } from '../../lib/seo';
+import { crumbs } from '../../lib/seo';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const articles = await getArticles();
@@ -25,24 +22,18 @@ interface Props {
 }
 const { page, section } = Astro.props;
 const isFirst = page.currentPage === 1;
-const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: section.name, href: sectionUrl(section.slug) },
-];
-const title = isFirst ? `${section.name}: guías y notas` : `${section.name}, página ${page.currentPage}`;
 ---
 
-<BaseLayout
-  activeSection={section.slug}
-  seo={{ title, description: section.description, prev: page.url.prev, next: page.url.next }}
-  jsonLd={[
-    breadcrumbLd(crumbs),
-    collectionLd({ name: title, description: section.description, path: page.url.current, articles: page.data }),
-  ]}
->
-  <PageHeader eyebrow="Categoría" title={section.name} description={section.description} color={section.color} />
-  <div class="wrap" style={`--c-section:${section.color}`}>
-    <ArticleListing articles={page.data} withLead={isFirst} showSection={false} />
-    <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
-  </div>
-</BaseLayout>
+<ListingLayout
+  title={isFirst ? `${section.name}: guías y notas` : `${section.name}, página ${page.currentPage}`}
+  heading={section.name}
+  eyebrow="Categoría"
+  description={section.description}
+  path={page.url.current}
+  crumbs={crumbs({ name: section.name, href: sectionUrl(section.slug) })}
+  articles={page.data}
+  section={section}
+  withLead={isFirst}
+  showSection={false}
+  pagination={{ prev: page.url.prev, next: page.url.next, current: page.currentPage, last: page.lastPage }}
+/>

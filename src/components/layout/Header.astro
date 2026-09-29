@@ -1,6 +1,6 @@
 ---
-import Logo from './Logo.astro';
-import PhoneIcon from '../help/PhoneIcon.astro';
+import Logo from '../ui/Logo.astro';
+import PhoneIcon from '../ui/PhoneIcon.astro';
 import { SECTIONS } from '../../config/site';
 import { sectionUrl } from '../../lib/content';
 
@@ -42,7 +42,7 @@ const { activeSection } = Astro.props;
     <div class="col-start-3 hidden justify-end sm:flex">
       <a
         href="/ayuda/"
-        class="inline-flex items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-xs font-semibold no-underline transition-colors hover:border-accent hover:text-accent-dark"
+        class="chip px-3 py-1.5 text-xs font-semibold"
       >
         <PhoneIcon class="size-3.5" />
         Pedir ayuda

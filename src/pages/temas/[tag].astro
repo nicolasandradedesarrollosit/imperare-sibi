@@ -1,11 +1,9 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeader from '../../components/page/PageHeader.astro';
-import ArticleListing from '../../components/page/ArticleListing.astro';
+import ListingLayout from '../../layouts/ListingLayout.astro';
 import { SITE } from '../../config/site';
 import { collectTags, getArticles, MIN_ARTICLES_TO_INDEX_TAG, tagUrl, type Tag } from '../../lib/content';
-import { breadcrumbLd, collectionLd } from '../../lib/seo';
+import { crumbs } from '../../lib/seo';
 
 export const getStaticPaths = (async () =>
   collectTags(await getArticles()).map((tag) => ({ params: { tag: tag.slug }, props: { tag } }))) satisfies GetStaticPaths;
@@ -15,20 +13,18 @@ interface Props {
 }
 const { tag } = Astro.props;
 const path = tagUrl(tag.name);
-const description = `Todo sobre ${tag.name.toLowerCase()} en ${SITE.name}: guías, experiencias y notas de salud mental revisadas por profesionales matriculados.`;
-const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: 'Temas', href: '/temas/' },
-  { name: tag.name, href: path },
-];
 ---
 
-<BaseLayout
-  seo={{ title: `${tag.name}: guías y notas`, description, noindex: tag.articles.length < MIN_ARTICLES_TO_INDEX_TAG }}
-  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: tag.name, description, path, articles: tag.articles })]}
->
-  <PageHeader eyebrow="Tema" title={tag.name} crumbs={crumbs} />
-  <div class="wrap">
-    <ArticleListing articles={tag.articles} withLead={false} />
-  </div>
-</BaseLayout>
+<ListingLayout
+  title={`${tag.name}: guías y notas`}
+  heading={tag.name}
+  eyebrow="Tema"
+  description={`Todo sobre ${tag.name.toLowerCase()} en ${SITE.name}: guías, experiencias y notas de salud mental revisadas por profesionales matriculados.`}
+  path={path}
+  crumbs={crumbs({ name: 'Temas', href: '/temas/' }, { name: tag.name, href: path })}
+  articles={tag.articles}
+  withLead={false}
+  showDescription={false}
+  showCrumbs
+  noindex={tag.articles.length < MIN_ARTICLES_TO_INDEX_TAG}
+/>

@@ -1,12 +1,9 @@
 ---
 import type { GetStaticPaths, Page } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeader from '../../components/page/PageHeader.astro';
-import Pagination from '../../components/page/Pagination.astro';
-import ArticleListing from '../../components/page/ArticleListing.astro';
+import ListingLayout from '../../layouts/ListingLayout.astro';
 import { SITE } from '../../config/site';
 import { archiveUrl, getArticles, type Article } from '../../lib/content';
-import { breadcrumbLd, collectionLd } from '../../lib/seo';
+import { crumbs } from '../../lib/seo';
 
 /** Archive of every article, newest first. */
 export const getStaticPaths = (async ({ paginate }) =>
@@ -17,21 +14,16 @@ interface Props {
 }
 const { page } = Astro.props;
 const isFirst = page.currentPage === 1;
-const title = isFirst ? 'Todas las notas' : `Todas las notas, página ${page.currentPage}`;
-const description = `Archivo completo de ${SITE.name}: guías, experiencias y novedades sobre salud mental, de la más reciente a la más antigua.`;
-const crumbs = [
-  { name: 'Inicio', href: '/' },
-  { name: 'Todas las notas', href: archiveUrl },
-];
 ---
 
-<BaseLayout
-  seo={{ title, description, prev: page.url.prev, next: page.url.next }}
-  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path: page.url.current, articles: page.data })]}
->
-  <PageHeader eyebrow="Archivo" title="Todas las notas" description={description} />
-  <div class="wrap">
-    <ArticleListing articles={page.data} withLead={isFirst} />
-    <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
-  </div>
-</BaseLayout>
+<ListingLayout
+  title={isFirst ? 'Todas las notas' : `Todas las notas, página ${page.currentPage}`}
+  heading="Todas las notas"
+  eyebrow="Archivo"
+  description={`Archivo completo de ${SITE.name}: guías, experiencias y novedades sobre salud mental, de la más reciente a la más antigua.`}
+  path={page.url.current}
+  crumbs={crumbs({ name: 'Todas las notas', href: archiveUrl })}
+  articles={page.data}
+  withLead={isFirst}
+  pagination={{ prev: page.url.prev, next: page.url.next, current: page.currentPage, last: page.lastPage }}
+/>

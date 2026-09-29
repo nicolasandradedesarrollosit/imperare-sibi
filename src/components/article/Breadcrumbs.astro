@@ -1,6 +1,8 @@
 ---
+import type { Crumb } from '../../lib/seo';
+
 interface Props {
-  items: { name: string; href: string }[];
+  items: Crumb[];
   class?: string;
 }
 const { items, class: className } = Astro.props;
@@ -18,7 +20,7 @@ const trail = items.slice(0, -1);
               ›
             </span>
           )}
-          <a href={it.href} class="text-(--c-section) no-underline hover:underline">
+          <a href={it.href} class="text-(--c-section) link">
             {it.name}
           </a>
         </li>

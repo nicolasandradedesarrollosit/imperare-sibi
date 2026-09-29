@@ -1,0 +1,29 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import Byline from './Byline.astro';
+import ReviewedBy from './ReviewedBy.astro';
+import { TYPE_LABEL } from '../../config/site';
+import { readingTime, type Article, type Author } from '../../lib/content';
+import type { Crumb } from '../../lib/seo';
+
+/** Centered article header: breadcrumbs, type, headline, standfirst, byline and reviewer. */
+interface Props {
+  article: Article;
+  author: Author;
+  reviewer?: Author;
+  crumbs: Crumb[];
+}
+const { article, author, reviewer, crumbs } = Astro.props;
+const { data } = article;
+---
+
+<header class="wrap grid justify-items-center gap-5 pt-10 pb-8 text-center">
+  <div class="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+    <Breadcrumbs items={crumbs} />
+    {data.type !== 'news' && <span class="text-sm font-bold">· {TYPE_LABEL[data.type]}</span>}
+  </div>
+  <h1 class="max-w-4xl text-display tracking-tight">{data.title}</h1>
+  <p class="max-w-2xl font-serif text-xl leading-snug text-ink-2">{data.description}</p>
+  <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
+  {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
+</header>
