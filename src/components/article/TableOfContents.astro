@@ -38,7 +38,7 @@ const items = headings.filter((h) => h.depth === 2);
         <ol role="list" class="text-sm">
           {items.map((h) => (
             <li class="border-b border-rule">
-              <a class="block py-2 no-underline hover:text-accent" href={`#${h.slug}`}>
+              <a class="link block py-2" href={`#${h.slug}`}>
                 {h.text}
               </a>
             </li>

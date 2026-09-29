@@ -61,7 +61,7 @@ const { activeSection } = Astro.props;
               <a
                 href={sectionUrl(s.slug)}
                 aria-current={activeSection === s.slug ? 'page' : undefined}
-                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-rule aria-[current=page]:border-accent"
+                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-accent/40 hover:text-accent-dark aria-[current=page]:border-accent"
               >
                 {s.name}
               </a>

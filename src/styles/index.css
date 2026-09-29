@@ -71,6 +71,13 @@
   a {
     text-decoration-thickness: 1px;
     text-underline-offset: 0.16em;
+    /* Every hover state (colour, borders, backgrounds) eases instead of jumping. */
+    transition:
+      color 220ms ease,
+      background-color 220ms ease,
+      border-color 220ms ease,
+      text-decoration-color 220ms ease,
+      opacity 220ms ease;
   }
   :focus-visible {
     outline: 2px solid var(--color-accent);
@@ -132,7 +139,7 @@
     @apply mx-auto mt-3 max-w-xl text-sm text-muted;
   }
   .heading__more {
-    @apply mt-3 inline-block text-sm font-semibold text-accent-dark no-underline hover:underline;
+    @apply mt-3 inline-block text-sm font-semibold text-accent-dark no-underline hover:text-ink;
   }
 
   /* Section name before a headline: "Ansiedad / Título…" */
@@ -160,12 +167,13 @@
     margin-right: 0.5rem;
   }
 
-  /* Links: quiet (underline on hover) and accent (green, semibold) */
+  /* Links: quiet (ink → green on hover) and accent (green → ink on hover). No underline:
+     the colour change eases in via the base `a` transition. */
   .link {
-    @apply no-underline hover:underline;
+    @apply no-underline hover:text-accent-dark;
   }
   .link-accent {
-    @apply font-semibold text-accent-dark no-underline hover:underline;
+    @apply font-semibold text-accent-dark no-underline hover:text-ink;
   }
 
   /* Rounded outline pill (topic chips, "Pedir ayuda") */
@@ -208,8 +216,13 @@
   .card__title {
     @apply text-lg leading-snug font-semibold;
   }
+  /* Hovering anywhere on the card (photo included) tints the headline. */
   .card__title a {
-    @apply no-underline hover:underline;
+    @apply no-underline;
+  }
+  .card:hover .card__title a,
+  .card__title a:focus-visible {
+    @apply text-accent-dark;
   }
   .card__dek {
     @apply font-serif text-base leading-normal text-ink-2;
@@ -385,8 +398,9 @@
     margin-top: 1.6em;
     scroll-margin-top: 4.5rem;
   }
+  /* Links inside body text keep an underline so they stay distinguishable (WCAG 1.4.1). */
   .prose a {
-    @apply text-accent-dark underline;
+    @apply text-accent-dark underline decoration-accent/40 hover:text-ink hover:decoration-ink;
   }
   .prose ul,
   .prose ol {
