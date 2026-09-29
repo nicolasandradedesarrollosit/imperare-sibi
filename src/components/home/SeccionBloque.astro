@@ -1,0 +1,58 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import type { Articulo } from '../../lib/content';
+
+interface Props {
+  seccion: { slug: string; nombre: string; descripcion: string };
+  articulos: Articulo[];
+}
+const { seccion, articulos } = Astro.props;
+const [principal, ...resto] = articulos;
+const id = `sec-${seccion.slug}`;
+---
+
+{
+  principal && (
+    <section class="bloque" aria-labelledby={id}>
+      <div class="section-title">
+        <h2 id={id}>
+          <a href={`/${seccion.slug}/`}>{seccion.nombre}</a>
+        </h2>
+        <a href={`/${seccion.slug}/`}>Ver todo</a>
+      </div>
+      <div class="bloque__grid">
+        <ArticleCard articulo={principal} variant="large" as="h3" showSeccion={false} />
+        {resto.length > 0 && (
+          <div class="bloque__list">
+            {resto.map((a) => (
+              <ArticleCard articulo={a} variant="compact" as="h3" showSeccion={false} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .bloque .section-title h2 a {
+    text-decoration: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  .bloque__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--sp-6);
+  }
+  .bloque__list > :global(:first-child) {
+    border-top: 0;
+    padding-top: 0;
+  }
+  @media (max-width: 48rem) {
+    .bloque__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

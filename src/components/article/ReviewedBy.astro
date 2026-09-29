@@ -1,0 +1,48 @@
+---
+import type { Autor } from '../../lib/content';
+import { autorUrl } from '../../lib/content';
+import { formatFecha } from '../../lib/dates';
+
+interface Props {
+  revisor: Autor;
+  fecha?: Date;
+}
+const { revisor, fecha } = Astro.props;
+---
+
+<aside class="reviewed" aria-label="Revisión profesional">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <path
+      d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm-1.2 14.2-3.5-3.5 1.4-1.4 2.1 2.1 4.9-4.9 1.4 1.4-6.3 6.3Z"
+      fill="currentColor"></path>
+  </svg>
+  <p>
+    Contenido revisado por <a href={autorUrl(revisor.id)}>{revisor.data.nombre}</a>
+    {revisor.data.credenciales && <span>({revisor.data.credenciales})</span>}
+    {fecha && <> el <time datetime={fecha.toISOString()}>{formatFecha(fecha)}</time></>}.
+  </p>
+</aside>
+
+<style>
+  .reviewed {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-sage-tint);
+    color: var(--c-sage-strong);
+    border-radius: var(--radius);
+    font-size: var(--fs-sm);
+  }
+  .reviewed svg {
+    flex: none;
+    margin-top: 2px;
+  }
+  .reviewed p {
+    color: var(--c-ink-soft);
+  }
+  .reviewed a {
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+</style>

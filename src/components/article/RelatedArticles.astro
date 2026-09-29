@@ -1,0 +1,31 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import type { Articulo } from '../../lib/content';
+interface Props {
+  articulos: Articulo[];
+}
+const { articulos } = Astro.props;
+---
+
+{
+  articulos.length > 0 && (
+    <section class="related" aria-labelledby="related-title">
+      <div class="section-title">
+        <h2 id="related-title">Seguí leyendo</h2>
+      </div>
+      <div class="related__grid">
+        {articulos.map((a) => (
+          <ArticleCard articulo={a} variant="medium" as="h3" />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .related__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--sp-6);
+  }
+</style>

@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+import type { Autor } from '../../lib/content';
+import { autorUrl } from '../../lib/content';
+import { formatFecha } from '../../lib/dates';
+
+interface Props {
+  autor: Autor;
+  publicado: Date;
+  actualizado?: Date;
+  minutos: number;
+}
+const { autor, publicado, actualizado, minutos } = Astro.props;
+const iniciales = autor.data.nombre
+  .split(' ')
+  .map((p) => p[0])
+  .slice(0, 2)
+  .join('');
+---
+
+<div class="byline">
+  {
+    autor.data.foto ? (
+      <Image src={autor.data.foto} alt="" width={48} height={48} class="byline__avatar" />
+    ) : (
+      <span class="byline__avatar byline__avatar--initials" aria-hidden="true">
+        {iniciales}
+      </span>
+    )
+  }
+  <div>
+    <p>
+      Por <a href={autorUrl(autor.id)} rel="author">{autor.data.nombre}</a>
+      <span class="byline__rol">· {autor.data.rol}</span>
+    </p>
+    <p class="byline__dates">
+      <time datetime={publicado.toISOString()}>{formatFecha(publicado)}</time>
+      {
+        actualizado && (
+          <>
+            · Actualizado el <time datetime={actualizado.toISOString()}>{formatFecha(actualizado)}</time>
+          </>
+        )
+      }
+      · {minutos} min de lectura
+    </p>
+  </div>
+</div>
+
+<style>
+  .byline {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: center;
+    font-size: var(--fs-sm);
+  }
+  .byline a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .byline a:hover {
+    text-decoration: underline;
+  }
+  .byline__rol,
+  .byline__dates {
+    color: var(--c-muted);
+  }
+  .byline__dates {
+    font-size: var(--fs-xs);
+  }
+  .byline__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex: none;
+    object-fit: cover;
+  }
+  .byline__avatar--initials {
+    display: grid;
+    place-items: center;
+    background: var(--c-sage-tint);
+    color: var(--c-sage-strong);
+    font-family: var(--f-serif);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+import { SITE } from '../../config/site';
+const habilitado = SITE.newsletterAction.length > 0;
+---
+
+<section class="container news" aria-labelledby="news-title">
+  <div class="news__box">
+    <div>
+      <h2 id="news-title">Un respiro semanal en tu correo</h2>
+      <p>
+        Cada domingo, una selección de notas, una guía práctica y recursos para cuidar tu salud mental. Sin spam, te
+        das de baja cuando quieras.
+      </p>
+    </div>
+    <form class="news__form" method="post" action={habilitado ? SITE.newsletterAction : undefined}>
+      <label for="news-email" class="sr-only">Tu correo electrónico</label>
+      <input
+        id="news-email"
+        type="email"
+        name="email"
+        required
+        placeholder="tu@correo.com"
+        autocomplete="email"
+        disabled={!habilitado}
+      />
+      <button class="btn" type="submit" disabled={!habilitado}>
+        {habilitado ? 'Suscribirme' : 'Próximamente'}
+      </button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .news {
+    margin-block: var(--sp-8);
+  }
+  .news__box {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: var(--sp-6);
+    align-items: center;
+    padding: var(--sp-7) var(--sp-6);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-lg);
+    background: var(--c-surface);
+  }
+  .news h2 {
+    font-size: var(--fs-2xl);
+    margin-bottom: var(--sp-3);
+  }
+  .news p {
+    color: var(--c-ink-soft);
+  }
+  .news__form {
+    display: flex;
+    gap: var(--sp-2);
+  }
+  .news__form input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: 0.75em 1em;
+    border: 1px solid var(--c-line-strong);
+    border-radius: var(--radius);
+    background: var(--c-paper);
+    color: var(--c-ink);
+  }
+  .news__form :disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  @media (max-width: 48rem) {
+    .news__box {
+      grid-template-columns: minmax(0, 1fr);
+      padding: var(--sp-5);
+    }
+    .news__form {
+      flex-direction: column;
+    }
+  }
+</style>

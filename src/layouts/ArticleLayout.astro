@@ -1,0 +1,231 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/article/Breadcrumbs.astro';
+import Byline from '../components/article/Byline.astro';
+import ReviewedBy from '../components/article/ReviewedBy.astro';
+import ArticleMedia from '../components/article/ArticleMedia.astro';
+import TagList from '../components/article/TagList.astro';
+import HelpBox from '../components/article/HelpBox.astro';
+import RelatedArticles from '../components/article/RelatedArticles.astro';
+import { getProvincia, getSeccion, SITE, TIPO_LABEL } from '../config/site';
+import { autorUrl, articuloUrl, getArticulos, relacionadas, tiempoLectura, type Articulo } from '../lib/content';
+import { articleLd, breadcrumbLd } from '../lib/seo';
+
+interface Props {
+  articulo: Articulo;
+  headings: MarkdownHeading[];
+}
+
+const { articulo, headings } = Astro.props;
+const { data } = articulo;
+const seccion = getSeccion(data.seccion)!;
+const provincia = data.provincia ? getProvincia(data.provincia) : undefined;
+const autor = await getEntry(data.autor);
+if (!autor) throw new Error(`Autor inexistente en ${articulo.id}`);
+const revisor = data.revisor ? await getEntry(data.revisor) : undefined;
+
+const palabras = (articulo.body ?? '').split(/\s+/).filter(Boolean).length;
+const minutos = tiempoLectura(articulo.body);
+const toc = headings.filter((h) => h.depth === 2);
+const related = relacionadas(articulo, await getArticulos());
+
+const imageSrc = data.imagen?.src ?? SITE.defaultOgImage;
+const crumbs = [
+  { name: 'Inicio', href: '/' },
+  { name: seccion.nombre, href: `/${seccion.slug}/` },
+  { name: data.title, href: articuloUrl(articulo) },
+];
+---
+
+<BaseLayout
+  seccionActiva={seccion.slug}
+  seo={{
+    title: data.seoTitle ?? data.title,
+    description: data.description,
+    image: imageSrc,
+    imageAlt: data.imagenAlt,
+    canonical: data.canonical,
+    noindex: data.noindex,
+    type: 'article',
+    article: {
+      publishedTime: data.publicado,
+      modifiedTime: data.actualizado,
+      section: seccion.nombre,
+      tags: data.tags,
+      authorUrl: autorUrl(autor.id),
+    },
+  }}
+  jsonLd={[
+    articleLd({
+      articulo,
+      autor,
+      revisor,
+      imageUrl: new URL(imageSrc, SITE.url).href,
+      seccionNombre: seccion.nombre,
+      palabras,
+    }),
+    breadcrumbLd(crumbs),
+  ]}
+>
+  <article class="nota">
+    <header class="container nota__header">
+      <Breadcrumbs items={crumbs} />
+      <p class="nota__kicker">
+        <a class="kicker" href={`/${seccion.slug}/`}>{seccion.nombre}</a>
+        {data.tipo !== 'noticia' && <span class="nota__tipo">{TIPO_LABEL[data.tipo]}</span>}
+        {provincia && <a class="nota__prov" href={`/edicion/${provincia.slug}/`}>{provincia.nombre}</a>}
+      </p>
+      <h1>{data.title}</h1>
+      <p class="nota__bajada">{data.description}</p>
+      <Byline autor={autor} publicado={data.publicado} actualizado={data.actualizado} minutos={minutos} />
+      {revisor && <ReviewedBy revisor={revisor} fecha={data.revisadoEl} />}
+    </header>
+
+    {
+      data.imagen && (
+        <figure class="container nota__figure">
+          <ArticleMedia articulo={articulo} width={1200} priority sizes="(max-width: 76rem) 100vw, 76rem" />
+          {(data.imagenAlt || data.imagenCredito) && (
+            <figcaption>
+              {data.imagenAlt}
+              {data.imagenCredito && <span> · {data.imagenCredito}</span>}
+            </figcaption>
+          )}
+        </figure>
+      )
+    }
+
+    <div class="container nota__grid">
+      <div class="nota__main">
+        {data.sensible && <HelpBox />}
+        <div class="prose">
+          <slot />
+        </div>
+        <footer class="nota__footer">
+          <TagList tags={data.tags} />
+          {!data.sensible && <HelpBox />}
+        </footer>
+      </div>
+      {
+        toc.length > 2 && (
+          <aside class="nota__toc" aria-labelledby="toc-title">
+            <h2 id="toc-title">En esta nota</h2>
+            <ol role="list">
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        )
+      }
+    </div>
+  </article>
+
+  <div class="container nota__related">
+    <RelatedArticles articulos={related} />
+  </div>
+</BaseLayout>
+
+<style>
+  .nota__header {
+    display: grid;
+    gap: var(--sp-4);
+    max-width: calc(var(--w-prose) + 2 * var(--gutter) + 8rem);
+    padding-block: var(--sp-6) var(--sp-5);
+  }
+  .nota__kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    align-items: center;
+  }
+  .nota__tipo,
+  .nota__prov {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .nota__tipo {
+    color: var(--c-terra);
+  }
+  .nota__prov {
+    color: var(--c-muted);
+    text-decoration: none;
+  }
+  h1 {
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.02em;
+  }
+  .nota__bajada {
+    font-family: var(--f-serif);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-snug);
+    color: var(--c-ink-soft);
+  }
+  .nota__figure {
+    margin-block: 0 var(--sp-6);
+  }
+  .nota__figure figcaption {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .nota__grid {
+    display: grid;
+    grid-template-columns: minmax(0, var(--w-prose)) minmax(0, 16rem);
+    justify-content: space-between;
+    gap: var(--sp-7);
+  }
+  .nota__main {
+    display: grid;
+    gap: var(--sp-6);
+    align-content: start;
+    min-width: 0;
+  }
+  .nota__footer {
+    display: grid;
+    gap: var(--sp-6);
+  }
+  .nota__toc {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+    font-size: var(--fs-sm);
+    border-left: 2px solid var(--c-line);
+    padding-left: var(--sp-4);
+  }
+  .nota__toc h2 {
+    font-family: var(--f-sans);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--sp-3);
+  }
+  .nota__toc ol {
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .nota__toc a {
+    text-decoration: none;
+    color: var(--c-ink-soft);
+  }
+  .nota__toc a:hover {
+    color: var(--c-sage-strong);
+  }
+  .nota__related {
+    margin-top: var(--sp-8);
+  }
+  @media (max-width: 64rem) {
+    .nota__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nota__toc {
+      display: none;
+    }
+  }
+</style>

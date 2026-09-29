@@ -1,0 +1,55 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '../styles/global.css';
+import interWoff from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import newsreaderWoff from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
+
+import SEO, { type SeoProps } from '../components/seo/SEO.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
+import CrisisBar from '../components/layout/CrisisBar.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { SITE } from '../config/site';
+import { graph } from '../lib/seo';
+
+interface Props {
+  seo: SeoProps;
+  /** Nodos JSON-LD adicionales (Article, BreadcrumbList, Person…). */
+  jsonLd?: Record<string, unknown>[];
+  /** Resalta la sección activa en la navegación. */
+  seccionActiva?: string;
+}
+
+const { seo, jsonLd = [], seccionActiva } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={newsreaderWoff} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interWoff} as="font" type="font/woff2" crossorigin />
+    <SEO {...seo} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#faf7f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131614" media="(prefers-color-scheme: dark)" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <JsonLd data={graph(...jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <CrisisBar />
+    <Header seccionActiva={seccionActiva} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

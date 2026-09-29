@@ -22,6 +22,8 @@ export const SITE = {
     linkedin: 'https://www.linkedin.com/company/imperaresibi',
   },
   twitterHandle: '@imperaresibi',
+  /** Endpoint del proveedor de newsletter (Buttondown, Brevo…). Vacío = formulario deshabilitado. */
+  newsletterAction: '',
   /** Cantidad de notas por página en portadas de sección. */
   pageSize: 12,
 } as const;

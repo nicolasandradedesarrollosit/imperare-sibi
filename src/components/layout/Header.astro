@@ -1,0 +1,151 @@
+---
+import Logo from './Logo.astro';
+import { PROVINCIAS, SECCIONES } from '../../config/site';
+import { formatFecha } from '../../lib/dates';
+
+interface Props {
+  seccionActiva?: string;
+}
+const { seccionActiva } = Astro.props;
+const ediciones = PROVINCIAS.filter((p) => p.activa);
+const hoy = formatFecha(new Date());
+---
+
+<header class="header">
+  <div class="container header__top">
+    <p class="header__date">{hoy}</p>
+    <details class="ediciones">
+      <summary>Ediciones</summary>
+      <ul role="list">
+        <li><a href="/">Nacional</a></li>
+        {
+          ediciones.map((p) => (
+            <li>
+              <a href={`/edicion/${p.slug}/`}>{p.nombre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </details>
+  </div>
+  <div class="container header__brand">
+    <a href="/" class="header__logo" aria-label="Imperare Sibi — Inicio">
+      <Logo size="lg" />
+    </a>
+  </div>
+  <nav class="nav" aria-label="Secciones">
+    <ul role="list" class="container nav__list">
+      {
+        SECCIONES.map((s) => (
+          <li>
+            <a href={`/${s.slug}/`} aria-current={seccionActiva === s.slug ? 'page' : undefined}>
+              {s.nombre}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    background: var(--c-paper);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .header__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-4);
+    padding-block: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .header__date::first-letter {
+    text-transform: uppercase;
+  }
+  .header__brand {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--sp-4) var(--sp-5);
+  }
+  .header__logo {
+    text-decoration: none;
+  }
+  .ediciones {
+    position: relative;
+  }
+  .ediciones summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--c-ink-soft);
+    list-style: none;
+  }
+  .ediciones summary::-webkit-details-marker {
+    display: none;
+  }
+  .ediciones summary::after {
+    content: ' ▾';
+  }
+  .ediciones ul {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--sp-2));
+    z-index: 20;
+    min-width: 13rem;
+    padding: var(--sp-2);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .ediciones a {
+    display: block;
+    padding: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+    border-radius: 4px;
+    color: var(--c-ink);
+  }
+  .ediciones a:hover {
+    background: var(--c-surface-2);
+  }
+  .nav {
+    border-top: 1px solid var(--c-line);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--c-paper);
+  }
+  .nav__list {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-5);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: var(--sp-3);
+  }
+  .nav__list::-webkit-scrollbar {
+    display: none;
+  }
+  .nav a {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--c-ink-soft);
+    padding-block: var(--sp-1);
+    border-bottom: 2px solid transparent;
+  }
+  .nav a:hover,
+  .nav a[aria-current='page'] {
+    color: var(--c-ink);
+    border-bottom-color: var(--c-sage);
+  }
+  @media (max-width: 52rem) {
+    .nav__list {
+      justify-content: flex-start;
+    }
+  }
+</style>

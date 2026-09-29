@@ -1,0 +1,141 @@
+---
+import { getEntry } from 'astro:content';
+import ArticleMedia from './ArticleMedia.astro';
+import { articuloUrl, type Articulo } from '../../lib/content';
+import { getSeccion, TIPO_LABEL } from '../../config/site';
+import { formatFechaCorta } from '../../lib/dates';
+
+type Variant = 'hero' | 'large' | 'medium' | 'compact' | 'list';
+
+interface Props {
+  articulo: Articulo;
+  variant?: Variant;
+  /** Nivel del titular para mantener la jerarquía de headings de la página. */
+  as?: 'h2' | 'h3' | 'h4';
+  priority?: boolean;
+  showSeccion?: boolean;
+}
+
+const { articulo, variant = 'medium', as: Heading = 'h3', priority = false, showSeccion = true } = Astro.props;
+const { data } = articulo;
+const url = articuloUrl(articulo);
+const seccion = getSeccion(data.seccion);
+const autor = await getEntry(data.autor);
+const showImage = variant !== 'compact' && variant !== 'list';
+const showBajada = variant === 'hero' || variant === 'large' || variant === 'list';
+const mediaWidth = variant === 'hero' ? 1200 : variant === 'large' ? 800 : 480;
+const sizes =
+  variant === 'hero' ? '(max-width: 48rem) 100vw, 60vw' : variant === 'large' ? '(max-width: 48rem) 100vw, 40vw' : '(max-width: 48rem) 100vw, 25vw';
+---
+
+<article class:list={['card', `card--${variant}`]}>
+  {
+    showImage && (
+      <a href={url} class="card__media" tabindex="-1" aria-hidden="true">
+        <ArticleMedia articulo={articulo} width={mediaWidth} priority={priority} sizes={sizes} />
+      </a>
+    )
+  }
+  <div class="card__body">
+    <p class="card__meta">
+      {showSeccion && seccion && <a class="kicker" href={`/${seccion.slug}/`}>{seccion.nombre}</a>}
+      {data.tipo !== 'noticia' && <span class="card__tipo">{TIPO_LABEL[data.tipo]}</span>}
+    </p>
+    <Heading class="card__title">
+      <a href={url}>{data.title}</a>
+    </Heading>
+    {showBajada && <p class="card__bajada">{data.description}</p>}
+    <p class="card__byline">
+      {autor && <span>{autor.data.nombre}</span>}
+      <time datetime={data.publicado.toISOString()}>{formatFechaCorta(data.publicado)}</time>
+    </p>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    gap: var(--sp-3);
+    align-content: start;
+  }
+  .card__media {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+  .card__media :global(.media) {
+    transition: transform 0.4s ease;
+  }
+  .card:hover .card__media :global(.media) {
+    transform: scale(1.02);
+  }
+  .card__body {
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .card__meta {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: center;
+    min-height: 1em;
+  }
+  .card__tipo {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--c-terra);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .card__title {
+    font-size: var(--fs-md);
+    line-height: var(--lh-snug);
+  }
+  .card__title a {
+    text-decoration: none;
+  }
+  .card__title a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--c-sage);
+  }
+  .card__bajada {
+    color: var(--c-ink-soft);
+    font-size: var(--fs-base);
+  }
+  .card__byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .card__byline span::after {
+    content: '·';
+    margin-left: var(--sp-2);
+  }
+
+  .card--hero .card__title {
+    font-size: var(--fs-3xl);
+    letter-spacing: -0.02em;
+  }
+  .card--hero .card__bajada {
+    font-size: var(--fs-md);
+    font-family: var(--f-serif);
+  }
+  .card--large .card__title {
+    font-size: var(--fs-xl);
+  }
+  .card--compact {
+    padding-block: var(--sp-4);
+    border-top: 1px solid var(--c-line);
+  }
+  .card--compact .card__title {
+    font-size: var(--fs-md);
+  }
+  .card--list {
+    padding-block: var(--sp-5);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .card--list .card__title {
+    font-size: var(--fs-lg);
+  }
+</style>

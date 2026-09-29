@@ -1,0 +1,152 @@
+---
+import Logo from './Logo.astro';
+import { LINEAS_AYUDA, NAV_INSTITUCIONAL, PROVINCIAS, SECCIONES, SITE } from '../../config/site';
+const ediciones = PROVINCIAS.filter((p) => p.activa);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <Logo size="md" />
+      <p>{SITE.tagline}</p>
+      <p class="footer__disclaimer">
+        La información de este sitio es de divulgación y no reemplaza la consulta con un profesional de la salud.
+      </p>
+    </div>
+    <nav aria-label="Secciones">
+      <h2>Secciones</h2>
+      <ul role="list">
+        {
+          SECCIONES.map((s) => (
+            <li>
+              <a href={`/${s.slug}/`}>{s.nombre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <nav aria-label="Ediciones">
+      <h2>Ediciones</h2>
+      <ul role="list">
+        {
+          ediciones.map((p) => (
+            <li>
+              <a href={`/edicion/${p.slug}/`}>{p.nombre}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <nav aria-label="Institucional">
+      <h2>Imperare Sibi</h2>
+      <ul role="list">
+        {
+          NAV_INSTITUCIONAL.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </nav>
+    <div>
+      <h2>Líneas de ayuda</h2>
+      <ul role="list" class="footer__help">
+        {
+          LINEAS_AYUDA.map((l) => (
+            <li>
+              <a href={`tel:${l.tel}`}>{l.numero}</a>
+              <span>{l.nombre}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="container footer__legal">
+    <p>© {year} {SITE.name}. Todos los derechos reservados.</p>
+    <ul role="list" class="footer__social">
+      <li><a href={SITE.social.instagram} rel="me noopener">Instagram</a></li>
+      <li><a href={SITE.social.x} rel="me noopener">X</a></li>
+      <li><a href={SITE.social.linkedin} rel="me noopener">LinkedIn</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--sp-8);
+    background: var(--c-surface-2);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-soft);
+  }
+  .footer__grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr);
+    gap: var(--sp-6);
+    padding-block: var(--sp-7);
+  }
+  .footer__brand {
+    display: grid;
+    gap: var(--sp-3);
+    align-content: start;
+  }
+  .footer__disclaimer {
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .footer h2 {
+    font-family: var(--f-sans);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+    margin-bottom: var(--sp-3);
+  }
+  .footer ul {
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .footer a {
+    text-decoration: none;
+  }
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  .footer__help li {
+    display: grid;
+  }
+  .footer__help a {
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+  .footer__help span {
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    padding-block: var(--sp-4);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .footer__social {
+    display: flex !important;
+    gap: var(--sp-4) !important;
+  }
+  @media (max-width: 64rem) {
+    .footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

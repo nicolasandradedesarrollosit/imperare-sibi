@@ -1,0 +1,106 @@
+---
+import ArticleCard from '../article/ArticleCard.astro';
+import type { Articulo } from '../../lib/content';
+import { formatFechaCorta } from '../../lib/dates';
+import { articuloUrl } from '../../lib/content';
+
+interface Props {
+  principal: Articulo;
+  secundarias: Articulo[];
+  ultimas: Articulo[];
+}
+const { principal, secundarias, ultimas } = Astro.props;
+---
+
+<section class="container hero" aria-label="Destacadas">
+  <div class="hero__main">
+    <ArticleCard articulo={principal} variant="hero" as="h2" priority />
+  </div>
+  <aside class="hero__latest" aria-labelledby="latest-title">
+    <h2 id="latest-title" class="hero__latest-title">Lo último</h2>
+    <ol role="list">
+      {
+        ultimas.map((a) => (
+          <li>
+            <time datetime={a.data.publicado.toISOString()}>{formatFechaCorta(a.data.publicado)}</time>
+            <a href={articuloUrl(a)}>{a.data.title}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </aside>
+  {
+    secundarias.length > 0 && (
+      <div class="hero__secondary">
+        {secundarias.map((a) => (
+          <ArticleCard articulo={a} variant="medium" as="h3" />
+        ))}
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--sp-6) var(--sp-7);
+    padding-block: var(--sp-6);
+  }
+  .hero__latest {
+    border-left: 1px solid var(--c-line);
+    padding-left: var(--sp-6);
+  }
+  .hero__latest-title {
+    font-family: var(--f-sans);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: var(--sp-3);
+    border-bottom: 2px solid var(--c-ink);
+  }
+  .hero__latest ol {
+    counter-reset: n;
+  }
+  .hero__latest li {
+    display: grid;
+    gap: var(--sp-1);
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .hero__latest time {
+    font-size: var(--fs-xs);
+    color: var(--c-sage-strong);
+    font-weight: 600;
+  }
+  .hero__latest a {
+    font-family: var(--f-serif);
+    font-size: var(--fs-md);
+    font-weight: 600;
+    line-height: var(--lh-snug);
+    text-decoration: none;
+  }
+  .hero__latest a:hover {
+    text-decoration: underline;
+  }
+  .hero__secondary {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-6);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-line);
+  }
+  @media (max-width: 56rem) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero__latest {
+      border-left: 0;
+      padding-left: 0;
+    }
+    .hero__secondary {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
