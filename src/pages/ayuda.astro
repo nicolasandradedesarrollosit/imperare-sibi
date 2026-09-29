@@ -17,7 +17,7 @@ const description =
   <div class="wrap grid gap-12">
     <!-- Emergency first -->
     <section
-      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 rounded-2xl border-2 border-alert/30 bg-[#fbf3ef] p-6 text-center sm:flex-row sm:text-left"
+      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 rounded border-l-4 border-alert bg-[#fbf3ef] p-6 text-center sm:flex-row sm:text-left"
       aria-labelledby="emergency-title"
     >
       <div class="flex-1">
@@ -42,9 +42,9 @@ const description =
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         {
           HELPLINE_LINES.map((l) => (
-            <article class="flex flex-col rounded-2xl bg-calm p-6">
-              <p class="text-xs font-bold tracking-wide text-accent-dark uppercase">{l.name}</p>
-              <p class="mt-2 font-serif text-4xl font-semibold text-ink">{l.number}</p>
+            <article class="flex flex-col rounded bg-calm p-6">
+              <p class="kicker kicker--block text-accent-dark">{l.name}</p>
+              <p class="mt-2 font-serif text-4xl font-semibold text-ink tabular-nums">{l.number}</p>
               <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
               <a class="btn mt-auto self-start" href={l.href}>
                 <PhoneIcon /> Llamar al {l.number}

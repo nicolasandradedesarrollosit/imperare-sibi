@@ -1,54 +1,38 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
 import { SECTIONS } from '../../config/site';
-import { articleUrl, bySection, sectionUrl, type Article } from '../../lib/content';
+import { bySection, sectionUrl, type Article } from '../../lib/content';
 
 /**
- * "Explorá por tema": one card per category with its description and latest titles.
- * Always renders every category, so the grid is complete whatever the content volume.
+ * Typographic index of every category: name, description and article count,
+ * in two ruled columns. Always lists every category, whatever the content volume.
  */
 interface Props {
   articles: Article[];
 }
 const { articles } = Astro.props;
-const categories = SECTIONS.map((section) => ({ section, latest: bySection(articles, section.slug).slice(0, 3) }));
+const categories = SECTIONS.map((section) => ({ section, count: bySection(articles, section.slug).length }));
 ---
 
-<section class="wrap" aria-labelledby="categories-title">
-  <SectionHeading id="categories-title" title="Explorá por tema" />
-  <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+<section class="wrap section" aria-labelledby="categories-title">
+  <SectionHeading id="categories-title" title="Categorías" />
+  <ul role="list" class="grid gap-x-(--col-gap) sm:grid-cols-2">
     {
-      categories.map(({ section, latest }) => (
-        <article
-          class="flex flex-col rounded-xl border border-rule p-6 transition-colors hover:border-(--c-section)"
-          style={`--c-section:${section.color}`}
-        >
-          <h3 class="text-xl">
-            <a class="text-ink link" href={sectionUrl(section.slug)}>
-              {section.name}
-            </a>
-          </h3>
-          <span class="mt-2 block h-[3px] w-8 bg-(--c-section)" aria-hidden="true" />
-          <p class="mt-3 text-sm text-muted">{section.description}</p>
-          {latest.length > 0 && (
-            <ul role="list" class="mt-4 grid gap-2 border-t border-rule pt-4">
-              {latest.map((a) => (
-                <li>
-                  <a class="font-serif text-[0.95rem] leading-snug font-semibold link" href={articleUrl(a)}>
-                    {a.data.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-          <a
-            class="mt-auto pt-4 text-sm font-semibold text-(--c-section) link"
-            href={sectionUrl(section.slug)}
-          >
-            Ver notas de {section.name.toLowerCase()} →
+      categories.map(({ section, count }) => (
+        <li class="border-b border-rule py-4">
+          <a href={sectionUrl(section.slug)} class="group grid gap-1 no-underline">
+            <span class="flex items-baseline justify-between gap-4">
+              <span class="font-serif text-xl font-semibold transition-colors group-hover:text-accent-dark">
+                {section.name}
+              </span>
+              <span class="text-xs text-muted tabular-nums">
+                {count} {count === 1 ? 'nota' : 'notas'}
+              </span>
+            </span>
+            <span class="text-sm text-muted">{section.description}</span>
           </a>
-        </article>
+        </li>
       ))
     }
-  </div>
+  </ul>
 </section>

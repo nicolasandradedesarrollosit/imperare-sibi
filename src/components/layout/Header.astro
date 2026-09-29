@@ -1,6 +1,5 @@
 ---
 import Logo from '../ui/Logo.astro';
-import PhoneIcon from '../ui/PhoneIcon.astro';
 import { SECTIONS } from '../../config/site';
 import { sectionUrl } from '../../lib/content';
 
@@ -8,6 +7,14 @@ interface Props {
   activeSection?: string;
 }
 const { activeSection } = Astro.props;
+// aria-current: "page" on the category page itself (and its pagination),
+// "true" on articles that belong to the category.
+const currentFor = (slug: string) => {
+  if (activeSection !== slug) return undefined;
+  const path = Astro.url.pathname;
+  const base = sectionUrl(slug);
+  return path === base || /^\d+\/$/.test(path.slice(base.length)) ? 'page' : 'true';
+};
 ---
 
 <header>
@@ -40,17 +47,11 @@ const { activeSection } = Astro.props;
 
     <!-- Hidden on phones: the helpline bar above already links to /ayuda, and the logo stays alone at the centre. -->
     <div class="col-start-3 hidden justify-end sm:flex">
-      <a
-        href="/ayuda/"
-        class="chip px-3 py-1.5 text-xs font-semibold"
-      >
-        <PhoneIcon class="size-3.5" />
-        Pedir ayuda
-      </a>
+      <a href="/ayuda/" class="link inline-block py-1 text-xs font-semibold">Pedir ayuda</a>
     </div>
   </div>
 
-  <nav class="sticky top-0 z-30 border-y border-rule bg-paper/95 backdrop-blur" aria-label="Categorías">
+  <nav class="sticky top-0 z-30 border-y border-rule bg-paper/95 backdrop-blur" aria-label="Categorías principales">
     <div
       class="wrap overflow-x-auto [scrollbar-width:none] max-md:pr-8 max-md:[mask-image:linear-gradient(to_right,#000_85%,transparent)] [&::-webkit-scrollbar]:hidden"
     >
@@ -60,8 +61,8 @@ const { activeSection } = Astro.props;
             <li>
               <a
                 href={sectionUrl(s.slug)}
-                aria-current={activeSection === s.slug ? 'page' : undefined}
-                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-accent/40 hover:text-accent-dark aria-[current=page]:border-accent"
+                aria-current={currentFor(s.slug)}
+                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-accent/40 hover:text-accent-dark aria-[current]:border-accent"
               >
                 {s.name}
               </a>

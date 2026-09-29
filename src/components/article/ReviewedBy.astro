@@ -9,14 +9,13 @@ interface Props {
 const { reviewer, date } = Astro.props;
 ---
 
-<p class="mx-auto inline-flex max-w-xl items-start gap-2 rounded-lg bg-calm px-4 py-2.5 text-left text-xs text-ink-2">
-  <svg viewBox="0 0 20 20" class="size-4 flex-none text-accent" aria-hidden="true">
-    <path
-      d="M10 1.5 3 4.2v5c0 4.2 2.9 7.9 7 9.3 4.1-1.4 7-5.1 7-9.3v-5L10 1.5Zm-1.1 11.7L5.8 10l1.2-1.2 1.9 1.9 4.1-4.1 1.2 1.2-5.3 5.4Z"
-      fill="currentColor"></path>
-  </svg>
-  <span>
-    Revisado por <a class="font-bold text-ink link" href={authorUrl(reviewer.id)}>{reviewer.data.name}</a
-    >{reviewer.data.credentials && <>, {reviewer.data.credentials}</>}{date && <>, el {formatDate(date)}</>}
-  </span>
+<p class="max-w-xl text-center text-xs text-muted">
+  Revisado por <a class="link font-semibold text-ink" href={authorUrl(reviewer.id)}>{reviewer.data.name}</a
+  >{reviewer.data.credentials && <>, {reviewer.data.credentials}</>}{
+    date && (
+      <>
+        , el <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      </>
+    )
+  }
 </p>

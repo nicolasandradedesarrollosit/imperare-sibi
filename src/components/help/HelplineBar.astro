@@ -1,17 +1,15 @@
 ---
-import PhoneIcon from '../ui/PhoneIcon.astro';
 import { HELPLINE_LINES } from '../../config/site';
 const [local, national] = HELPLINE_LINES;
 ---
 
 <aside class="bg-calm text-ink-2" aria-label="Líneas de ayuda">
   <p class="wrap flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 py-2 text-center text-xs">
-    <PhoneIcon class="size-3.5 text-accent" />
     <span>¿Necesitás hablar con alguien?</span>
     <span>
       Llamá gratis al <a class="font-bold text-ink" href={local!.href}>{local!.number}</a> o al{' '}
       <a class="font-bold text-ink" href={national!.href}>{national!.number}</a>
     </span>
-    <a class="link-accent inline-block py-1" href="/ayuda/">Ver recursos →</a>
+    <a class="link-accent inline-block py-1" href="/ayuda/">Más recursos</a>
   </p>
 </aside>

@@ -13,16 +13,13 @@ const description = `Índice de todos los temas de ${SITE.name}: ansiedad, depre
 <BaseLayout seo={{ title: 'Temas', description }} jsonLd={[breadcrumbLd(crumbs({ name: 'Temas', href: '/temas/' }))]}>
   <PageHeader eyebrow="Índice" title="Temas" description={description} />
   <div class="wrap">
-    <ul role="list" class="mx-auto flex max-w-3xl flex-wrap justify-center gap-3">
+    <ul role="list" class="mx-auto max-w-4xl gap-x-(--col-gap) sm:columns-2 lg:columns-3">
       {
         tags.map((t) => (
-          <li>
-            <a
-              href={tagUrl(t.name)}
-              class="chip items-baseline gap-2 px-4 py-2"
-            >
-              <span class="font-serif text-lg font-semibold">{t.name}</span>
-              <span class="text-xs text-muted">{t.articles.length}</span>
+          <li class="break-inside-avoid border-b border-rule">
+            <a href={tagUrl(t.name)} class="group flex items-baseline justify-between gap-4 py-3 no-underline">
+              <span class="font-serif text-lg font-semibold transition-colors group-hover:text-accent-dark">{t.name}</span>
+              <span class="text-xs text-muted tabular-nums">{t.articles.length}</span>
             </a>
           </li>
         ))

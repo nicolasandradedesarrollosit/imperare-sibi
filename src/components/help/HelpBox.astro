@@ -10,24 +10,21 @@ interface Props {
 const { showMore = true, class: className } = Astro.props;
 ---
 
-<aside class:list={['rounded-2xl bg-calm p-6 sm:p-8', className]} aria-labelledby="help-title">
+<aside class:list={['rounded bg-calm p-6 sm:p-8', className]} aria-labelledby="help-title">
   <h2 id="help-title" class="text-2xl">Si estás pasando por un momento difícil</h2>
   <p class="mt-2 text-sm text-ink-2">
     No tenés que atravesarlo en soledad. Estas líneas son gratuitas y atienden todos los días:
   </p>
-  <ul role="list" class="mt-5 grid gap-2">
+  <ul role="list" class="mt-4 border-t border-calm-strong">
     {
       HELPLINE_LINES.map((l) => (
-        <li>
-          <a
-            href={l.href}
-            class="group flex min-h-14 items-center gap-4 rounded-xl bg-paper px-4 py-3 no-underline transition-colors hover:bg-white hover:ring-1 hover:ring-accent/40"
-          >
-            <span class="grid size-10 flex-none place-items-center rounded-full bg-accent text-white">
-              <PhoneIcon class="size-5" />
-            </span>
+        <li class="border-b border-calm-strong">
+          <a href={l.href} class="group flex min-h-14 items-center gap-4 py-3 no-underline">
+            <PhoneIcon class="size-5 flex-none text-accent" />
             <span class="grid">
-              <span class="text-xl leading-tight font-bold text-ink">{l.number}</span>
+              <span class="text-xl leading-tight font-bold text-ink tabular-nums transition-colors group-hover:text-accent-dark">
+                {l.number}
+              </span>
               <span class="text-xs text-muted">
                 {l.name}. {l.detail}.
               </span>
