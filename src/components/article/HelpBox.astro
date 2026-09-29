@@ -1,31 +1,32 @@
 ---
-import { LINEAS_AYUDA } from '../../config/site';
+import { HELPLINES } from '../../config/site';
 ---
 
 <aside class="help" aria-labelledby="help-title">
   <h2 id="help-title">Si estás pasando por un momento difícil</h2>
-  <p>No estás solo ni sola. Hay personas preparadas para escucharte, las 24 horas y de forma gratuita:</p>
+  <p>Hay personas preparadas para escucharte, todos los días y de forma gratuita:</p>
   <ul role="list">
     {
-      LINEAS_AYUDA.map((l) => (
+      HELPLINES.map((l) => (
         <li>
-          <a href={`tel:${l.tel}`}>{l.numero}</a> — {l.nombre}. <span>{l.detalle}.</span>
+          <a href={`tel:${l.tel}`}>{l.number}</a>
+          <span>
+            {l.name}. {l.detail}.
+          </span>
         </li>
       ))
     }
   </ul>
-  <p><a href="/ayuda/">Ver todos los recursos de ayuda por provincia</a></p>
+  <p><a href="/ayuda/">Todos los recursos de ayuda</a></p>
 </aside>
 
 <style>
   .help {
     display: grid;
     gap: var(--sp-3);
-    padding: var(--sp-5);
-    border: 1px solid var(--c-sage);
-    border-left-width: 4px;
-    border-radius: var(--radius);
-    background: var(--c-surface);
+    padding: var(--sp-5) 0;
+    border-top: 3px solid var(--c-accent);
+    border-bottom: 1px solid var(--c-rule);
     font-size: var(--fs-sm);
   }
   .help h2 {
@@ -35,9 +36,14 @@ import { LINEAS_AYUDA } from '../../config/site';
     display: grid;
     gap: var(--sp-2);
   }
+  .help li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--sp-3);
+  }
   .help a {
-    font-weight: 600;
-    color: var(--c-sage-strong);
+    font-weight: 700;
+    color: var(--c-accent-dark);
   }
   .help span {
     color: var(--c-muted);

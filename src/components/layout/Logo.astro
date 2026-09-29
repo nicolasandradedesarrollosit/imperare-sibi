@@ -1,61 +1,49 @@
 ---
 interface Props {
-  /** Muestra solo el isotipo (sin wordmark). */
+  /** Mark only, without the wordmark. */
   compact?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  class?: string;
 }
-const { compact = false, size = 'md' } = Astro.props;
+const { compact = false, class: className } = Astro.props;
 ---
 
-<span class:list={['logo', `logo--${size}`]}>
+<span class:list={['logo', className]}>
   <svg class="logo__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-    <circle cx="32" cy="32" r="30" fill="var(--c-ink)"></circle>
-    <path d="M21 19v26" fill="none" stroke="var(--c-paper)" stroke-width="5.5" stroke-linecap="round"></path>
+    <circle cx="32" cy="32" r="30" fill="#121212"></circle>
+    <path d="M21 19v26" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round"></path>
     <path
       d="M45 22c-2-2.8-4.8-4.2-7.9-4.2-4.3 0-7.3 2.6-7.3 6.1 0 8.3 15.7 5.7 15.7 14.4 0 4.4-3.7 7.5-8.5 7.5-3.6 0-6.7-1.6-8.6-4.6"
       fill="none"
-      stroke="var(--c-logo-s)"
+      stroke="#9cc0aa"
       stroke-width="5.5"
       stroke-linecap="round"
       stroke-linejoin="round"></path>
   </svg>
-  {
-    !compact && (
-      <span class="logo__word">
-        Imperare <em>Sibi</em>
-      </span>
-    )
-  }
+  {!compact && <span class="logo__word">Imperare <em>Sibi</em></span>}
 </span>
 
 <style>
   .logo {
     display: inline-flex;
     align-items: center;
-    gap: 0.55em;
+    gap: 0.45em;
     color: var(--c-ink);
-    font-size: 1.5rem;
-  }
-  .logo--sm {
-    font-size: 1.2rem;
-  }
-  .logo--lg {
     font-size: 2rem;
+    line-height: 1;
   }
   .logo__mark {
-    width: 1.6em;
-    height: 1.6em;
+    width: 1.15em;
+    height: 1.15em;
     flex: none;
   }
   .logo__word {
     font-family: var(--f-serif);
     font-weight: 600;
-    letter-spacing: -0.015em;
-    line-height: 1;
+    letter-spacing: -0.02em;
     white-space: nowrap;
   }
   .logo__word em {
-    font-weight: 500;
-    color: var(--c-sage-strong);
+    font-weight: 400;
+    color: var(--c-accent);
   }
 </style>

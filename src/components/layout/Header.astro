@@ -1,152 +1,238 @@
 ---
 import Logo from './Logo.astro';
-import { PROVINCIAS, SECCIONES } from '../../config/site';
-import { formatFecha } from '../../lib/dates';
+import { ACTIVE_PROVINCES, SECTIONS } from '../../config/site';
+import { provinceUrl, sectionUrl } from '../../lib/content';
+import { formatToday } from '../../lib/dates';
 
 interface Props {
-  seccionActiva?: string;
+  activeSection?: string;
 }
-const { seccionActiva } = Astro.props;
-const ediciones = PROVINCIAS.filter((p) => p.activa);
-const hoy = formatFecha(new Date());
+const { activeSection } = Astro.props;
 ---
 
-<header class="header">
-  <div class="container header__top">
-    <p class="header__date">{hoy}</p>
-    <details class="ediciones">
-      <summary>Ediciones</summary>
-      <ul role="list">
-        <li><a href="/">Nacional</a></li>
+<header class="masthead">
+  <div class="wrap masthead__top">
+    <div class="masthead__left">
+      <p class="masthead__date">{formatToday(new Date())}</p>
+      <details class="editions" data-dismissable>
+        <summary>Ediciones</summary>
+        <ul role="list" class="editions__panel">
+          <li><a href="/">Nacional</a></li>
+          {
+            ACTIVE_PROVINCES.map((p) => (
+              <li>
+                <a href={provinceUrl(p.slug)}>{p.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </div>
+    <a href="/" class="masthead__logo" aria-label="Imperare Sibi, ir a la portada">
+      <Logo />
+    </a>
+    <div class="masthead__right">
+      <a href="/#newsletter">Newsletter</a>
+      <a href="/ayuda/">Pedir ayuda</a>
+    </div>
+  </div>
+  <nav class="sections" aria-label="Secciones">
+    <div class="wrap sections__scroller">
+      <ul role="list" class="sections__list">
         {
-          ediciones.map((p) => (
+          SECTIONS.map((s) => (
             <li>
-              <a href={`/edicion/${p.slug}/`}>{p.nombre}</a>
+              <a href={sectionUrl(s.slug)} aria-current={activeSection === s.slug ? 'page' : undefined}>
+                {s.name}
+              </a>
             </li>
           ))
         }
       </ul>
-    </details>
-  </div>
-  <div class="container header__brand">
-    <a href="/" class="header__logo" aria-label="Imperare Sibi — Inicio">
-      <Logo size="lg" />
-    </a>
-  </div>
-  <nav class="nav" aria-label="Secciones">
-    <ul role="list" class="container nav__list">
-      {
-        SECCIONES.map((s) => (
-          <li>
-            <a href={`/${s.slug}/`} aria-current={seccionActiva === s.slug ? 'page' : undefined}>
-              {s.nombre}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    </div>
   </nav>
 </header>
 
+<script>
+  // Close dismissable <details> menus on outside click or Escape.
+  const openMenus = () => document.querySelectorAll<HTMLDetailsElement>('details[data-dismissable][open]');
+  document.addEventListener('click', (e) => {
+    openMenus().forEach((d) => {
+      if (!d.contains(e.target as Node)) d.open = false;
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    openMenus().forEach((d) => {
+      d.open = false;
+      d.querySelector('summary')?.focus();
+    });
+  });
+</script>
+
 <style>
-  .header {
-    background: var(--c-paper);
-    border-bottom: 1px solid var(--c-line);
-  }
-  .header__top {
-    display: flex;
-    justify-content: space-between;
+  .masthead__top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: var(--sp-4);
-    padding-block: var(--sp-2);
+    padding-block: var(--sp-5);
     font-size: var(--fs-xs);
+  }
+  .masthead__left {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .masthead__date {
     color: var(--c-muted);
   }
-  .header__date::first-letter {
-    text-transform: uppercase;
-  }
-  .header__brand {
-    display: flex;
-    justify-content: center;
-    padding-block: var(--sp-4) var(--sp-5);
-  }
-  .header__logo {
+  .masthead__logo {
     text-decoration: none;
   }
-  .ediciones {
+  .masthead__right {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--sp-5);
+  }
+  .masthead__right a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .masthead__right a:hover {
+    text-decoration: underline;
+  }
+
+  /* Editions menu */
+  .editions {
     position: relative;
   }
-  .ediciones summary {
+  .editions summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding-block: var(--sp-1);
+    font-weight: 700;
     cursor: pointer;
-    font-weight: 600;
-    color: var(--c-ink-soft);
     list-style: none;
+    user-select: none;
   }
-  .ediciones summary::-webkit-details-marker {
+  .editions summary::-webkit-details-marker {
     display: none;
   }
-  .ediciones summary::after {
-    content: ' ▾';
+  .editions summary::after {
+    content: '';
+    width: 0.4em;
+    height: 0.4em;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-0.15em) rotate(45deg);
   }
-  .ediciones ul {
+  .editions[open] summary::after {
+    transform: translateY(0.1em) rotate(-135deg);
+  }
+  .editions__panel {
     position: absolute;
-    right: 0;
     top: calc(100% + var(--sp-2));
-    z-index: 20;
+    left: 0;
+    z-index: 40;
+    width: max-content;
     min-width: 13rem;
-    padding: var(--sp-2);
-    background: var(--c-surface);
-    border: 1px solid var(--c-line);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    max-width: calc(100vw - 2 * var(--gutter));
+    padding-block: var(--sp-2);
+    background: var(--c-bg);
+    border: 1px solid var(--c-ink);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
   }
-  .ediciones a {
+  .editions__panel a {
     display: block;
-    padding: var(--sp-2) var(--sp-3);
+    padding: var(--sp-2) var(--sp-4);
     font-size: var(--fs-sm);
     text-decoration: none;
-    border-radius: 4px;
-    color: var(--c-ink);
   }
-  .ediciones a:hover {
-    background: var(--c-surface-2);
+  .editions__panel a:hover {
+    background: var(--c-bg-alt);
   }
-  .nav {
-    border-top: 1px solid var(--c-line);
+
+  /* Section nav */
+  .sections {
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: var(--c-paper);
+    z-index: 30;
+    background: var(--c-bg);
+    border-top: 1px solid var(--c-ink);
+    border-bottom: 1px solid var(--c-rule);
   }
-  .nav__list {
-    margin-inline: auto !important;
-    display: flex;
-    justify-content: center;
-    gap: var(--sp-5);
+  .sections__scroller {
     overflow-x: auto;
     scrollbar-width: none;
-    padding-block: var(--sp-3);
   }
-  .nav__list::-webkit-scrollbar {
+  .sections__scroller::-webkit-scrollbar {
     display: none;
   }
-  .nav a {
+  .sections__list {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-6);
+    width: max-content;
+    min-width: 100%;
+  }
+  .sections__list a {
+    display: block;
+    padding-block: 0.8rem 0.7rem;
     font-size: var(--fs-sm);
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
     text-decoration: none;
-    color: var(--c-ink-soft);
-    padding-block: var(--sp-1);
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
   }
-  .nav a:hover,
-  .nav a[aria-current='page'] {
-    color: var(--c-ink);
-    border-bottom-color: var(--c-sage);
+  .sections__list a:hover {
+    border-bottom-color: var(--c-rule);
   }
-  @media (max-width: 52rem) {
-    .nav__list {
+  .sections__list a[aria-current='page'] {
+    border-bottom-color: var(--c-accent);
+  }
+
+  @media (max-width: 56rem) {
+    .masthead__top {
+      grid-template-columns: auto 1fr;
+      padding-block: var(--sp-3);
+    }
+    .masthead__logo {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .masthead__logo :global(.logo) {
+      font-size: 1.5rem;
+    }
+    .masthead__left {
+      grid-column: 2;
+      grid-row: 1;
+      justify-content: flex-end;
+    }
+    .masthead__date,
+    .masthead__right {
+      display: none;
+    }
+    .editions__panel {
+      left: auto;
+      right: 0;
+    }
+    .sections__list {
       justify-content: flex-start;
+      gap: var(--sp-5);
+    }
+    /* Fade on the right edge hints that the nav scrolls. */
+    .sections__scroller {
+      padding-right: var(--sp-7);
+    }
+    .sections__scroller {
+      mask-image: linear-gradient(to right, #000 85%, transparent);
+    }
+  }
+  @media (max-width: 22.5rem) {
+    .masthead__logo :global(.logo) {
+      font-size: 1.3rem;
     }
   }
 </style>

@@ -1,39 +1,44 @@
 ---
 import Breadcrumbs from '../article/Breadcrumbs.astro';
 interface Props {
-  kicker?: string;
+  eyebrow?: string;
   title: string;
   description?: string;
   crumbs?: { name: string; href: string }[];
+  /** Section colour for the top rule and breadcrumbs. */
+  color?: string;
 }
-const { kicker, title, description, crumbs } = Astro.props;
+const { eyebrow, title, description, crumbs, color } = Astro.props;
 ---
 
-<header class="container ph">
-  {crumbs && <Breadcrumbs items={crumbs} />}
-  {kicker && <p class="kicker">{kicker}</p>}
+<header class="wrap page-header" style={color ? `--c-section:${color}` : undefined}>
+  {crumbs && crumbs.length > 1 && <Breadcrumbs items={crumbs} />}
+  {eyebrow && <p class="label page-header__eyebrow">{eyebrow}</p>}
   <h1>{title}</h1>
-  {description && <p class="ph__desc">{description}</p>}
+  {description && <p class="page-header__desc">{description}</p>}
   <slot />
 </header>
 
 <style>
-  .ph {
+  .page-header {
     display: grid;
     gap: var(--sp-3);
-    padding-block: var(--sp-6) var(--sp-5);
-    border-bottom: 1px solid var(--c-line);
-    margin-bottom: var(--sp-6);
+    padding-block: var(--sp-6) var(--sp-6);
   }
-  h1 {
+  .page-header h1 {
+    padding-top: var(--sp-3);
+    border-top: 4px solid var(--c-section, var(--c-ink));
     font-size: var(--fs-3xl);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
-  .ph__desc {
-    max-width: 44rem;
+  .page-header__eyebrow {
+    color: var(--c-muted);
+  }
+  .page-header__desc {
+    max-width: 46rem;
     font-family: var(--f-serif);
-    font-size: var(--fs-lg);
-    line-height: var(--lh-snug);
-    color: var(--c-ink-soft);
+    font-size: var(--fs-md);
+    line-height: 1.5;
+    color: var(--c-ink-2);
   }
 </style>

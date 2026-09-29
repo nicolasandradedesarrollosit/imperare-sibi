@@ -1,0 +1,53 @@
+---
+import { HELPLINES } from '../../config/site';
+const [local, national] = HELPLINES;
+---
+
+<aside class="helpline" aria-label="Líneas de ayuda">
+  <div class="wrap helpline__inner">
+    <p>
+      <strong>¿Necesitás ayuda ahora?</strong>{' '}
+      <span>
+        Llamá gratis al <a href={`tel:${local.tel}`}>{local.number}</a> (CABA y GBA) o al{' '}
+        <a href={`tel:${national.tel}`}>{national.number}</a> (todo el país).
+      </span>
+    </p>
+    <a class="helpline__more" href="/ayuda/">Más recursos</a>
+  </div>
+</aside>
+
+<style>
+  .helpline {
+    background: var(--c-helpline-bg);
+    color: var(--c-helpline-ink);
+    font-size: var(--fs-xs);
+    line-height: 1.4;
+  }
+  .helpline__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-1) var(--sp-5);
+    padding-block: 0.45rem;
+  }
+  .helpline a {
+    color: inherit;
+    font-weight: 700;
+  }
+  .helpline span {
+    opacity: 0.88;
+  }
+  .helpline__more {
+    flex: none;
+    /* 24px minimum touch target */
+    display: inline-block;
+    padding-block: 0.25rem;
+    margin-block: -0.25rem;
+  }
+  @media (max-width: 40rem) {
+    .helpline__inner {
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+  }
+</style>

@@ -1,20 +1,38 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
+import { existsSync, readFileSync } from 'node:fs';
 
 import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
-import { existsSync, readFileSync } from 'node:fs';
+import { unified } from '@astrojs/markdown-remark';
+
+import { ADSENSE } from './src/config/site.ts';
+import rehypeInArticleAds from './src/lib/rehype-in-article-ads.ts';
+
+const isDev = process.argv.includes('dev');
+const adsMode = ADSENSE.client ? 'live' : isDev ? 'placeholder' : 'off';
 
 /**
- * Excluye del sitemap las páginas marcadas como noindex (tags con poco contenido,
- * ediciones sin notas locales, 404). Se evalúa sobre el HTML ya generado.
- * @param {string} page
+ * Reads a page already rendered to dist/. The sitemap integration runs after the
+ * build, so we can derive indexability and lastmod from the final HTML.
+ * @param {string} page absolute page URL
  */
-function isIndexable(page) {
+function renderedHtml(page) {
   const file = `./dist${new URL(page).pathname}index.html`;
-  if (!existsSync(file)) return true;
-  return !/<meta name="robots" content="noindex/.test(readFileSync(file, 'utf8'));
+  return existsSync(file) ? readFileSync(file, 'utf8') : '';
+}
+
+/** @param {string} page */
+const isIndexable = (page) => !/<meta name="robots" content="noindex/.test(renderedHtml(page));
+
+/** @param {string} page */
+function lastModified(page) {
+  const html = renderedHtml(page);
+  const match =
+    html.match(/property="article:modified_time" content="([^"]+)"/) ??
+    html.match(/property="article:published_time" content="([^"]+)"/);
+  return match?.[1];
 }
 
 // https://astro.build/config
@@ -22,14 +40,61 @@ export default defineConfig({
   site: 'https://imperaresibi.com.ar',
   trailingSlash: 'always',
   output: 'static',
-  adapter: vercel({ imageService: true }),
+  adapter: vercel(),
+  image: {
+    // Optimised at build time with sharp (static output); AVIF/WebP with real srcsets.
+    responsiveStyles: false,
+  },
+  markdown: {
+    // unified (remark/rehype) instead of the default Sätteri processor, which
+    // does not run rehype plugins. MDX inherits this processor.
+    processor: unified({
+      rehypePlugins: [
+        [
+          rehypeInArticleAds,
+          {
+            mode: adsMode,
+            client: ADSENSE.client,
+            slot: ADSENSE.slots.inArticle,
+            max: ADSENSE.inArticleMax,
+            everyWords: ADSENSE.inArticleEveryWords,
+          },
+        ],
+      ],
+    }),
+  },
+  fonts: [
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Newsreader',
+      cssVariable: '--font-serif',
+      // Static weights: the variable build (with optical-size axis) is ~140 KB per file.
+      weights: [400, 600],
+      styles: ['normal', 'italic'],
+      subsets: ['latin', 'latin-ext'],
+      fallbacks: ['Georgia', 'serif'],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: 'Libre Franklin',
+      cssVariable: '--font-sans',
+      weights: [400, 600, 700],
+      styles: ['normal'],
+      subsets: ['latin', 'latin-ext'],
+      fallbacks: ['Arial', 'sans-serif'],
+    },
+  ],
   integrations: [
     mdx(),
     sitemap({
-      i18n: { defaultLocale: 'es', locales: { es: 'es-AR' } },
       filter: (page) => !page.includes('/404') && isIndexable(page),
+      serialize: (item) => {
+        const lastmod = lastModified(item.url);
+        return lastmod ? { ...item, lastmod } : item;
+      },
     }),
   ],
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
-  build: { inlineStylesheets: 'auto' },
+  // ~18 KB of CSS in total: inlining it removes render-blocking requests (faster FCP/LCP).
+  build: { inlineStylesheets: 'always' },
 });

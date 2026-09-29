@@ -1,28 +1,30 @@
 ---
-import '@fontsource-variable/inter';
-import '@fontsource-variable/newsreader';
-import '@fontsource-variable/newsreader/wght-italic.css';
+import { Font } from 'astro:assets';
 import '../styles/global.css';
-import interWoff from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
-import newsreaderWoff from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
 
 import SEO, { type SeoProps } from '../components/seo/SEO.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
-import CrisisBar from '../components/layout/CrisisBar.astro';
+import HelplineBar from '../components/layout/HelplineBar.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
-import { SITE } from '../config/site';
+import { ADSENSE, adsEnabled, SITE } from '../config/site';
 import { graph } from '../lib/seo';
 
 interface Props {
   seo: SeoProps;
-  /** Nodos JSON-LD adicionales (Article, BreadcrumbList, Person…). */
+  /** Extra JSON-LD nodes (Article, BreadcrumbList, CollectionPage…). */
   jsonLd?: Record<string, unknown>[];
-  /** Resalta la sección activa en la navegación. */
-  seccionActiva?: string;
+  /** Highlights the active section in the navigation. */
+  activeSection?: string;
+  /**
+   * Whether this page may carry ads. False on sensitive articles, crisis resources,
+   * legal pages and errors: the AdSense script is not even loaded there.
+   */
+  ads?: boolean;
 }
 
-const { seo, jsonLd = [], seccionActiva } = Astro.props;
+const { seo, jsonLd = [], activeSection, ads = true } = Astro.props;
+const loadAdsense = ads && adsEnabled;
 ---
 
 <!doctype html>
@@ -30,26 +32,47 @@ const { seo, jsonLd = [], seccionActiva } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="preload" href={newsreaderWoff} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={interWoff} as="font" type="font/woff2" crossorigin />
+    <!-- Preload only above-the-fold faces: serif headlines (600) and UI text (400). -->
+    <Font cssVariable="--font-serif" preload={[{ weight: 600, style: 'normal', subset: 'latin' }]} />
+    <Font cssVariable="--font-sans" preload={[{ weight: 400, style: 'normal', subset: 'latin' }]} />
     <SEO {...seo} />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#faf7f2" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131614" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
-    <meta name="generator" content={Astro.generator} />
+    {
+      loadAdsense && (
+        <>
+          <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+          <script
+            is:inline
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE.client}`}
+            crossorigin="anonymous"
+          />
+        </>
+      )
+    }
     <JsonLd data={graph(...jsonLd)} />
   </head>
   <body>
-    <a class="skip-link" href="#contenido">Saltar al contenido</a>
-    <CrisisBar />
-    <Header seccionActiva={seccionActiva} />
-    <main id="contenido">
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <HelplineBar />
+    <Header activeSection={activeSection} />
+    <main id="main">
       <slot />
     </main>
     <Footer />
+    {
+      loadAdsense && (
+        <script is:inline>
+          document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])').forEach(function () {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          });
+        </script>
+      )
+    }
   </body>
 </html>

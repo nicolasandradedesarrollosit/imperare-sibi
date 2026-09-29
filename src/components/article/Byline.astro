@@ -1,48 +1,33 @@
 ---
 import { Image } from 'astro:assets';
-import type { Autor } from '../../lib/content';
-import { autorUrl } from '../../lib/content';
-import { formatFecha } from '../../lib/dates';
+import { authorUrl, type Author } from '../../lib/content';
+import { formatDate } from '../../lib/dates';
 
 interface Props {
-  autor: Autor;
-  publicado: Date;
-  actualizado?: Date;
-  minutos: number;
+  author: Author;
+  publishedAt: Date;
+  updatedAt?: Date;
+  minutes: number;
 }
-const { autor, publicado, actualizado, minutos } = Astro.props;
-const iniciales = autor.data.nombre
-  .split(' ')
-  .map((p) => p[0])
-  .slice(0, 2)
-  .join('');
+const { author, publishedAt, updatedAt, minutes } = Astro.props;
 ---
 
 <div class="byline">
-  {
-    autor.data.foto ? (
-      <Image src={autor.data.foto} alt="" width={48} height={48} class="byline__avatar" />
-    ) : (
-      <span class="byline__avatar byline__avatar--initials" aria-hidden="true">
-        {iniciales}
-      </span>
-    )
-  }
-  <div>
+  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="byline__photo" />}
+  <div class="byline__text">
     <p>
-      Por <a href={autorUrl(autor.id)} rel="author">{autor.data.nombre}</a>{' '}
-      <span class="byline__rol">· {autor.data.rol}</span>
+      Por <a href={authorUrl(author.id)} rel="author">{author.data.name}</a>
     </p>
-    <p class="byline__dates">
-      <time datetime={publicado.toISOString()}>{formatFecha(publicado)}</time>{' '}
+    <p class="byline__meta">
+      <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
       {
-        actualizado && (
-          <>
-            {' '}· Actualizado el{' '}<time datetime={actualizado.toISOString()}>{formatFecha(actualizado)}</time>
-          </>
+        updatedAt && (
+          <span>
+            Actualizado el <time datetime={updatedAt.toISOString()}>{formatDate(updatedAt)}</time>
+          </span>
         )
       }
-      · {minutos} min de lectura
+      <span>{minutes} min de lectura</span>
     </p>
   </div>
 </div>
@@ -50,37 +35,32 @@ const iniciales = autor.data.nombre
 <style>
   .byline {
     display: flex;
-    gap: var(--sp-3);
     align-items: center;
+    gap: var(--sp-3);
     font-size: var(--fs-sm);
   }
+  .byline__photo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
   .byline a {
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
   }
   .byline a:hover {
     text-decoration: underline;
   }
-  .byline__rol,
-  .byline__dates {
+  .byline__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--sp-2);
+    font-size: var(--fs-xs);
     color: var(--c-muted);
   }
-  .byline__dates {
-    font-size: var(--fs-xs);
-  }
-  .byline__avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    flex: none;
-    object-fit: cover;
-  }
-  .byline__avatar--initials {
-    display: grid;
-    place-items: center;
-    background: var(--c-sage-tint);
-    color: var(--c-sage-strong);
-    font-family: var(--f-serif);
-    font-weight: 600;
+  .byline__meta > * + *::before {
+    content: '·';
+    margin-right: var(--sp-2);
   }
 </style>

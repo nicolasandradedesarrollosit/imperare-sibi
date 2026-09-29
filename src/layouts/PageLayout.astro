@@ -6,19 +6,26 @@ import { breadcrumbLd } from '../lib/seo';
 interface Props {
   title: string;
   description: string;
-  kicker?: string;
+  eyebrow?: string;
   noindex?: boolean;
+  ads?: boolean;
 }
-const { title, description, kicker, noindex } = Astro.props;
+const { title, description, eyebrow, noindex, ads = false } = Astro.props;
 const crumbs = [
-  { name: 'Inicio', href: '/' },
+  { name: 'Portada', href: '/' },
   { name: title, href: Astro.url.pathname },
 ];
 ---
 
-<BaseLayout seo={{ title, description, noindex }} jsonLd={[breadcrumbLd(crumbs)]}>
-  <PageHeader kicker={kicker} title={title} description={description} crumbs={crumbs} />
-  <div class="container">
-    <div class="prose"><slot /></div>
+<BaseLayout seo={{ title, description, noindex }} jsonLd={[breadcrumbLd(crumbs)]} ads={ads}>
+  <PageHeader eyebrow={eyebrow} title={title} description={description} />
+  <div class="wrap">
+    <div class="prose page-body"><slot /></div>
   </div>
 </BaseLayout>
+
+<style>
+  .page-body {
+    max-width: var(--w-read);
+  }
+</style>

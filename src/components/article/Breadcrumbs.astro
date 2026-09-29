@@ -3,14 +3,16 @@ interface Props {
   items: { name: string; href: string }[];
 }
 const { items } = Astro.props;
+// The current page is already the <h1>; only ancestors are shown as links.
+const trail = items.slice(0, -1);
 ---
 
 <nav aria-label="Ruta de navegación" class="crumbs">
   <ol role="list">
     {
-      items.map((it, i) => (
+      trail.map((it) => (
         <li>
-          {i < items.length - 1 ? <a href={it.href}>{it.name}</a> : <span aria-current="page">{it.name}</span>}
+          <a href={it.href}>{it.name}</a>
         </li>
       ))
     }
@@ -22,32 +24,20 @@ const { items } = Astro.props;
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-2);
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
+    font-size: var(--fs-sm);
+    font-weight: 600;
   }
   .crumbs li + li::before {
-    content: '/';
+    content: '›';
     margin-right: var(--sp-2);
-    color: var(--c-line-strong);
+    color: var(--c-muted);
+    font-weight: 400;
   }
   .crumbs a {
+    color: var(--c-section, var(--c-accent));
     text-decoration: none;
-    color: var(--c-sage-strong);
-    font-weight: 600;
   }
   .crumbs a:hover {
     text-decoration: underline;
-  }
-  .crumbs li {
-    min-width: 0;
-  }
-  .crumbs li:last-child {
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .crumbs ol {
-    flex-wrap: nowrap;
   }
 </style>
