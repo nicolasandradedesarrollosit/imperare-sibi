@@ -1,0 +1,84 @@
+/* Design tokens — Imperare Sibi
+   Paleta editorial cálida con acento salvia. Modo oscuro por preferencia del sistema. */
+:root {
+  color-scheme: light;
+
+  /* Color */
+  --c-paper: #faf7f2;
+  --c-surface: #ffffff;
+  --c-surface-2: #f2ede4;
+  --c-ink: #1f2421;
+  --c-ink-soft: #3d4540;
+  --c-muted: #626a65;
+  --c-line: #e3dcd0;
+  --c-line-strong: #cfc6b7;
+  --c-sage: #5b7f6b;
+  --c-sage-strong: #3f5e4d;
+  --c-sage-tint: #e5ede7;
+  --c-terra: #a8593a;
+  --c-terra-tint: #f5e6dd;
+  --c-crisis-bg: #1f2421;
+  --c-crisis-ink: #f4f1ea;
+  --c-focus: #3f5e4d;
+  --c-logo-s: #9cc0aa;
+
+  /* Tipografía */
+  --f-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+  --f-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --fs-xl: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  --fs-2xl: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --fs-3xl: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.3;
+  --lh-body: 1.65;
+
+  /* Espaciado */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+
+  /* Layout */
+  --w-max: 76rem;
+  --w-prose: 42rem;
+  --gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgb(31 36 33 / 0.06), 0 4px 16px rgb(31 36 33 / 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --c-paper: #131614;
+    --c-surface: #1a1e1b;
+    --c-surface-2: #212622;
+    --c-ink: #ece8e1;
+    --c-ink-soft: #cdc8bf;
+    --c-muted: #a09a90;
+    --c-line: #2d332f;
+    --c-line-strong: #3d4540;
+    --c-sage: #8fb39e;
+    --c-sage-strong: #a9c7b5;
+    --c-sage-tint: #1f2b24;
+    --c-terra: #e0957a;
+    --c-terra-tint: #2e211b;
+    --c-crisis-bg: #2a3a31;
+    --c-crisis-ink: #f4f1ea;
+    --c-focus: #a9c7b5;
+    --c-logo-s: #3f5e4d;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  }
+}
