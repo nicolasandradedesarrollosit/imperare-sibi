@@ -22,7 +22,7 @@ const { lead, secondary } = Astro.props;
     secondary.length > 0 && (
       <div class="media-wide compact-mobile stacked grid content-start lg:border-l lg:border-rule lg:pl-(--col-gap) [&>*+*]:mt-5 [&>*+*]:pt-5">
         {secondary.map((a) => (
-          <ArticleCard article={a} variant="stack" sizes="(max-width: 40rem) 6.5rem, (max-width: 64rem) 50vw, 22rem" />
+          <ArticleCard article={a} variant="stack" as="h2" sizes="(max-width: 40rem) 6.5rem, (max-width: 64rem) 50vw, 22rem" />
         ))}
       </div>
     )

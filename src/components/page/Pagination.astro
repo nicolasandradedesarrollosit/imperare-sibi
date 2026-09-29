@@ -13,7 +13,7 @@ const { prev, next, current, last } = Astro.props;
     <nav class="mt-14 grid grid-cols-[1fr_auto_1fr] items-center border-t border-rule pt-5 text-sm" aria-label="Paginación">
       {prev ? (
         <a class="font-bold link" href={prev} rel="prev">
-          ← Más recientes
+          <span aria-hidden="true">←</span> Más recientes
         </a>
       ) : (
         <span />
@@ -23,7 +23,7 @@ const { prev, next, current, last } = Astro.props;
       </span>
       {next ? (
         <a class="text-right font-bold link" href={next} rel="next">
-          Anteriores →
+          Anteriores <span aria-hidden="true">→</span>
         </a>
       ) : (
         <span />

@@ -12,13 +12,13 @@ const mode = resolveAdsMode(import.meta.env.DEV);
 
 {
   mode !== 'off' && (
-    <aside class:list={['ad', `ad--${placement}`, className]} aria-label={AD_LABEL}>
+    <div class:list={['ad', `ad--${placement}`, className]}>
       <span class="ad__label">{AD_LABEL}</span>
       {mode === 'live' ? (
         <ins class="adsbygoogle" {...adUnitAttributes(placement)} />
       ) : (
         <div class="ad__placeholder">Anuncio · {placement}</div>
       )}
-    </aside>
+    </div>
   )
 }

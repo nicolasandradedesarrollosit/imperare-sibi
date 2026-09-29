@@ -43,8 +43,9 @@ function adNode(mode: AdsMode): HastNode {
 
   return {
     type: 'element',
-    tagName: 'aside',
-    properties: { className: ['ad', 'ad--in-article'], ariaLabel: AD_LABEL },
+    // A plain container, not a landmark: several ads per page would repeat the same landmark.
+    tagName: 'div',
+    properties: { className: ['ad', 'ad--in-article'] },
     children: [{ type: 'element', tagName: 'span', properties: { className: ['ad__label'] }, children: [text(AD_LABEL)] }, unit],
   };
 }

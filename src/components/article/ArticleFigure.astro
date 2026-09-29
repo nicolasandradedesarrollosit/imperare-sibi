@@ -2,7 +2,10 @@
 import { Image } from 'astro:assets';
 import type { Article } from '../../lib/content';
 
-/** Lead photo of an article (LCP element): eager, high priority, with caption and credit. */
+/**
+ * Lead photo of an article (LCP element): eager, high priority. The description lives
+ * in `alt`; the caption only carries the credit, so screen readers don't hear it twice.
+ */
 interface Props {
   article: Article;
 }
@@ -21,11 +24,8 @@ const { data } = Astro.props.article;
       fit="cover"
       loading="eager"
       fetchpriority="high"
-      class="aspect-video w-full rounded-sm bg-paper-alt object-cover"
+      class="aspect-video w-full bg-paper-alt object-cover"
     />
-    <figcaption class="meta mt-2 justify-center text-center">
-      <span>{data.imageAlt}</span>
-      {data.imageCredit && <span>{data.imageCredit}</span>}
-    </figcaption>
+    {data.imageCredit && <figcaption class="mt-2 text-right text-xs text-muted">{data.imageCredit}</figcaption>}
   </div>
 </figure>
