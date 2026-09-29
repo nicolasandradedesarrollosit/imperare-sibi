@@ -231,22 +231,24 @@
     @apply font-bold text-ink;
   }
 
-  /* featured: big centered story */
-  .card--featured {
-    @apply gap-5 text-center;
+  /* lead: main front-page story (photo on top, large headline, standfirst) */
+  .card--lead {
+    @apply gap-4;
   }
-  .card--featured .card__media img {
+  .card--lead .card__media img {
     aspect-ratio: 16 / 9;
   }
-  .card--featured .card__title {
-    @apply mx-auto max-w-3xl text-display tracking-tight;
+  .card--lead .card__title {
+    @apply text-display tracking-tight;
     line-height: 1.08;
   }
-  .card--featured .card__dek {
-    @apply mx-auto max-w-2xl text-lg;
+  .card--lead .card__dek {
+    @apply max-w-2xl text-lg;
   }
-  .card--featured .meta {
-    @apply justify-center;
+
+  /* Modifier for a container: its cards use 16:9 photos instead of 3:2 (shorter) */
+  .media-wide .card__media img {
+    aspect-ratio: 16 / 9;
   }
 
   /* row: text left, thumbnail right */
@@ -337,6 +339,13 @@
     }
     .compact-mobile .card__dek {
       display: none;
+    }
+    /* Narrow text column: the section name goes on its own line (as in .kicker--block) */
+    .compact-mobile .kicker {
+      @apply mb-1 block font-sans text-xs font-bold tracking-wide uppercase;
+    }
+    .compact-mobile .kicker::after {
+      content: none;
     }
   }
 

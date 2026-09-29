@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/article/ArticleCard.astro';
+import FrontPage from '../components/home/FrontPage.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
 import EssentialGuides from '../components/home/EssentialGuides.astro';
 import CategoryGrid from '../components/home/CategoryGrid.astro';
@@ -11,7 +12,11 @@ import { archiveUrl, getArticles, take } from '../lib/content';
 
 const articles = await getArticles();
 const used = new Set<string>();
-const [featured] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
+// Lead: the newest `featured` article (or simply the newest). Secondary: other
+// featured pieces first, then the latest ones.
+const [lead] = take(articles, used, 1, (a) => a.data.featured).concat(take(articles, used, 1));
+const featured = take(articles, used, 2, (a) => a.data.featured);
+const secondary = [...featured, ...take(articles, used, 2 - featured.length)];
 const latest = take(articles, used, 6);
 const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
 ---
@@ -19,19 +24,11 @@ const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
 <BaseLayout seo={{ title: SITE.name, description: SITE.description }}>
   <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
 
-  {
-    featured && (
-      <section class="wrap pt-10" aria-label="Nota destacada">
-        <ArticleCard article={featured} variant="featured" as="h2" priority />
-      </section>
-    )
-  }
-
-  <div class="wrap"><AdSlot placement="horizontal" class="mt-14" /></div>
+  {lead && <FrontPage lead={lead} secondary={secondary} />}
 
   {
     latest.length > 0 && (
-      <section class="wrap py-14" aria-labelledby="latest-title">
+      <section class="wrap pt-14" aria-labelledby="latest-title">
         <SectionHeading id="latest-title" title="Últimas notas" more={{ href: archiveUrl, label: 'Ver todas las notas' }} />
         <div class="ruled">
           {latest.map((a) => (
@@ -41,6 +38,8 @@ const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
       </section>
     )
   }
+
+  <div class="wrap"><AdSlot placement="horizontal" class="my-14" /></div>
 
   <EssentialGuides guides={guides} />
 
