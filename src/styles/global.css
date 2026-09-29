@@ -364,6 +364,12 @@ input {
 @media (max-width: 40rem) {
   .compact-mobile {
     row-gap: 0;
+    margin-inline: 0;
+  }
+  .compact-mobile > * {
+    margin-left: 0;
+    padding-inline: 0;
+    border-left: 0;
   }
   .compact-mobile > * + * {
     margin-top: var(--sp-4);
@@ -377,6 +383,7 @@ input {
   .compact-mobile .card--stack .card__media {
     grid-column: 2;
     grid-row: 1;
+    align-self: start;
   }
   .compact-mobile .card--stack .card__body {
     grid-column: 1;
