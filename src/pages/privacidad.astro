@@ -1,0 +1,52 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<PageLayout
+  eyebrow="Legales"
+  title="Política de privacidad y cookies"
+  description="Qué datos recopilamos, cómo usamos las cookies y cómo funciona la publicidad en este sitio."
+>
+  <p><em>Última actualización: septiembre de 2026.</em></p>
+  <h2 id="responsable">Responsable</h2>
+  <p>
+    {SITE.name} ({SITE.url}) es responsable del tratamiento de los datos personales recopilados en este sitio, conforme a
+    la Ley 25.326 de Protección de los Datos Personales. Contacto: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+  </p>
+  <h2 id="datos">Datos que recopilamos</h2>
+  <ul>
+    <li>
+      <strong>Newsletter:</strong> tu correo electrónico, solo si te suscribís. Lo usamos exclusivamente para enviarte el
+      boletín y podés darte de baja en cualquier momento.
+    </li>
+    <li>
+      <strong>Datos de navegación:</strong> información técnica (tipo de dispositivo, navegador, páginas visitadas)
+      recopilada de forma agregada para medir audiencia y mejorar el sitio.
+    </li>
+  </ul>
+  <p>No pedimos ni almacenamos información sobre tu salud.</p>
+  <h2 id="cookies">Cookies</h2>
+  <p>
+    Una cookie es un pequeño archivo que el sitio guarda en tu navegador. Usamos cookies propias necesarias para el
+    funcionamiento del sitio y cookies de terceros con fines de medición y publicidad.
+  </p>
+  <h2 id="publicidad">Publicidad de terceros</h2>
+  <p>
+    Este sitio muestra anuncios de Google AdSense. Google y sus socios pueden usar cookies para mostrar anuncios
+    basados en tus visitas anteriores a este y otros sitios. Podés desactivar la publicidad personalizada en la <a
+      href="https://adssettings.google.com"
+      rel="noopener">configuración de anuncios de Google</a
+    >. Más información sobre cómo Google usa los datos en <a
+      href="https://policies.google.com/technologies/partner-sites"
+      rel="noopener">policies.google.com</a
+    >.
+  </p>
+  <h2 id="derechos">Tus derechos</h2>
+  <p>
+    Podés solicitar el acceso, la rectificación o la supresión de tus datos escribiendo a <a href={`mailto:${SITE.email}`}
+      >{SITE.email}</a
+    >. La Agencia de Acceso a la Información Pública, en su carácter de órgano de control de la Ley 25.326, atiende las
+    denuncias y reclamos relacionados con el incumplimiento de las normas de protección de datos personales.
+  </p>
+</PageLayout>

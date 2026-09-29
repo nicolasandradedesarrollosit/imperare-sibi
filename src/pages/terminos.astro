@@ -1,0 +1,31 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<PageLayout
+  eyebrow="Legales"
+  title="Términos de uso"
+  description="Condiciones de uso del sitio y alcance de la información publicada."
+>
+  <p><em>Última actualización: septiembre de 2026.</em></p>
+  <h2>Alcance de la información</h2>
+  <p>
+    El contenido de {SITE.name} es de carácter informativo y de divulgación. No constituye diagnóstico, tratamiento ni
+    consejo médico o psicológico, y no reemplaza la consulta con un profesional de la salud.
+  </p>
+  <h2>Propiedad intelectual</h2>
+  <p>
+    Los textos, la marca y los elementos gráficos de este sitio pertenecen a {SITE.name} o a sus respectivos autores. Las
+    fotografías se usan bajo las licencias indicadas en cada caso. Podés citar fragmentos con enlace a la fuente.
+  </p>
+  <h2>Enlaces externos</h2>
+  <p>Este sitio puede incluir enlaces a sitios de terceros sobre cuyos contenidos no tenemos control.</p>
+  <h2>Publicidad</h2>
+  <p>
+    Los anuncios son provistos por terceros y están identificados como tales. Su presencia no implica recomendación de
+    productos o servicios por parte de {SITE.name}.
+  </p>
+  <h2>Contacto</h2>
+  <p>Para consultas sobre estos términos: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+</PageLayout>
