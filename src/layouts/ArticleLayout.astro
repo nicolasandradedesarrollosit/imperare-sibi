@@ -10,7 +10,7 @@ import TagLinks from '../components/article/TagLinks.astro';
 import HelpBox from '../components/article/HelpBox.astro';
 import ArticleCard from '../components/article/ArticleCard.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
-import { getProvince, getSection, TYPE_LABEL } from '../config/site';
+import { getProvince, getSection, SITE, TYPE_LABEL } from '../config/site';
 import {
   articleUrl,
   authorUrl,
@@ -141,6 +141,7 @@ const crumbs = [
 
       <footer class="story__footer">
         <TagLinks tags={data.tags} />
+        <p class="story__disclaimer">{SITE.disclaimer}</p>
         {!data.sensitive && <HelpBox />}
       </footer>
     </div>
@@ -261,6 +262,13 @@ const crumbs = [
   }
   .story__main > :global(.help) {
     margin-bottom: var(--sp-7);
+  }
+  .story__disclaimer {
+    padding: var(--sp-4) 0;
+    border-block: 1px solid var(--c-rule);
+    font-size: var(--fs-sm);
+    font-style: italic;
+    color: var(--c-muted);
   }
   .story__footer {
     display: grid;

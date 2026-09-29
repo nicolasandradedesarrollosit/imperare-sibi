@@ -24,6 +24,9 @@ export const SITE = {
     linkedin: 'https://www.linkedin.com/company/imperaresibi',
   },
   twitterHandle: '@imperaresibi',
+  /** Health disclaimer shown in the footer of every page and at the end of every article. */
+  disclaimer:
+    'Este sitio contiene experiencias personales y contenido de divulgación general. No constituye asesoramiento profesional, diagnóstico ni tratamiento psicológico. Si estás pasando por un momento difícil o una crisis, buscá ayuda de un profesional matriculado.',
   /** Newsletter provider endpoint (Buttondown, Brevo…). Empty = form disabled. */
   newsletterAction: '',
   /** Articles per page on section and topic listings. */
