@@ -5,7 +5,6 @@ export const GET: APIRoute = ({ site }) => {
   const news = new URL('news-sitemap.xml', site).href;
   const body = `User-agent: *
 Allow: /
-Disallow: /_astro/
 
 Sitemap: ${sitemap}
 Sitemap: ${news}
