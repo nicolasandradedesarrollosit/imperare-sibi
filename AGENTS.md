@@ -21,9 +21,12 @@ Consult these guides before working on related tasks:
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
 
-## Proyecto
+## Project conventions
 
-- Contenido en `src/content/` (Content Collections, schemas en `src/content.config.ts`); URLs de notas `/{seccion}/{id}/`.
-- Todo lo configurable (secciones, provincias, líneas de ayuda, marca) vive en `src/config/site.ts`; no hardcodear en componentes.
-- CSS propio con tokens en `src/styles/tokens.css` (sin Tailwind). Cero JS por defecto.
-- Ver `README.md` y `docs/ESTRATEGIA.md`.
+- Code, comments and docs in English; reader-facing copy and URLs in Spanish (es-AR).
+- Content lives in `src/content/` (schemas in `src/content.config.ts`); article URLs are `/{section}/{id}/`.
+- Everything configurable (sections, provinces, helplines, AdSense, brand) lives in `src/config/site.ts`; never hardcode it in components.
+- Plain CSS with tokens in `src/styles/tokens.css` (no Tailwind), light theme only. No client JS unless strictly needed.
+- Markdown uses the `unified` processor because the in-article ads rehype plugin needs it.
+- Keep ad containers height-reserved (`AdSlot.astro`, `.ad` in `global.css`) and never render ads on `sensitive` articles or crisis/legal pages.
+- See `README.md` and `docs/STRATEGY.md`.
