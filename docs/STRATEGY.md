@@ -1,15 +1,17 @@
 # Imperare Sibi: business and editorial strategy
 
+A single, national mental-health blog.
+
 > *Imperare sibi maximum imperium est*: "To rule oneself is the greatest rule" (Seneca).
 
 ## 1. Vision
 
-Become Argentina's reference outlet for mental health: rigorous, humane and accessible information, reviewed by licensed professionals, with a presence in every province.
+Become Argentina's reference mental-health blog: rigorous, humane and accessible writing, reviewed by licensed professionals, for readers anywhere in the country.
 
 ## 2. Problem and opportunity
 
 - Demand for information on anxiety, depression, sleep, grief and relationships keeps growing, but Spanish-language (Rioplatense) supply is fragmented: private-practice blogs, scattered pieces in general newspapers, and content translated from the US that ignores the Argentine health system (obras sociales, prepagas, public hospitals, National Mental Health Law 26.657).
-- There is no digital-native, specialised **federal** outlet: coverage is concentrated in Greater Buenos Aires.
+- There is no specialised, digital-native publication that speaks to the **whole country**: most coverage is written from and for Greater Buenos Aires.
 - Google treats health as **YMYL** (*Your Money or Your Life*) and rewards sites that demonstrate **E-E-A-T** (experience, expertise, authoritativeness, trust). An outlet with named authors and systematic professional review has a structural advantage over generic blogs.
 
 ## 3. Positioning
@@ -18,10 +20,10 @@ Become Argentina's reference outlet for mental health: rigorous, humane and acce
 | --- | --- |
 | Tone | Calm, close, no sensationalism or needless jargon |
 | Rigour | Every health article has a named author and **review by a licensed professional** (psychology/psychiatry), with a visible review date |
-| Local focus | Argentine health system, resources per province, Rioplatense voice |
+| National focus | Argentine health system, resources available across the country, Rioplatense voice |
 | Ethics | WHO guidelines for suicide coverage, ads always labelled and excluded from sensitive content, public corrections policy |
 
-**Moat**: a network of professional reviewers + federal coverage + an evergreen archive that compounds SEO authority.
+**Moat**: a network of professional reviewers + national scope + an evergreen archive that compounds SEO authority.
 
 ## 4. Audiences
 
@@ -38,8 +40,8 @@ Become Argentina's reference outlet for mental health: rigorous, humane and acce
 | Evergreen guides ("What is anxiety", "Seeing a psychologist through your obra social") | `guide` | Long-term organic traffic and the highest ad RPM; updated, not rewritten |
 | News (public policy, studies, health system) | `news` | Google News / Discover, publishing cadence |
 | Interviews with specialists | `interview` | Authority, backlinks, professional network |
-| Opinion and personal stories | `opinion` | Community, shareability |
-| Help resources per province | fixed page | Public service, trust, institutional backlinks (never monetised) |
+| Personal experiences and opinion | `opinion` | Community, shareability; the blog voice |
+| Help resources (national) | fixed page | Public service, trust, institutional backlinks (never monetised) |
 
 Launch sections: **Ansiedad**, **Depresión**, **Vínculos**, **Infancias y adolescencias**, **Políticas públicas**, **Bienestar**.
 
@@ -47,7 +49,8 @@ Launch sections: **Ansiedad**, **Depresión**, **Vínculos**, **Infancias y adol
 
 - **One stable URL per article**: `/{section}/{slug}/`, no date, so a guide can be updated for years without losing rankings.
 - Static HTML per article, CSS inlined, no JavaScript by default: Core Web Vitals in the green (Lighthouse 99–100 on mobile at launch).
-- Structured data: `NewsArticle`/`Article` with `author`, `reviewedBy` and `lastReviewed`; `BreadcrumbList`; `CollectionPage` + `ItemList` on listings; `ProfilePage` for authors; `NewsMediaOrganization` with editorial policies.
+- Structured data: `BlogPosting`/`NewsArticle` with `author`, `reviewedBy` and `lastReviewed`; `BreadcrumbList`; `CollectionPage` + `ItemList` on listings; `ProfilePage` for authors; `Organization` with editorial policies.
+- `/llms.txt` and clean, well-structured HTML so AI assistants and AI search can cite the site.
 - Mandatory photo (≥1200px) per article: required for Google Discover and large image previews; 1200×630 social crop generated automatically.
 - Sitemap with `lastmod`, **Google News sitemap** (last 48h) and RSS. Thin pages are `noindex` and left out of the sitemap.
 - Topic clusters: pillar guides link to satellite pieces and back (tags, section blocks, "Seguí leyendo").
@@ -65,9 +68,9 @@ Launch sections: **Ansiedad**, **Depresión**, **Vínculos**, **Infancias y adol
 - Growth lever: evergreen guides attract high-intent health queries with strong CPMs; the editorial calendar should prioritise them.
 
 **Stage 2 (months 6–12): directory**
-- Directory of professionals and centres by province and speciality.
+- National directory of professionals and centres by speciality (online and in-person).
 - Freemium: free basic listing, paid featured listing (monthly subscription).
-- Fits the federal expansion and adds recurring revenue less dependent on traffic.
+- Recurring revenue less dependent on traffic.
 
 **Stage 3 (year 2): diversification**
 - Newsletter sponsorships.
@@ -76,13 +79,11 @@ Launch sections: **Ansiedad**, **Depresión**, **Vínculos**, **Infancias y adol
 - Online courses and workshops (psychoeducation, mindfulness, parenting).
 - Evaluate a premium ad network (Ezoic, Mediavine-type) once traffic qualifies.
 
-## 8. Expanding into a national network
+## 8. One editorial team, national reach
 
-- **One domain, provincial editions** (`/edicion/cordoba/`, `/edicion/mendoza/`…). This concentrates SEO authority; subdomains would split it.
-- Each article can carry a `province`; the edition page aggregates local stories, local helplines and (later) the local directory. Editions stay `noindex` until they have their own stories.
-- Per edition: a local editor/correspondent plus reviewing professionals from the area.
-- Suggested rollout: AMBA → Córdoba → Santa Fe (Rosario) → Mendoza → Tucumán → rest of NOA/NEA/Patagonia.
-- Technically, editions, sections and helplines live in configuration (`src/config/site.ts`) and content collections: adding a province requires no component changes.
+- A single blog with one editorial line and one domain: all authority concentrates on the same URLs.
+- Content is written for readers anywhere in Argentina: national helplines, rights that apply across the country (Law 26.657), and resources available in every province (public hospitals, primary-care centres, obras sociales and prepagas).
+- Voices from different regions join as authors and professional reviewers, not as separate editions.
 
 ## 9. Ethics, legal and safety
 
@@ -101,11 +102,10 @@ Launch sections: **Ansiedad**, **Depresión**, **Vínculos**, **Infancias y adol
 | Quality | % of health articles professionally reviewed (target 100%), average review age |
 | Technical | Core Web Vitals in the green, indexed vs published articles |
 | Community | Newsletter subscribers, open rate |
-| Federal | Provinces with an active edition, local stories per week |
 
 ## 11. Technical roadmap
 
-1. ✅ Astro base: front page, sections, articles, authors, topics, editions, technical SEO, AdSense-ready slots.
+1. ✅ Astro + Tailwind base: front page, categories, articles, archive, topics, authors, technical SEO, `llms.txt`, AdSense-ready slots, content guide for LLM-assisted writing.
 2. Newsletter provider (Buttondown / Brevo) + form.
 3. Static search (Pagefind).
 4. Editorial panel (Keystatic or a headless CMS) once there are non-technical writers.

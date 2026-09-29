@@ -1,10 +1,11 @@
 # Imperare Sibi
 
-Digital news outlet about mental health in Argentina. Static site built with [Astro](https://astro.build), optimised for SEO and AdSense, and structured to grow into a national network of provincial editions.
+Mental-health blog for readers across Argentina. Static site built with [Astro](https://astro.build) and Tailwind CSS, optimised for SEO and AdSense.
 
 The reader-facing site is in Spanish (es-AR). Code, comments and documentation are in English.
 
 - Business and editorial strategy: [`docs/STRATEGY.md`](docs/STRATEGY.md)
+- **Writing a new article (humans and LLMs): [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md)** + template `src/content/articles/_template.mdx`
 
 ## Development
 
@@ -20,35 +21,12 @@ Requires Node 22.12+. Fonts are fetched from Fontsource at build time (Astro Fon
 
 ## Publishing an article
 
-1. Add the photo to `src/content/articles/img/` (landscape, **at least 1200px wide**; the build fails otherwise).
-2. Create `src/content/articles/<slug>.mdx`. The file name becomes the URL: `/{section}/{slug}/`.
-3. Fill in the frontmatter. The build fails if a field is missing or invalid:
+Follow [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md). In short:
 
-```yaml
----
-title: 'Headline (max 110 characters)'
-seoTitle: 'Shorter title for Google (optional, max 60)'
-description: 'Standfirst, 70–160 characters. Also the meta description.'
-section: ansiedad # ansiedad | depresion | vinculos | infancias-y-adolescencias | politicas-publicas | bienestar
-type: guide # news | guide | interview | opinion
-tags: ['Ansiedad', 'Tratamiento']
-province: cordoba # optional: also listed on /edicion/cordoba/
-author: lucia-fernandez # id from src/content/authors/
-reviewer: ana-quiroga # health professional who reviewed it (strongly recommended)
-reviewedAt: 2026-09-25
-publishedAt: 2026-09-28T09:00:00-03:00
-updatedAt: 2026-10-10 # optional: published as dateModified
-image: ./img/photo.jpg
-imageAlt: 'Description of the photo (also used as caption)'
-imageCredit: 'Foto: Name / Unsplash'
-featured: true # optional: candidate for the front-page lead
-sensitive: true # optional: suicide/self-harm. Helplines go first, no ads at all
-draft: true # optional: not published in production
----
-```
-
-4. Write the body in Markdown/MDX. Use `##` subheadings; with 3 or more, the "En esta nota" table of contents is generated.
-5. Commit and push to `main`; Vercel deploys. Sitemap, Google News sitemap, RSS, social images and JSON-LD regenerate automatically.
+1. Add a landscape photo (**≥1200px wide**) to `src/content/articles/img/`.
+2. Copy `src/content/articles/_template.mdx` to `src/content/articles/<slug>.mdx` (the file name is the URL: `/{section}/{slug}/`) and fill in the frontmatter; the build fails on missing or invalid fields.
+3. Write the body in Markdown/MDX with `##` subheadings (3 or more generate the "En esta nota" index).
+4. `npm run check && npm run build`, then commit and push to `main`; Vercel deploys. Sitemap, Google News sitemap, RSS, `llms.txt`, social images and JSON-LD regenerate automatically.
 
 Authors are one JSON file each in `src/content/authors/` (name, role, bio, credentials, social links). Author pages matter for E-E-A-T.
 
@@ -66,39 +44,43 @@ Placements (each container reserves its height up front to keep CLS at ~0):
 
 | Page | Units |
 | --- | --- |
-| Front page | 1 horizontal after the lead, 1 between section blocks |
-| Section | 1 horizontal after the lead story |
-| Article | in-article units (after the 2nd paragraph, then every ~400 words, max 3; inserted by `src/lib/rehype-in-article-ads.ts`), 1 in the desktop rail, 1 at the end |
-| Never | `sensitive` articles, `/ayuda/`, legal pages, author pages, 404 |
+| Front page | 1 horizontal after the featured story |
+| Category, archive | 1 horizontal after the lead story |
+| Article | in-article units (after the 2nd paragraph, then every ~400 words, max 3; inserted by `src/lib/rehype-in-article-ads.ts`), 1 in the right-margin rail on wide screens (≥88rem), 1 at the end |
+| Never | `sensitive` articles, `/ayuda/`, legal and institutional pages, author pages, 404 |
 
 ## Architecture
 
 ```
 src/
-  config/site.ts          # brand, sections, provinces/editions, helplines, AdSense: single source of truth
+  config/site.ts          # brand, categories, helplines, disclaimer, AdSense: single source of truth
   content.config.ts       # collection schemas (frontmatter validation)
-  content/                # articles (.mdx + img/) and authors (.json)
+  content/                # articles (.mdx + img/, _template.mdx) and authors (.json)
+  styles/index.css        # Tailwind v4: @theme tokens + shared component classes
   layouts/                # BaseLayout (SEO, masthead, footer, ads script), ArticleLayout, PageLayout
   components/
     seo/                  # meta tags, Open Graph, JSON-LD
-    layout/               # HelplineBar, Header (masthead + section nav), Footer, Logo
-    article/              # ArticleCard (lead | stack | row | wide | text), byline, reviewer, tags, help box
-    home/                 # FrontPage, LatestRail, EssentialGuides, SectionBlock, SectionColumn, NewsletterStrip, EditionsIndex
+    layout/               # Header (centered masthead, live date, category nav), Footer, Logo
+    help/                 # HelplineBar, HelpBox, PhoneIcon
+    article/              # ArticleCard (featured | stack | row | wide | text), byline, reviewer, tags
+    home/                 # SectionHeading, EssentialGuides, CategoryGrid, NewsletterStrip
+    page/                 # PageHeader, ArticleListing, Pagination
     ads/AdSlot.astro      # reserved-height ad containers
   lib/                    # content queries, JSON-LD builders, image crops, dates, rehype ads plugin
   pages/                  # routes; folder names are URLs, so they stay in Spanish
-    [seccion]/[...page].astro   # paginated section front
+    [seccion]/[...page].astro   # paginated category page
     [seccion]/[slug].astro      # one static HTML file per article
-    autores/ temas/ edicion/    # author, topic and provincial edition pages
-    rss.xml.ts  news-sitemap.xml.ts  robots.txt.ts  ads.txt.ts
+    notas/ temas/ autores/      # archive, topic index + topic pages, author pages
+    ayuda.astro                 # crisis resources (never monetised)
+    rss.xml.ts  news-sitemap.xml.ts  robots.txt.ts  ads.txt.ts  llms.txt.ts
 public/brand/             # logo and mark (regenerate PNGs with scripts/generate-brand-assets.mjs)
 ```
 
-**Design**: newspaper grid with hairline column rules (`.ruled`), per-section colour on kickers and rules, Newsreader for headlines and body, Libre Franklin for UI. Light theme only. Home blocks adapt to how many stories each section has, so there are never half-empty blocks.
+**Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. Newsreader for headlines and body, Libre Franklin for UI; light theme only. Article paragraphs are indented book-style.
 
-**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`NewsArticle`/`Article` with `author`, `reviewedBy`, `lastReviewed`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`, author pages `ProfilePage`. Thin pages (topics with fewer than 3 articles, editions without local stories) are `noindex` and excluded from the sitemap, which includes `lastmod`. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and there is no JavaScript besides a tiny menu script (and AdSense once enabled).
+**Live date**: the masthead date is filled in by a tiny inline script in the browser, because a static build would otherwise freeze it on deploy day.
 
-**Adding a province**: set `active: true` in `PROVINCES` (`src/config/site.ts`) and tag articles with `province: <slug>`.
+**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`BlogPosting` or `NewsArticle` with `author`, `reviewedBy`, `lastReviewed`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`, author pages `ProfilePage`. Topic pages with fewer than 3 articles are `noindex` and excluded from the sitemap, which includes `lastmod`. `/llms.txt` gives AI assistants a Markdown map of the site. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and the only JavaScript is the date script (plus AdSense once enabled).
 
 ## Before launch
 
