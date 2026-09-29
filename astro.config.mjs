@@ -9,6 +9,7 @@ import { existsSync, readFileSync } from 'node:fs';
 /**
  * Excluye del sitemap las páginas marcadas como noindex (tags con poco contenido,
  * ediciones sin notas locales, 404). Se evalúa sobre el HTML ya generado.
+ * @param {string} page
  */
 function isIndexable(page) {
   const file = `./dist${new URL(page).pathname}index.html`;
