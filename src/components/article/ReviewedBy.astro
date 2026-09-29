@@ -18,8 +18,8 @@ const { revisor, fecha } = Astro.props;
   </svg>
   <p>
     Contenido revisado por <a href={autorUrl(revisor.id)}>{revisor.data.nombre}</a>
-    {revisor.data.credenciales && <span>({revisor.data.credenciales})</span>}
-    {fecha && <> el <time datetime={fecha.toISOString()}>{formatFecha(fecha)}</time></>}.
+    {revisor.data.credenciales && <span> ({revisor.data.credenciales})</span>}
+    {fecha && <> el{' '}<time datetime={fecha.toISOString()}>{formatFecha(fecha)}</time></>}.
   </p>
 </aside>
 

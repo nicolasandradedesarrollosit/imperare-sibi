@@ -38,10 +38,16 @@ const { items } = Astro.props;
   .crumbs a:hover {
     text-decoration: underline;
   }
-  .crumbs span {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+  .crumbs li {
+    min-width: 0;
+  }
+  .crumbs li:last-child {
+    flex: 1;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .crumbs ol {
+    flex-wrap: nowrap;
   }
 </style>

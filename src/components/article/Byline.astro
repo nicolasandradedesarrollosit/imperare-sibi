@@ -30,15 +30,15 @@ const iniciales = autor.data.nombre
   }
   <div>
     <p>
-      Por <a href={autorUrl(autor.id)} rel="author">{autor.data.nombre}</a>
+      Por <a href={autorUrl(autor.id)} rel="author">{autor.data.nombre}</a>{' '}
       <span class="byline__rol">· {autor.data.rol}</span>
     </p>
     <p class="byline__dates">
-      <time datetime={publicado.toISOString()}>{formatFecha(publicado)}</time>
+      <time datetime={publicado.toISOString()}>{formatFecha(publicado)}</time>{' '}
       {
         actualizado && (
           <>
-            · Actualizado el <time datetime={actualizado.toISOString()}>{formatFecha(actualizado)}</time>
+            {' '}· Actualizado el{' '}<time datetime={actualizado.toISOString()}>{formatFecha(actualizado)}</time>
           </>
         )
       }

@@ -134,8 +134,10 @@ const crumbs = [
   .nota__header {
     display: grid;
     gap: var(--sp-4);
-    max-width: calc(var(--w-prose) + 2 * var(--gutter) + 8rem);
     padding-block: var(--sp-6) var(--sp-5);
+  }
+  .nota__header > :global(*) {
+    max-width: 50rem;
   }
   .nota__kicker {
     display: flex;
