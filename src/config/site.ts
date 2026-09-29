@@ -1,6 +1,7 @@
 /**
- * Configuración central del sitio. Todo lo que cambia entre ediciones, secciones o
- * marca vive acá: los componentes y páginas leen de este archivo, nunca hardcodean.
+ * Central site configuration. Everything that varies between editions, sections or
+ * branding lives here: components and pages read from this file and never hardcode it.
+ * User-facing strings are Spanish (es-AR); identifiers are English.
  */
 
 export const SITE = {
@@ -10,7 +11,8 @@ export const SITE = {
     'Medio especializado en salud mental en Argentina: guías, noticias y entrevistas revisadas por profesionales. Ansiedad, depresión, vínculos, infancias y políticas públicas.',
   url: 'https://imperaresibi.com.ar',
   locale: 'es-AR',
-  lang: 'es',
+  ogLocale: 'es_AR',
+  timeZone: 'America/Argentina/Buenos_Aires',
   defaultOgImage: '/og-default.png',
   logo: '/brand/logo.svg',
   logoPng: '/brand/icon-512.png',
@@ -22,131 +24,164 @@ export const SITE = {
     linkedin: 'https://www.linkedin.com/company/imperaresibi',
   },
   twitterHandle: '@imperaresibi',
-  /** Endpoint del proveedor de newsletter (Buttondown, Brevo…). Vacío = formulario deshabilitado. */
+  /** Newsletter provider endpoint (Buttondown, Brevo…). Empty = form disabled. */
   newsletterAction: '',
-  /** Cantidad de notas por página en portadas de sección. */
+  /** Articles per page on section and topic listings. */
   pageSize: 12,
 } as const;
 
-export const SECCIONES = [
+/**
+ * Google AdSense. Leave `client` empty until the account is approved: no ad code is
+ * emitted in production (dev shows dashed placeholders to review the layout).
+ * Slot ids come from AdSense → Ads → By ad unit.
+ */
+export const ADSENSE = {
+  client: '', // e.g. 'ca-pub-1234567890123456'
+  slots: {
+    inArticle: '',
+    rail: '',
+    horizontal: '',
+  },
+  /** Max in-article units per article, and min words between them. */
+  inArticleMax: 3,
+  inArticleEveryWords: 400,
+} as const;
+
+export const adsEnabled = ADSENSE.client.length > 0;
+
+export const SECTIONS = [
   {
     slug: 'ansiedad',
-    nombre: 'Ansiedad',
-    descripcion:
+    name: 'Ansiedad',
+    color: '#2f5d46',
+    description:
       'Qué es la ansiedad, cómo se manifiesta y qué tratamientos existen. Guías y notas revisadas por profesionales de la salud mental.',
   },
   {
     slug: 'depresion',
-    nombre: 'Depresión',
-    descripcion:
+    name: 'Depresión',
+    color: '#34467a',
+    description:
       'Información confiable sobre depresión: síntomas, diagnóstico, tratamientos y cómo acompañar a alguien que la atraviesa.',
   },
   {
     slug: 'vinculos',
-    nombre: 'Vínculos',
-    descripcion: 'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental.',
+    name: 'Vínculos',
+    color: '#9c3f22',
+    description: 'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental.',
   },
   {
     slug: 'infancias-y-adolescencias',
-    nombre: 'Infancias y adolescencias',
-    descripcion:
+    name: 'Infancias y adolescencias',
+    color: '#7a5200',
+    description:
       'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta.',
   },
   {
     slug: 'politicas-publicas',
-    nombre: 'Políticas públicas',
-    descripcion:
+    name: 'Políticas públicas',
+    color: '#6a2c5a',
+    description:
       'Ley de Salud Mental, obras sociales, prepagas y sistema público: actualidad y análisis sobre el acceso a la salud mental en Argentina.',
   },
   {
     slug: 'bienestar',
-    nombre: 'Bienestar',
-    descripcion: 'Sueño, hábitos, estrés y autocuidado: herramientas basadas en evidencia para el día a día.',
+    name: 'Bienestar',
+    color: '#1c6269',
+    description: 'Sueño, hábitos, estrés y autocuidado: herramientas basadas en evidencia para el día a día.',
   },
 ] as const;
 
-export type SeccionSlug = (typeof SECCIONES)[number]['slug'];
-export const SECCION_SLUGS = SECCIONES.map((s) => s.slug) as [SeccionSlug, ...SeccionSlug[]];
+export type Section = (typeof SECTIONS)[number];
+export type SectionSlug = Section['slug'];
+export const SECTION_SLUGS = SECTIONS.map((s) => s.slug) as [SectionSlug, ...SectionSlug[]];
 
-export function getSeccion(slug: string) {
-  return SECCIONES.find((s) => s.slug === slug);
+export function getSection(slug: string): Section | undefined {
+  return SECTIONS.find((s) => s.slug === slug);
 }
 
 /**
- * Ediciones provinciales. `activa: true` genera la página /edicion/{slug}/.
- * Sumar una provincia a la cadena = activarla acá y cargar contenido con `provincia`.
+ * Provincial editions. `active: true` generates /edicion/{slug}/.
+ * Adding a province to the network = activate it here and tag articles with `province`.
  */
-export const PROVINCIAS = [
-  { slug: 'caba', nombre: 'Ciudad de Buenos Aires', region: 'AMBA', activa: true },
-  { slug: 'buenos-aires', nombre: 'Buenos Aires', region: 'AMBA', activa: true },
-  { slug: 'cordoba', nombre: 'Córdoba', region: 'Centro', activa: true },
-  { slug: 'santa-fe', nombre: 'Santa Fe', region: 'Centro', activa: true },
-  { slug: 'mendoza', nombre: 'Mendoza', region: 'Cuyo', activa: true },
-  { slug: 'entre-rios', nombre: 'Entre Ríos', region: 'Centro', activa: false },
-  { slug: 'la-pampa', nombre: 'La Pampa', region: 'Centro', activa: false },
-  { slug: 'san-juan', nombre: 'San Juan', region: 'Cuyo', activa: false },
-  { slug: 'san-luis', nombre: 'San Luis', region: 'Cuyo', activa: false },
-  { slug: 'tucuman', nombre: 'Tucumán', region: 'NOA', activa: false },
-  { slug: 'salta', nombre: 'Salta', region: 'NOA', activa: false },
-  { slug: 'jujuy', nombre: 'Jujuy', region: 'NOA', activa: false },
-  { slug: 'catamarca', nombre: 'Catamarca', region: 'NOA', activa: false },
-  { slug: 'la-rioja', nombre: 'La Rioja', region: 'NOA', activa: false },
-  { slug: 'santiago-del-estero', nombre: 'Santiago del Estero', region: 'NOA', activa: false },
-  { slug: 'misiones', nombre: 'Misiones', region: 'NEA', activa: false },
-  { slug: 'corrientes', nombre: 'Corrientes', region: 'NEA', activa: false },
-  { slug: 'chaco', nombre: 'Chaco', region: 'NEA', activa: false },
-  { slug: 'formosa', nombre: 'Formosa', region: 'NEA', activa: false },
-  { slug: 'neuquen', nombre: 'Neuquén', region: 'Patagonia', activa: false },
-  { slug: 'rio-negro', nombre: 'Río Negro', region: 'Patagonia', activa: false },
-  { slug: 'chubut', nombre: 'Chubut', region: 'Patagonia', activa: false },
-  { slug: 'santa-cruz', nombre: 'Santa Cruz', region: 'Patagonia', activa: false },
-  { slug: 'tierra-del-fuego', nombre: 'Tierra del Fuego', region: 'Patagonia', activa: false },
+export const PROVINCES = [
+  { slug: 'caba', name: 'Ciudad de Buenos Aires', region: 'AMBA', active: true },
+  { slug: 'buenos-aires', name: 'Buenos Aires', region: 'AMBA', active: true },
+  { slug: 'cordoba', name: 'Córdoba', region: 'Centro', active: true },
+  { slug: 'santa-fe', name: 'Santa Fe', region: 'Centro', active: true },
+  { slug: 'entre-rios', name: 'Entre Ríos', region: 'Centro', active: false },
+  { slug: 'la-pampa', name: 'La Pampa', region: 'Centro', active: false },
+  { slug: 'mendoza', name: 'Mendoza', region: 'Cuyo', active: true },
+  { slug: 'san-juan', name: 'San Juan', region: 'Cuyo', active: false },
+  { slug: 'san-luis', name: 'San Luis', region: 'Cuyo', active: false },
+  { slug: 'tucuman', name: 'Tucumán', region: 'NOA', active: false },
+  { slug: 'salta', name: 'Salta', region: 'NOA', active: false },
+  { slug: 'jujuy', name: 'Jujuy', region: 'NOA', active: false },
+  { slug: 'catamarca', name: 'Catamarca', region: 'NOA', active: false },
+  { slug: 'la-rioja', name: 'La Rioja', region: 'NOA', active: false },
+  { slug: 'santiago-del-estero', name: 'Santiago del Estero', region: 'NOA', active: false },
+  { slug: 'misiones', name: 'Misiones', region: 'NEA', active: false },
+  { slug: 'corrientes', name: 'Corrientes', region: 'NEA', active: false },
+  { slug: 'chaco', name: 'Chaco', region: 'NEA', active: false },
+  { slug: 'formosa', name: 'Formosa', region: 'NEA', active: false },
+  { slug: 'neuquen', name: 'Neuquén', region: 'Patagonia', active: false },
+  { slug: 'rio-negro', name: 'Río Negro', region: 'Patagonia', active: false },
+  { slug: 'chubut', name: 'Chubut', region: 'Patagonia', active: false },
+  { slug: 'santa-cruz', name: 'Santa Cruz', region: 'Patagonia', active: false },
+  { slug: 'tierra-del-fuego', name: 'Tierra del Fuego', region: 'Patagonia', active: false },
 ] as const;
 
-export type ProvinciaSlug = (typeof PROVINCIAS)[number]['slug'];
-export const PROVINCIA_SLUGS = PROVINCIAS.map((p) => p.slug) as [ProvinciaSlug, ...ProvinciaSlug[]];
+export type Province = (typeof PROVINCES)[number];
+export type ProvinceSlug = Province['slug'];
+export const PROVINCE_SLUGS = PROVINCES.map((p) => p.slug) as [ProvinceSlug, ...ProvinceSlug[]];
+export const ACTIVE_PROVINCES = PROVINCES.filter((p) => p.active);
 
-export function getProvincia(slug: string) {
-  return PROVINCIAS.find((p) => p.slug === slug);
+export function getProvince(slug: string): Province | undefined {
+  return PROVINCES.find((p) => p.slug === slug);
 }
 
-export const TIPOS_NOTA = ['noticia', 'guia', 'entrevista', 'opinion'] as const;
-export type TipoNota = (typeof TIPOS_NOTA)[number];
-export const TIPO_LABEL: Record<TipoNota, string> = {
-  noticia: 'Noticia',
-  guia: 'Guía',
-  entrevista: 'Entrevista',
+export const ARTICLE_TYPES = ['news', 'guide', 'interview', 'opinion'] as const;
+export type ArticleType = (typeof ARTICLE_TYPES)[number];
+export const TYPE_LABEL: Record<ArticleType, string> = {
+  news: 'Noticia',
+  guide: 'Guía',
+  interview: 'Entrevista',
   opinion: 'Opinión',
 };
 
 /**
- * Líneas de ayuda. IMPORTANTE: verificar vigencia periódicamente antes de publicar.
- * `tel` se usa en el href (solo dígitos).
+ * Crisis helplines. IMPORTANT: verify they are current before every launch/review.
+ * `tel` is used in the href (digits only).
  */
-export const LINEAS_AYUDA = [
+export const HELPLINES = [
   {
-    nombre: 'Centro de Asistencia al Suicida',
-    numero: '135',
+    name: 'Centro de Asistencia al Suicida',
+    number: '135',
     tel: '135',
-    detalle: 'Gratuita desde CABA y Gran Buenos Aires',
+    detail: 'Gratuita desde CABA y Gran Buenos Aires',
   },
   {
-    nombre: 'Centro de Asistencia al Suicida (todo el país)',
-    numero: '0800 345 1435',
+    name: 'Centro de Asistencia al Suicida (todo el país)',
+    number: '0800 345 1435',
     tel: '08003451435',
-    detalle: 'Gratuita desde cualquier provincia',
+    detail: 'Gratuita desde cualquier provincia',
   },
   {
-    nombre: 'Emergencias',
-    numero: '107 / 911',
+    name: 'Emergencias',
+    number: '107 / 911',
     tel: '911',
-    detalle: 'Si hay riesgo inmediato',
+    detail: 'Si hay riesgo inmediato',
   },
 ] as const;
 
-export const NAV_INSTITUCIONAL = [
+export const INSTITUTIONAL_NAV = [
   { href: '/sobre-nosotros/', label: 'Sobre nosotros' },
   { href: '/politica-editorial/', label: 'Política editorial' },
   { href: '/ayuda/', label: 'Pedir ayuda' },
   { href: '/contacto/', label: 'Contacto' },
+] as const;
+
+export const LEGAL_NAV = [
+  { href: '/privacidad/', label: 'Privacidad y cookies' },
+  { href: '/terminos/', label: 'Términos de uso' },
 ] as const;

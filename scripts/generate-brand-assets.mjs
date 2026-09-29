@@ -1,16 +1,16 @@
-// Genera los PNG/ICO de marca a partir de SVG.
-// Uso: node scripts/generate-brand-assets.mjs
+// Generates the brand PNG/ICO files from the SVG mark.
+// Usage: node scripts/generate-brand-assets.mjs
 import sharp from 'sharp';
 import { readFile, writeFile } from 'node:fs/promises';
 
 const pub = new URL('../public/', import.meta.url);
-const isotipo = await readFile(new URL('brand/isotipo.svg', pub));
+const mark = await readFile(new URL('brand/mark.svg', pub));
 
 const paper = '#faf7f2';
 
 async function icon(size, file, padding = 0.08) {
   const inner = Math.round(size * (1 - padding * 2));
-  const glyph = await sharp(isotipo, { density: 1200 }).resize(inner, inner).png().toBuffer();
+  const glyph = await sharp(mark, { density: 1200 }).resize(inner, inner).png().toBuffer();
   await sharp({ create: { width: size, height: size, channels: 4, background: paper } })
     .composite([{ input: glyph, gravity: 'center' }])
     .png()
@@ -22,8 +22,8 @@ await icon(192, 'brand/icon-192.png');
 await icon(512, 'brand/icon-512.png');
 await icon(512, 'brand/icon-maskable-512.png', 0.24);
 
-// favicon.ico con un PNG de 32px embebido (formato ICO válido).
-const png32 = await sharp(isotipo, { density: 600 }).resize(32, 32).png().toBuffer();
+// favicon.ico wrapping a 32px PNG (a valid ICO container).
+const png32 = await sharp(mark, { density: 600 }).resize(32, 32).png().toBuffer();
 const header = Buffer.alloc(22);
 header.writeUInt16LE(0, 0);
 header.writeUInt16LE(1, 2);
@@ -38,7 +38,7 @@ header.writeUInt32LE(png32.length, 14);
 header.writeUInt32LE(22, 18);
 await writeFile(new URL('favicon.ico', pub), Buffer.concat([header, png32]));
 
-// Imagen Open Graph por defecto (1200x630).
+// Default Open Graph image (1200x630).
 const og = `
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="${paper}"/>
@@ -55,4 +55,4 @@ const og = `
 </svg>`;
 await sharp(Buffer.from(og)).png().toFile(new URL('og-default.png', pub).pathname);
 
-console.log('Brand assets generados.');
+console.log('Brand assets generated.');

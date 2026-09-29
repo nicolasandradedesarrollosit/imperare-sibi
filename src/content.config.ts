@@ -1,56 +1,57 @@
 import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { PROVINCIA_SLUGS, SECCION_SLUGS, TIPOS_NOTA } from './config/site';
+import { ARTICLE_TYPES, PROVINCE_SLUGS, SECTION_SLUGS } from './config/site';
 
 /**
- * Notas. El id (nombre del archivo) es el slug de la URL: /{seccion}/{id}/.
- * Para migrar a un CMS headless alcanza con reemplazar el `loader`.
+ * Articles. The entry id (file name) is the URL slug: /{section}/{id}/.
+ * Migrating to a headless CMS only requires swapping the `loader`.
  */
-const articulos = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/articulos' }),
+const articles = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/articles' }),
   schema: ({ image }) =>
     z.object({
       title: z.string().max(110),
-      /** Título alternativo para <title> si el titular es muy largo. */
-      seoTitle: z.string().max(65).optional(),
-      /** Bajada. Se usa también como meta description (ideal 120–160 caracteres). */
-      description: z.string().min(50).max(200),
-      seccion: z.enum(SECCION_SLUGS),
-      tipo: z.enum(TIPOS_NOTA).default('noticia'),
+      /** Shorter <title> for search results when the headline is long. */
+      seoTitle: z.string().max(60).optional(),
+      /** Standfirst. Also used as meta description (aim for 120–160 characters). */
+      description: z.string().min(70).max(160),
+      section: z.enum(SECTION_SLUGS),
+      type: z.enum(ARTICLE_TYPES).default('news'),
       tags: z.array(z.string()).default([]),
-      provincia: z.enum(PROVINCIA_SLUGS).optional(),
-      autor: reference('autores'),
-      /** Profesional que revisó el contenido (E-E-A-T para temas de salud). */
-      revisor: reference('autores').optional(),
-      revisadoEl: z.coerce.date().optional(),
-      publicado: z.coerce.date(),
-      actualizado: z.coerce.date().optional(),
-      imagen: image().optional(),
-      imagenAlt: z.string().optional(),
-      imagenCredito: z.string().optional(),
-      destacado: z.boolean().default(false),
-      /** Notas sobre suicidio/autolesiones: refuerza recursos de ayuda y excluye publicidad. */
-      sensible: z.boolean().default(false),
-      /** URL canónica externa si la nota se republica desde otro medio. */
+      province: z.enum(PROVINCE_SLUGS).optional(),
+      author: reference('authors'),
+      /** Health professional who reviewed the piece (E-E-A-T for health topics). */
+      reviewer: reference('authors').optional(),
+      reviewedAt: z.coerce.date().optional(),
+      publishedAt: z.coerce.date(),
+      updatedAt: z.coerce.date().optional(),
+      /** Required, at least 1200px wide (Google Discover, social cards); enforced in ArticleLayout. */
+      image: image(),
+      imageAlt: z.string().min(10),
+      imageCredit: z.string().optional(),
+      featured: z.boolean().default(false),
+      /** Suicide/self-harm coverage: helplines go first and no ads are served. */
+      sensitive: z.boolean().default(false),
+      /** External canonical URL when the piece is syndicated from another outlet. */
       canonical: z.url().optional(),
       noindex: z.boolean().default(false),
       draft: z.boolean().default(false),
     }),
 });
 
-const autores = defineCollection({
-  loader: glob({ pattern: '*.json', base: './src/content/autores' }),
+const authors = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/authors' }),
   schema: ({ image }) =>
     z.object({
-      nombre: z.string(),
-      rol: z.string(),
+      name: z.string(),
+      role: z.string(),
       bio: z.string(),
-      /** Profesión y matrícula (ej. "Lic. en Psicología — M.N. 12345"). */
-      credenciales: z.string().optional(),
-      foto: image().optional(),
-      provincia: z.enum(PROVINCIA_SLUGS).optional(),
-      redes: z
+      /** Profession and licence (e.g. "Lic. en Psicología — M.N. 12345"). */
+      credentials: z.string().optional(),
+      photo: image().optional(),
+      province: z.enum(PROVINCE_SLUGS).optional(),
+      social: z
         .object({
           x: z.url().optional(),
           instagram: z.url().optional(),
@@ -61,4 +62,4 @@ const autores = defineCollection({
     }),
 });
 
-export const collections = { articulos, autores };
+export const collections = { articles, authors };
