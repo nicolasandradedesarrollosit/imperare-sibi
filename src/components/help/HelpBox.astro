@@ -1,0 +1,54 @@
+---
+import PhoneIcon from './PhoneIcon.astro';
+import { EMERGENCY, HELPLINE_LINES } from '../../config/site';
+
+interface Props {
+  /** Show the "all resources" link (hidden on /ayuda itself). */
+  showMore?: boolean;
+  class?: string;
+}
+const { showMore = true, class: className } = Astro.props;
+---
+
+<aside class:list={['rounded-2xl bg-calm p-6 sm:p-8', className]} aria-labelledby="help-title">
+  <h2 id="help-title" class="text-2xl">Si estás pasando por un momento difícil</h2>
+  <p class="mt-2 text-sm text-ink-2">
+    No tenés que atravesarlo en soledad. Estas líneas son gratuitas y atienden todos los días:
+  </p>
+  <ul role="list" class="mt-5 grid gap-2">
+    {
+      HELPLINE_LINES.map((l) => (
+        <li>
+          <a
+            href={`tel:${l.tel}`}
+            class="group flex min-h-14 items-center gap-4 rounded-xl bg-paper px-4 py-3 no-underline transition-colors hover:bg-white hover:ring-1 hover:ring-accent/40"
+          >
+            <span class="grid size-10 flex-none place-items-center rounded-full bg-accent text-white">
+              <PhoneIcon class="size-5" />
+            </span>
+            <span class="grid">
+              <span class="text-xl leading-tight font-bold text-ink">{l.number}</span>
+              <span class="text-xs text-muted">
+                {l.name}. {l.detail}.
+              </span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="mt-4 text-sm text-ink-2">
+    Si hay riesgo inmediato, llamá al{' '}
+    <a class="font-bold text-alert" href={`tel:${EMERGENCY.tel}`}>{EMERGENCY.number}</a>.
+    {
+      showMore && (
+        <>
+          {' '}
+          <a class="font-semibold text-accent-dark underline" href="/ayuda/">
+            Ver todos los recursos
+          </a>
+        </>
+      )
+    }
+  </p>
+</aside>

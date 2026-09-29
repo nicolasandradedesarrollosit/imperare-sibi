@@ -1,38 +1,88 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
-import { HELPLINES } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/page/PageHeader.astro';
+import PhoneIcon from '../components/help/PhoneIcon.astro';
+import { HELPLINE_LINES } from '../config/site';
+import { breadcrumbLd } from '../lib/seo';
+
+const title = 'Dónde pedir ayuda';
+const description =
+  'Líneas gratuitas y recursos de salud mental en toda la Argentina. Si estás pasando por un momento difícil, no tenés que atravesarlo en soledad.';
+const crumbs = [
+  { name: 'Inicio', href: '/' },
+  { name: title, href: '/ayuda/' },
+];
 ---
 
-<PageLayout
-  eyebrow="Recursos"
-  title="Dónde pedir ayuda"
-  description="Líneas gratuitas y recursos de salud mental en Argentina. Si estás en riesgo, pedí ayuda ahora."
->
-  <p><strong>Si vos o alguien cercano está en peligro inmediato, llamá al 911 o al 107.</strong></p>
-  <h2>Líneas de ayuda</h2>
-  <ul>
-    {
-      HELPLINES.map((l) => (
-        <li>
-          <strong>
-            <a href={`tel:${l.tel}`}>{l.number}</a>
-          </strong>
-          {': '}
-          {l.name}. {l.detail}.
-        </li>
-      ))
-    }
-  </ul>
-  <h2>Otros recursos</h2>
-  <ul>
-    <li>Guardias de salud mental en hospitales públicos: atención gratuita las 24 horas.</li>
-    <li>Centros de salud y acción comunitaria de tu barrio (CeSAC, CAPS).</li>
-    <li>Tu obra social o prepaga tiene que cubrir prestaciones de salud mental (Ley 26.657).</li>
-  </ul>
-  <p>
-    <em
-      >Estamos sumando recursos por provincia. Verificamos esta información periódicamente; si encontrás un dato
-      desactualizado, <a href="/contacto/">avisanos</a>.</em
+<BaseLayout seo={{ title, description }} jsonLd={[breadcrumbLd(crumbs)]} ads={false}>
+  <PageHeader eyebrow="Recursos" title={title} description={description} />
+
+  <div class="wrap grid gap-12">
+    <!-- Emergency first -->
+    <section
+      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 rounded-2xl border-2 border-alert/30 bg-[#fbf3ef] p-6 text-center sm:flex-row sm:text-left"
+      aria-labelledby="emergency-title"
     >
-  </p>
-</PageLayout>
+      <div class="flex-1">
+        <h2 id="emergency-title" class="text-2xl">Si hay riesgo inmediato</h2>
+        <p class="mt-1 text-sm text-ink-2">
+          Si vos o alguien cercano está en peligro ahora, llamá a emergencias. Atienden las 24 horas en todo el país.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <a class="btn border-alert bg-alert hover:border-ink hover:bg-ink" href="tel:911"><PhoneIcon /> 911</a>
+        <a class="btn btn--ghost" href="tel:107"><PhoneIcon /> 107</a>
+      </div>
+    </section>
+
+    <!-- Free helplines -->
+    <section class="mx-auto w-full max-w-3xl" aria-labelledby="lines-title">
+      <h2 id="lines-title" class="text-center text-heading">Líneas gratuitas para hablar con alguien</h2>
+      <p class="mx-auto mt-2 max-w-xl text-center text-sm text-muted">
+        Personas capacitadas te escuchan de forma anónima y confidencial. No hace falta estar en una situación extrema para
+        llamar.
+      </p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        {
+          HELPLINE_LINES.map((l) => (
+            <article class="flex flex-col rounded-2xl bg-calm p-6">
+              <p class="text-xs font-bold tracking-wide text-accent-dark uppercase">{l.name}</p>
+              <p class="mt-2 font-serif text-4xl font-semibold text-ink">{l.number}</p>
+              <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
+              <a class="btn mt-auto self-start" href={`tel:${l.tel}`}>
+                <PhoneIcon /> Llamar al {l.number}
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Guidance -->
+    <div class="prose mx-auto max-w-read">
+      <h2>Si estás acompañando a alguien</h2>
+      <p>
+        Escuchá sin juzgar y sin apurarte a dar soluciones. Preguntá de forma directa cómo se siente: hablar del malestar no
+        lo empeora. Ofrecé ayuda concreta, como buscar juntos un turno o acompañar a una consulta, y no te quedes con la
+        responsabilidad en soledad: vos también podés llamar a estas líneas para pedir orientación.
+      </p>
+      <h2>Atención gratuita en el sistema público</h2>
+      <p>
+        Los hospitales generales y especializados de todo el país tienen servicios de salud mental y guardias que atienden
+        las 24 horas. También podés acercarte al centro de salud o de atención primaria de tu barrio, donde suele haber
+        equipos interdisciplinarios.
+      </p>
+      <h2>Con obra social o prepaga</h2>
+      <p>
+        La Ley Nacional de Salud Mental 26.657 reconoce la atención en salud mental como parte del derecho a la salud, y tu
+        cobertura tiene que incluirla. Te explicamos paso a paso cómo pedir turno y qué hacer si te lo niegan en <a
+          href="/politicas-publicas/como-acceder-a-un-psicologo-por-obra-social/">esta guía</a
+        >.
+      </p>
+    </div>
+
+    <p class="mx-auto max-w-read text-center text-xs text-muted italic">
+      Verificamos estos datos periódicamente. Si encontrás información desactualizada, <a href="/contacto/">avisanos</a>.
+    </p>
+  </div>
+</BaseLayout>
