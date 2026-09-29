@@ -36,7 +36,11 @@ const {
   next,
 } = Astro.props as SeoProps;
 
-const fullTitle = title === SITE.name ? `${SITE.name}: salud mental en Argentina` : `${title} | ${SITE.name}`;
+// Brand suffix only when the whole title still fits Google's ~60-character display.
+const TITLE_MAX = 60;
+const branded = `${title} | ${SITE.name}`;
+const fullTitle =
+  title === SITE.name ? `${SITE.name}: salud mental en Argentina` : branded.length <= TITLE_MAX ? branded : title;
 const canonicalUrl = canonical ?? absUrl(Astro.url.pathname);
 const imageUrl = absUrl(image.url);
 const robots = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';

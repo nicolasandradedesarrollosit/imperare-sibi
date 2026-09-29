@@ -1,0 +1,37 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/page/PageHeader.astro';
+import Pagination from '../../components/page/Pagination.astro';
+import ArticleListing from '../../components/page/ArticleListing.astro';
+import { SITE } from '../../config/site';
+import { archiveUrl, getArticles, type Article } from '../../lib/content';
+import { breadcrumbLd, collectionLd } from '../../lib/seo';
+
+/** Archive of every article, newest first. */
+export const getStaticPaths = (async ({ paginate }) =>
+  paginate(await getArticles(), { pageSize: SITE.pageSize })) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Article>;
+}
+const { page } = Astro.props;
+const isFirst = page.currentPage === 1;
+const title = isFirst ? 'Todas las notas' : `Todas las notas, página ${page.currentPage}`;
+const description = `Archivo completo de ${SITE.name}: guías, experiencias y novedades sobre salud mental, de la más reciente a la más antigua.`;
+const crumbs = [
+  { name: 'Inicio', href: '/' },
+  { name: 'Todas las notas', href: archiveUrl },
+];
+---
+
+<BaseLayout
+  seo={{ title, description, prev: page.url.prev, next: page.url.next }}
+  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path: page.url.current, articles: page.data })]}
+>
+  <PageHeader eyebrow="Archivo" title="Todas las notas" description={description} />
+  <div class="wrap">
+    <ArticleListing articles={page.data} withLead={isFirst} />
+    <Pagination prev={page.url.prev} next={page.url.next} current={page.currentPage} last={page.lastPage} />
+  </div>
+</BaseLayout>

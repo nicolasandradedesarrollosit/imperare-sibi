@@ -10,7 +10,7 @@ const WEBSITE_ID = `${SITE.url}/#website`;
 
 export function organizationLd(): JsonLd {
   return {
-    '@type': ['NewsMediaOrganization', 'Organization'],
+    '@type': 'Organization',
     '@id': ORG_ID,
     name: SITE.name,
     url: SITE.url,
@@ -112,7 +112,8 @@ export function articleLd(args: {
   const { data } = article;
   const url = absUrl(articleUrl(article));
   return {
-    '@type': data.type === 'news' ? 'NewsArticle' : 'Article',
+    // News pieces are NewsArticle; guides, opinion and interviews are blog posts.
+    '@type': data.type === 'news' ? 'NewsArticle' : 'BlogPosting',
     '@id': `${url}#article`,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     headline: data.title,
