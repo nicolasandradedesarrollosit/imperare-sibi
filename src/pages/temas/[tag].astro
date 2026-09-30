@@ -16,10 +16,10 @@ const path = tagUrl(tag.name);
 ---
 
 <ListingLayout
-  title={`${tag.name}: guías y notas`}
+  title={`${tag.name}: todas las notas del tema`}
   heading={tag.name}
   eyebrow="Tema"
-  description={`Todo sobre ${tag.name.toLowerCase()} en ${SITE.name}: guías, experiencias y notas de salud mental revisadas por profesionales matriculados.`}
+  description={`Todo sobre ${tag.name.toLowerCase()} en ${SITE.name}: guías, noticias y experiencias sobre salud mental en la Argentina.`}
   path={path}
   crumbs={crumbs({ name: 'Temas', href: '/temas/' }, { name: tag.name, href: path })}
   articles={tag.articles}

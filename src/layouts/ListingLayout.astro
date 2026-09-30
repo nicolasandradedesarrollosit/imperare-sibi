@@ -46,13 +46,17 @@ const {
   noindex,
   pagination,
 } = Astro.props;
+
+// Paginated pages get their own meta description so they are not duplicates of page 1.
+const metaDescription =
+  pagination && pagination.current > 1 ? `Página ${pagination.current} de ${pagination.last}. ${description}` : description;
 ---
 
 <BaseLayout
   page="listing"
   activeSection={section?.slug}
-  seo={{ title, description, noindex, prev: pagination?.prev, next: pagination?.next }}
-  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path, articles })]}
+  seo={{ title, description: metaDescription, noindex, prev: pagination?.prev, next: pagination?.next }}
+  jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description: metaDescription, path, articles })]}
 >
   <PageHeader
     eyebrow={eyebrow}
