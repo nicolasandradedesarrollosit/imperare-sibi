@@ -39,7 +39,7 @@ export const SITE = {
  * Slot ids come from AdSense → Ads → By ad unit.
  */
 export const ADSENSE = {
-  client: '', // e.g. 'ca-pub-1234567890123456'
+  client: 'ca-pub-7493753362093860',
   slots: {
     inArticle: '',
     rail: '',
