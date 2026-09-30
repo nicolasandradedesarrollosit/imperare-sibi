@@ -4,7 +4,7 @@ import { SECTIONS } from '../config/site';
 import { sectionUrl } from '../lib/content';
 ---
 
-<BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }} ads={false}>
+<BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }} page="error">
   <section class="wrap grid justify-items-center gap-5 py-24 text-center">
     <p class="label text-muted">Error 404</p>
     <h1 class="text-display">No encontramos esta página</h1>

@@ -23,7 +23,7 @@ const latest = take(pool, used, pool.length >= 3 ? pool.length - (pool.length % 
 const guides = articles.filter((a) => a.data.type === 'guide').slice(0, 6);
 ---
 
-<BaseLayout seo={{ title: SITE.name, description: SITE.description }}>
+<BaseLayout page="home" seo={{ title: SITE.name, description: SITE.description }}>
   <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
 
   {lead && <FrontPage lead={lead} secondary={secondary} />}

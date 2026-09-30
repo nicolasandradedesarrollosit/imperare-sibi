@@ -36,9 +36,11 @@ Authors are one JSON file each in `src/content/authors/` (name, role, bio, crede
 
 Everything is wired but inactive until an account is approved:
 
-1. Set `ADSENSE.client` (`ca-pub-…`) and the three slot ids in `src/config/site.ts`.
+1. Set `ADSENSE.client` (`ca-pub-` + 16 digits) and the slot ids in `src/config/site.ts`. The build fails on a malformed client or slot id; a placement whose slot is empty is simply not rendered.
 2. Deploy. That enables the AdSense script, the ad units and `/ads.txt`.
 3. In the AdSense dashboard: enable Auto ads **only** for anchor and vignette formats (in-page placements are manual), and set up the consent message under *Privacy & messaging*.
+
+Eligibility is decided in one place, `src/lib/ads.ts`: every page passes its `page` kind to `BaseLayout` (`home`, `listing`, `article`, `restricted-article`, `institutional`, `legal`, `crisis`, `profile`, `error`) and only the kinds listed in `ADSENSE.pageKinds` load AdSense. Articles that are `sensitive`, `noindex` or `draft` become `restricted-article` (no script, no slots, no in-article units).
 
 Placements (each container reserves its height up front to keep CLS at ~0):
 
@@ -75,7 +77,7 @@ src/
   lib/
     content.ts            # queries: getArticles, related, readMore, collectTags, URL builders…
     seo.ts                # JSON-LD builders and the crumbs() breadcrumb helper
-    ads.ts                # AdSense mode + <ins> attributes, shared by AdSlot and the rehype plugin
+    ads.ts                # AdSense policy (page kinds, article eligibility, config validation) + <ins> markup
     images.ts             # social/schema image crops
     dates.ts              # es-AR date formatting
     rehype-in-article-ads.ts

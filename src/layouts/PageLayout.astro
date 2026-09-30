@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import PageHeader from '../components/page/PageHeader.astro';
+import type { PageKind } from '../lib/ads';
 import { breadcrumbLd, crumbs } from '../lib/seo';
 
 interface Props {
@@ -8,13 +9,14 @@ interface Props {
   description: string;
   eyebrow?: string;
   noindex?: boolean;
-  ads?: boolean;
+  /** Institutional pages by default; legal pages declare themselves. */
+  page?: Extract<PageKind, 'institutional' | 'legal'>;
 }
-const { title, description, eyebrow, noindex, ads = false } = Astro.props;
+const { title, description, eyebrow, noindex, page = 'institutional' } = Astro.props;
 
 ---
 
-<BaseLayout seo={{ title, description, noindex }} jsonLd={[breadcrumbLd(crumbs({ name: title, href: Astro.url.pathname }))]} ads={ads}>
+<BaseLayout seo={{ title, description, noindex }} jsonLd={[breadcrumbLd(crumbs({ name: title, href: Astro.url.pathname }))]} page={page}>
   <PageHeader eyebrow={eyebrow} title={title} description={description} />
   <div class="wrap">
     <div class="prose mx-auto max-w-read"><slot /></div>

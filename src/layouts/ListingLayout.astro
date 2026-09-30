@@ -49,6 +49,7 @@ const {
 ---
 
 <BaseLayout
+  page="listing"
   activeSection={section?.slug}
   seo={{ title, description, noindex, prev: pagination?.prev, next: pagination?.next }}
   jsonLd={[breadcrumbLd(crumbs), collectionLd({ name: title, description, path, articles })]}

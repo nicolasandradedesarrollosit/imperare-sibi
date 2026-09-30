@@ -8,12 +8,13 @@ import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 
 import { ADSENSE, SITE } from './src/config/site.ts';
-import { resolveAdsMode } from './src/lib/ads.ts';
+import { assertAdsenseConfig, resolveAdsMode } from './src/lib/ads.ts';
 import rehypeInArticleAds from './src/lib/rehype-in-article-ads.ts';
 
 import tailwindcss from '@tailwindcss/vite';
 
-const adsMode = resolveAdsMode(process.argv.includes('dev'));
+assertAdsenseConfig();
+const inArticleAdsMode = resolveAdsMode(process.argv.includes('dev'), 'in-article');
 
 /**
  * Reads a page already rendered to dist/. The sitemap integration runs after the
@@ -56,7 +57,7 @@ export default defineConfig({
       rehypePlugins: [
         [
           rehypeInArticleAds,
-          { mode: adsMode, max: ADSENSE.inArticleMax, everyWords: ADSENSE.inArticleEveryWords },
+          { mode: inArticleAdsMode, max: ADSENSE.inArticleMax, everyWords: ADSENSE.inArticleEveryWords },
         ],
       ],
     }),

@@ -48,9 +48,13 @@ export const ADSENSE = {
   /** Max in-article units per article, and min words between them. */
   inArticleMax: 3,
   inArticleEveryWords: 400,
+  /**
+   * Page kinds that may carry ads (see PageKind in src/lib/ads.ts). Crisis resources,
+   * legal and institutional pages, author profiles, errors and restricted articles
+   * (sensitive, noindex, draft) never do.
+   */
+  pageKinds: ['home', 'listing', 'article'],
 } as const;
-
-export const adsEnabled = ADSENSE.client.length > 0;
 
 export const SECTIONS = [
   {

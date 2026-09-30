@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { placement, class: className } = Astro.props;
-const mode = resolveAdsMode(import.meta.env.DEV);
+const mode = resolveAdsMode(import.meta.env.DEV, placement);
 ---
 
 {

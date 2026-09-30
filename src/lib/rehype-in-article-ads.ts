@@ -2,12 +2,12 @@
  * Rehype plugin that inserts AdSense in-article units into article bodies:
  * the first after the 2nd paragraph, then roughly every `everyWords` words.
  * Units only go between two paragraphs or before a subheading, never as the
- * last block, and never in articles flagged `sensitive`.
+ * last block, and never in articles that articleAllowsAds() rejects.
  *
- * `mode` comes from resolveAdsMode() (see ./ads.ts).
+ * `mode` comes from resolveAdsMode(isDev, 'in-article') (see ./ads.ts).
  */
 
-import { AD_LABEL, adUnitAttributes, type AdsMode } from './ads';
+import { AD_LABEL, adUnitAttributes, articleAllowsAds, type AdsMode } from './ads';
 
 interface HastNode {
   type: string;
@@ -56,7 +56,7 @@ export default function rehypeInArticleAds(opts: Options) {
 
   return (tree: HastNode, file: VFileLike) => {
     if (opts.mode === 'off') return;
-    if (file.data?.astro?.frontmatter?.sensitive) return;
+    if (!articleAllowsAds(file.data?.astro?.frontmatter ?? {})) return;
 
     const children = tree.children ?? [];
     const out: HastNode[] = [];

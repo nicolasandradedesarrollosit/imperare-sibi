@@ -10,6 +10,7 @@ import ReadMore from '../components/article/ReadMore.astro';
 import HelpBox from '../components/help/HelpBox.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import { getSection, SITE } from '../config/site';
+import { articlePageKind, pageAllowsAds } from '../lib/ads';
 import { articleUrl, authorUrl, getArticles, readMore, sectionUrl, wordCount, type Article } from '../lib/content';
 import { ogImage, schemaImages } from '../lib/images';
 import { articleLd, breadcrumbLd, crumbs as trail } from '../lib/seo';
@@ -27,8 +28,8 @@ if (!author) throw new Error(`Unknown author in ${article.id}`);
 if (data.image.width < 1200) throw new Error(`${article.id}: article images must be at least 1200px wide.`);
 const reviewer = data.reviewer ? await getEntry(data.reviewer) : undefined;
 
-// Sensitive coverage (suicide, self-harm) never carries ads.
-const ads = !data.sensitive;
+const page = articlePageKind(data);
+const ads = pageAllowsAds(page);
 const more = readMore(article, await getArticles());
 const og = await ogImage(data.image);
 const images = await schemaImages(data.image);
@@ -40,7 +41,7 @@ const crumbs = trail(
 
 <BaseLayout
   activeSection={section.slug}
-  ads={ads}
+  page={page}
   seo={{
     title: data.seoTitle ?? data.title,
     description: data.description,

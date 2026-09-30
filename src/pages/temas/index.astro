@@ -10,7 +10,7 @@ const description = `Índice de todos los temas de ${SITE.name}: ansiedad, depre
 
 ---
 
-<BaseLayout seo={{ title: 'Temas', description }} jsonLd={[breadcrumbLd(crumbs({ name: 'Temas', href: '/temas/' }))]}>
+<BaseLayout page="listing" seo={{ title: 'Temas', description }} jsonLd={[breadcrumbLd(crumbs({ name: 'Temas', href: '/temas/' }))]}>
   <PageHeader eyebrow="Índice" title="Temas" description={description} />
   <div class="wrap">
     <ul role="list" class="mx-auto max-w-4xl gap-x-(--col-gap) sm:columns-2 lg:columns-3">

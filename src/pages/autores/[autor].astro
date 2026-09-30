@@ -31,7 +31,7 @@ const social = Object.entries(author.data.social).filter(([, url]) => url) as [s
 <BaseLayout
   seo={{ title: `${author.data.name}, ${author.data.role}`, description: author.data.bio.slice(0, 160), type: 'profile' }}
   jsonLd={[profilePageLd(author, path), breadcrumbLd(crumbs({ name: author.data.name, href: path }))]}
-  ads={false}
+  page="profile"
 >
   <PageHeader eyebrow={author.data.role} title={author.data.name} description={author.data.bio}>
     {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="rounded-full" />}
