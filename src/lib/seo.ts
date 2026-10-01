@@ -1,5 +1,5 @@
 import { SITE } from '../config/site';
-import { articleUrl, authorUrl, type Article, type Author } from './content';
+import { articleUrl, type Article } from './content';
 
 export const absUrl = (path: string) => new URL(path, SITE.url).href;
 
@@ -18,7 +18,6 @@ export function organizationLd(): JsonLd {
     foundingDate: SITE.foundingDate,
     email: SITE.email,
     areaServed: { '@type': 'Country', name: 'Argentina' },
-    sameAs: Object.values(SITE.social),
     publishingPrinciples: absUrl('/politica-editorial/'),
     correctionsPolicy: absUrl('/politica-editorial/#correcciones'),
     ethicsPolicy: absUrl('/politica-editorial/#principios'),
@@ -35,23 +34,6 @@ export function websiteLd(): JsonLd {
     description: SITE.description,
     inLanguage: SITE.locale,
     publisher: { '@id': ORG_ID },
-  };
-}
-
-export function personLd(author: Author): JsonLd {
-  const { data } = author;
-  const url = absUrl(authorUrl(author.id));
-  return {
-    '@type': 'Person',
-    '@id': `${url}#person`,
-    name: data.name,
-    jobTitle: data.role,
-    description: data.bio,
-    url,
-    ...(data.credentials && { hasCredential: data.credentials }),
-    ...(data.photo && { image: absUrl(data.photo.src) }),
-    sameAs: Object.values(data.social).filter(Boolean),
-    worksFor: { '@id': ORG_ID },
   };
 }
 
@@ -98,29 +80,17 @@ export function collectionLd(args: { name: string; description: string; path: st
   };
 }
 
-export function profilePageLd(author: Author, path: string): JsonLd {
-  return {
-    '@type': 'ProfilePage',
-    url: absUrl(path),
-    inLanguage: SITE.locale,
-    isPartOf: { '@id': WEBSITE_ID },
-    mainEntity: personLd(author),
-  };
-}
-
 export function articleLd(args: {
   article: Article;
-  author: Author;
-  reviewer?: Author;
   images: string[];
   sectionName: string;
   words: number;
 }): JsonLd {
-  const { article, author, reviewer, images, sectionName, words } = args;
+  const { article, images, sectionName, words } = args;
   const { data } = article;
   const url = absUrl(articleUrl(article));
   return {
-    // News pieces are NewsArticle; guides, opinion and interviews are blog posts.
+    // News pieces are NewsArticle; everything else is a blog post.
     '@type': data.type === 'news' ? 'NewsArticle' : 'BlogPosting',
     '@id': `${url}#article`,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
@@ -135,13 +105,10 @@ export function articleLd(args: {
     keywords: data.tags.join(', '),
     wordCount: words,
     isAccessibleForFree: true,
-    author: [personLd(author)],
+    // The blog is anonymous: the organisation signs every piece, never a person.
+    author: { '@id': ORG_ID },
     publisher: { '@id': ORG_ID },
     isPartOf: { '@id': WEBSITE_ID },
-    ...(reviewer && {
-      reviewedBy: personLd(reviewer),
-      ...(data.reviewedAt && { lastReviewed: data.reviewedAt.toISOString() }),
-    }),
   };
 }
 

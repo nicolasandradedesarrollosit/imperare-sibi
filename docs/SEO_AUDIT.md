@@ -1,5 +1,7 @@
 # SEO audit — 30 September 2026
 
+> Historical snapshot. Since this audit the blog became anonymous (no authors, reviewers or author pages) and the canonical host was corrected to `https://www.imperaresibi.com`. The E-E-A-T recommendations about reviewers and author profiles below no longer apply; the current routine is in [`PUBLISHING.md`](PUBLISHING.md).
+
 Scope: the static build (`npm run build`, 58 HTML pages) after adding the first batch of 10 `news` pieces. Every page in `dist/` was checked with a throwaway script (not committed) plus manual review of sitemaps, feeds and structured data.
 
 ## Summary

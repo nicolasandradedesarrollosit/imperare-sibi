@@ -1,19 +1,16 @@
 ---
 import Breadcrumbs from './Breadcrumbs.astro';
 import Byline from './Byline.astro';
-import ReviewedBy from './ReviewedBy.astro';
 import { TYPE_LABEL } from '../../config/site';
-import { readingTime, type Article, type Author } from '../../lib/content';
+import { readingTime, type Article } from '../../lib/content';
 import type { Crumb } from '../../lib/seo';
 
-/** Article header (left-aligned with the lead photo): breadcrumbs, type, headline, standfirst, byline and reviewer. */
+/** Article header (left-aligned with the lead photo): breadcrumbs, type, headline, standfirst and dateline. */
 interface Props {
   article: Article;
-  author: Author;
-  reviewer?: Author;
   crumbs: Crumb[];
 }
-const { article, author, reviewer, crumbs } = Astro.props;
+const { article, crumbs } = Astro.props;
 const { data } = article;
 ---
 
@@ -25,7 +22,6 @@ const { data } = article;
     </div>
     <h1 class="max-w-4xl text-display">{data.title}</h1>
     <p class="max-w-3xl text-lg leading-snug text-muted">{data.description}</p>
-    <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
-    {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
+    <Byline publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
   </div>
 </header>

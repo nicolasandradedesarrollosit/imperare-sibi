@@ -1,4 +1,4 @@
-import { defineCollection, reference } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { ARTICLE_TYPES, SECTION_SLUGS } from './config/site';
@@ -19,10 +19,6 @@ const articles = defineCollection({
       section: z.enum(SECTION_SLUGS),
       type: z.enum(ARTICLE_TYPES).default('news'),
       tags: z.array(z.string()).default([]),
-      author: reference('authors'),
-      /** Health professional who reviewed the piece (E-E-A-T for health topics). */
-      reviewer: reference('authors').optional(),
-      reviewedAt: z.coerce.date().optional(),
       publishedAt: z.coerce.date(),
       updatedAt: z.coerce.date().optional(),
       /** Required, at least 1200px wide (Google Discover, social cards); enforced in ArticleLayout. */
@@ -39,25 +35,4 @@ const articles = defineCollection({
     }),
 });
 
-const authors = defineCollection({
-  loader: glob({ pattern: '*.json', base: './src/content/authors' }),
-  schema: ({ image }) =>
-    z.object({
-      name: z.string(),
-      role: z.string(),
-      bio: z.string(),
-      /** Profession and licence (e.g. "Lic. en Psicología — M.N. 12345"). */
-      credentials: z.string().optional(),
-      photo: image().optional(),
-      social: z
-        .object({
-          x: z.url().optional(),
-          instagram: z.url().optional(),
-          linkedin: z.url().optional(),
-          web: z.url().optional(),
-        })
-        .default({}),
-    }),
-});
-
-export const collections = { articles, authors };
+export const collections = { articles };

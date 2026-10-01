@@ -17,7 +17,7 @@ export const GET: APIRoute = async () => {
 
 > ${SITE.description}
 
-Contenido en español (Argentina) para lectores de todo el país. Las notas sobre salud son revisadas por profesionales matriculados; la información es de divulgación y no reemplaza la consulta profesional. Si alguien está en crisis: Centro de Asistencia al Suicida 135 (CABA y GBA) o 0800 345 1435 (todo el país); emergencias 911.
+Contenido en español (Argentina) para lectores de todo el país. Las notas se publican sin firma y citan fuentes públicas y verificables; la información es de divulgación y no reemplaza la consulta profesional. Si alguien está en crisis: Centro de Asistencia al Suicida 135 (CABA y GBA) o 0800 345 1435 (todo el país); emergencias 911.
 
 ## Categorías
 

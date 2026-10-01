@@ -1,7 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type Article = CollectionEntry<'articles'>;
-export type Author = CollectionEntry<'authors'>;
 
 const isPublished = (a: Article) => import.meta.env.DEV || !a.data.draft;
 
@@ -15,7 +14,6 @@ export async function getArticles(): Promise<Article[]> {
 }
 
 export const articleUrl = (a: Article) => `/${a.data.section}/${a.id}/`;
-export const authorUrl = (id: string) => `/autores/${id}/`;
 export const sectionUrl = (slug: string) => `/${slug}/`;
 export const archiveUrl = '/notas/';
 

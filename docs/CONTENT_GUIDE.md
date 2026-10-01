@@ -15,7 +15,7 @@ If you are an LLM: read this whole file before writing, copy `src/content/articl
 5. **Write** following [§3](#3-voice-and-style) and [§4](#4-structure-by-type).
 6. **Run the SEO checklist** ([§5](#5-seo-checklist)) and the safety checklist ([§7](#7-safety-and-ethics)).
 7. **Validate**: `npm run check && npm run build`. Fix every error. Optionally `npm run dev` and open the article.
-8. **Professional review.** A licensed psychologist/psychiatrist must review health content before it is published. Set `reviewer` and `reviewedAt` only after that review actually happened; until then keep `draft: true`.
+8. **Publish and follow up**: remove `draft`, push to `main`, then run the post-publication checklist in [`PUBLISHING.md`](PUBLISHING.md).
 
 ## 2. Frontmatter reference
 
@@ -27,9 +27,6 @@ description: 'Un ataque de pánico puede sentirse como una emergencia, pero pasa
 section: ansiedad
 type: guide
 tags: ['Ansiedad', 'Pánico', 'Síntomas']
-author: redaccion
-reviewer: ana-quiroga
-reviewedAt: 2026-09-23
 publishedAt: 2026-09-23T11:00:00-03:00
 updatedAt: 2026-10-10 # optional
 image: ./img/man-head-hands.jpg
@@ -47,10 +44,8 @@ draft: false # optional
 | `seoTitle` | no | ≤60 chars. Use it when `title` is longer than ~60 so Google does not truncate it. The site appends ` \| Imperare Sibi`. |
 | `description` | yes | 70–160 chars (aim 140–160). Standfirst and meta description. Says what the reader gets; includes the keyword naturally. |
 | `section` | yes | One of `ansiedad`, `depresion`, `vinculos`, `infancias-y-adolescencias`, `politicas-publicas`, `bienestar`. |
-| `type` | yes | `guide` (evergreen explainer), `news` (time-bound), `opinion` (signed point of view / personal experience), `interview`. |
+| `type` | yes | `guide` (evergreen explainer), `news` (time-bound), `opinion` (unsigned editorial reflection). `interview` exists in the schema but is not used: the blog names no people. |
 | `tags` | yes | 2–4 tags, Title Case in Spanish. **Reuse existing tags** (see `/temas/` or grep the articles) so topic pages grow; create a new tag only for a genuinely new theme. |
-| `author` | yes | File name (without `.json`) in `src/content/authors/`. Use `redaccion` for unsigned editorial pieces. |
-| `reviewer` / `reviewedAt` | yes for health content | Author id of the professional who reviewed it, and the date of that review. |
 | `publishedAt` | yes | ISO date-time with Argentina offset: `2026-10-01T09:00:00-03:00`. |
 | `updatedAt` | no | Set it whenever you materially update an article (it becomes `dateModified`). |
 | `image` | yes | Relative path `./img/<file>.jpg`, landscape, **≥1200px wide** (the build fails otherwise). |
@@ -80,9 +75,7 @@ draft: false # optional
 
 **News** (`type: news`, 400–800 words): what happened, why it matters for readers' mental health or access to care, what changes for them, source link. Use only verifiable, dated facts.
 
-**Opinion / personal experience** (`type: opinion`, 600–1,000 words): first person is fine; clearly a point of view; no clinical advice; end with a pointer to professional help.
-
-**Interview** (`type: interview`): only with a real, identified person who agreed to it. Never invent interviews or quotes.
+**Opinion** (`type: opinion`, 600–1,000 words): an unsigned editorial reflection in the first person plural ("nos enseñaron…"); clearly a point of view; no personal anecdotes that could identify the writer; no clinical advice; end with a pointer to professional help.
 
 Every article: a `##` roughly every 150–300 words, so readers can scan it and the in-article ads have natural breakpoints (the ad plugin only inserts ads between paragraphs or before a heading).
 
@@ -99,7 +92,7 @@ Every article: a `##` roughly every 150–300 words, so readers can scan it and 
 - [ ] Image ≥1200px, descriptive `imageAlt`.
 - [ ] If you update an old article, set `updatedAt` and keep the same slug (never rename published slugs).
 
-Everything else (canonical, Open Graph image, JSON-LD with author and reviewer, sitemap, RSS, `llms.txt`) is generated automatically.
+Everything else (canonical, Open Graph image, JSON-LD, sitemap, RSS, `llms.txt`) is generated automatically.
 
 ## 6. Images
 
@@ -115,6 +108,7 @@ Everything else (canonical, Open Graph image, JSON-LD with author and reviewer, 
 
 These rules are not negotiable.
 
+- **The blog is anonymous.** No bylines, no reviewer names, no team bios, no personal social accounts or personal email addresses, anywhere on the site or in structured data. Articles are signed by the organisation (`Organization` in JSON-LD). Never claim a review or credential that did not happen ("revisado por profesionales", licence numbers). The only people named are public figures or institutions quoted from a linked source, and photographers in `imageCredit`.
 - **Never invent** statistics, studies, quotes, people, testimonies, case stories, institutions, phone numbers or laws. If you cannot verify a fact, leave it out.
 - **No individual clinical advice**: no diagnoses, no medication names with doses, no "stop/start your treatment". Explain options in general terms and refer to professionals.
 - **Suicide and self-harm** (follow WHO media guidelines): set `sensitive: true`; never describe methods, locations or means; do not present suicide as a solution or explain it by a single cause; avoid the word "exitoso"; include hope and recovery; the helplines box is added automatically.
@@ -130,4 +124,4 @@ npm run check   # types and frontmatter schema
 npm run build   # full site build; fails on missing fields or small images
 ```
 
-Then report: the file you created, the main keyword, the internal and external links you added, and whether the article still needs professional review (`draft: true`).
+Then report: the file you created, the main keyword, and the internal and external links you added. After it is live, follow [`PUBLISHING.md`](PUBLISHING.md).

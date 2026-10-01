@@ -27,7 +27,6 @@ export type PageKind =
   | 'institutional'
   | 'legal'
   | 'crisis'
-  | 'profile'
   | 'error';
 
 export const AD_LABEL = 'Publicidad';

@@ -6,10 +6,10 @@
 
 export const SITE = {
   name: 'Imperare Sibi',
-  tagline: 'Información sobre salud mental en Argentina, revisada por profesionales.',
+  tagline: 'Información sobre salud mental en Argentina, con fuentes verificables.',
   description:
-    'Blog de salud mental para toda la Argentina: guías claras, experiencias y novedades revisadas por profesionales. Ansiedad, depresión, vínculos, sueño y más.',
-  url: 'https://imperaresibi.com.ar',
+    'Blog de salud mental para toda la Argentina: guías claras y novedades con fuentes verificables. Ansiedad, depresión, vínculos, sueño y más.',
+  url: 'https://www.imperaresibi.com',
   locale: 'es-AR',
   ogLocale: 'es_AR',
   timeZone: 'America/Argentina/Buenos_Aires',
@@ -17,16 +17,11 @@ export const SITE = {
   logo: '/brand/logo.svg',
   logoPng: '/brand/icon-512.png',
   foundingDate: '2026',
-  email: 'redaccion@imperaresibi.com.ar',
-  social: {
-    instagram: 'https://www.instagram.com/imperaresibi',
-    x: 'https://x.com/imperaresibi',
-    linkedin: 'https://www.linkedin.com/company/imperaresibi',
-  },
-  twitterHandle: '@imperaresibi',
+  /** Generic mailbox on the site's own domain. The blog is anonymous: never a personal address. */
+  email: 'contacto@imperaresibi.com',
   /** Health disclaimer shown in the footer of every page and at the end of every article. */
   disclaimer:
-    'Este sitio contiene experiencias personales y contenido de divulgación general. No constituye asesoramiento profesional, diagnóstico ni tratamiento psicológico. Si estás pasando por un momento difícil o una crisis, buscá ayuda de un profesional matriculado.',
+    'Este sitio contiene contenido de divulgación general. No constituye asesoramiento profesional, diagnóstico ni tratamiento psicológico. Si estás pasando por un momento difícil o una crisis, buscá ayuda de un profesional matriculado.',
   /** Newsletter provider endpoint (Buttondown, Brevo…). Empty = form disabled. */
   newsletterAction: '',
   /** Articles per page on section and topic listings. */
@@ -50,7 +45,7 @@ export const ADSENSE = {
   inArticleEveryWords: 400,
   /**
    * Page kinds that may carry ads (see PageKind in src/lib/ads.ts). Crisis resources,
-   * legal and institutional pages, author profiles, errors and restricted articles
+   * legal and institutional pages, errors and restricted articles
    * (sensitive, noindex, draft) never do.
    */
   pageKinds: ['home', 'listing', 'article'],
@@ -61,7 +56,7 @@ export const SECTIONS = [
     slug: 'ansiedad',
     name: 'Ansiedad',
     description:
-      'Qué es la ansiedad, cómo se manifiesta y qué tratamientos existen. Guías y notas revisadas por profesionales de la salud mental.',
+      'Qué es la ansiedad, cómo se manifiesta y qué tratamientos existen. Guías y notas claras, con fuentes verificables.',
   },
   {
     slug: 'depresion',
@@ -73,13 +68,13 @@ export const SECTIONS = [
     slug: 'vinculos',
     name: 'Vínculos',
     description:
-      'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental y qué hacer para cuidarlos, con guías revisadas.',
+      'Pareja, familia, amistades y trabajo: cómo los vínculos impactan en nuestra salud mental y qué hacer para cuidarlos, con guías claras.',
   },
   {
     slug: 'infancias-y-adolescencias',
     name: 'Infancias y adolescencias',
     description:
-      'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta, con guías para familias revisadas por profesionales.',
+      'Salud mental de niñas, niños y adolescentes: crianza, escuela, redes sociales y señales de alerta, con guías claras para familias.',
   },
   {
     slug: 'politicas-publicas',
@@ -91,7 +86,7 @@ export const SECTIONS = [
     slug: 'bienestar',
     name: 'Bienestar',
     description:
-      'Sueño, hábitos, estrés y autocuidado: herramientas simples y basadas en evidencia para sentirte mejor en el día a día, revisadas por profesionales.',
+      'Sueño, hábitos, estrés y autocuidado: herramientas simples y basadas en evidencia para sentirte mejor en el día a día.',
   },
 ] as const;
 

@@ -1,6 +1,5 @@
 ---
 import type { MarkdownHeading } from 'astro';
-import { getEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import ArticleHeader from '../components/article/ArticleHeader.astro';
 import ArticleFigure from '../components/article/ArticleFigure.astro';
@@ -11,7 +10,7 @@ import HelpBox from '../components/help/HelpBox.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import { getSection, SITE } from '../config/site';
 import { articlePageKind, pageAllowsAds } from '../lib/ads';
-import { articleUrl, authorUrl, getArticles, readMore, sectionUrl, wordCount, type Article } from '../lib/content';
+import { articleUrl, getArticles, readMore, sectionUrl, wordCount, type Article } from '../lib/content';
 import { ogImage, schemaImages } from '../lib/images';
 import { articleLd, breadcrumbLd, crumbs as trail } from '../lib/seo';
 
@@ -23,10 +22,7 @@ interface Props {
 const { article, headings } = Astro.props;
 const { data } = article;
 const section = getSection(data.section)!;
-const author = await getEntry(data.author);
-if (!author) throw new Error(`Unknown author in ${article.id}`);
 if (data.image.width < 1200) throw new Error(`${article.id}: article images must be at least 1200px wide.`);
-const reviewer = data.reviewer ? await getEntry(data.reviewer) : undefined;
 
 const page = articlePageKind(data);
 const ads = pageAllowsAds(page);
@@ -49,22 +45,20 @@ const crumbs = trail(
     canonical: data.canonical,
     noindex: data.noindex,
     type: 'article',
-    author: author.data.name,
     article: {
       publishedTime: data.publishedAt,
       modifiedTime: data.updatedAt,
       section: section.name,
       tags: data.tags,
-      authorUrl: authorUrl(author.id),
     },
   }}
   jsonLd={[
-    articleLd({ article, author, reviewer, images, sectionName: section.name, words: wordCount(article.body) }),
+    articleLd({ article, images, sectionName: section.name, words: wordCount(article.body) }),
     breadcrumbLd(crumbs),
   ]}
 >
   <article>
-    <ArticleHeader article={article} author={author} reviewer={reviewer} crumbs={crumbs} />
+    <ArticleHeader article={article} crumbs={crumbs} />
     <ArticleFigure article={article} />
 
     <!--

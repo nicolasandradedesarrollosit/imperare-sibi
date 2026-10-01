@@ -1,33 +1,23 @@
 ---
-import { Image } from 'astro:assets';
-import { authorUrl, type Author } from '../../lib/content';
 import { formatDate } from '../../lib/dates';
 
+/** Dateline under the headline. The blog is anonymous, so no person is ever named here. */
 interface Props {
-  author: Author;
   publishedAt: Date;
   updatedAt?: Date;
   minutes: number;
 }
-const { author, publishedAt, updatedAt, minutes } = Astro.props;
+const { publishedAt, updatedAt, minutes } = Astro.props;
 ---
 
-<div class="flex items-center gap-3 justify-self-stretch border-t border-rule pt-4 text-sm">
-  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="size-10 rounded-sm object-cover" />}
-  <div class="grid gap-0.5">
-    <p>
-      Por <a class="font-semibold link" href={authorUrl(author.id)} rel="author">{author.data.name}</a>
-    </p>
-    <p class="meta">
-      <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
-      {
-        updatedAt && (
-          <span>
-            Actualizado el <time datetime={updatedAt.toISOString()}>{formatDate(updatedAt)}</time>
-          </span>
-        )
-      }
-      <span>{minutes} min de lectura</span>
-    </p>
-  </div>
-</div>
+<p class="meta justify-self-stretch border-t border-rule pt-4">
+  <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+  {
+    updatedAt && (
+      <span>
+        Actualizado el <time datetime={updatedAt.toISOString()}>{formatDate(updatedAt)}</time>
+      </span>
+    )
+  }
+  <span>{minutes} min de lectura</span>
+</p>

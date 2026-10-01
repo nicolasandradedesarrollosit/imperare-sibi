@@ -6,6 +6,7 @@ The reader-facing site is in Spanish (es-AR). Code, comments and documentation a
 
 - Business and editorial strategy: [`docs/STRATEGY.md`](docs/STRATEGY.md)
 - **Writing a new article (humans and LLMs): [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md)** + template `src/content/articles/_template.mdx`
+- **After an article is live, and the SEO roadmap: [`docs/PUBLISHING.md`](docs/PUBLISHING.md)**
 
 ## Development
 
@@ -28,19 +29,19 @@ Follow [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md). In short:
 3. Write the body in Markdown/MDX with `##` subheadings (3 or more generate the "En esta nota" index).
 4. `npm run check && npm run build`, then commit and push to `main`; Vercel deploys. Sitemap, Google News sitemap, RSS, `llms.txt`, social images and JSON-LD regenerate automatically.
 
-Authors are one JSON file each in `src/content/authors/` (name, role, bio, credentials, social links). Author pages matter for E-E-A-T.
+5. Run the post-publication checklist in [`docs/PUBLISHING.md`](docs/PUBLISHING.md).
 
-> The bundled articles and author profiles are **samples**. Replace them before launch.
+**The blog is anonymous.** There are no authors, reviewers, team bios or social profiles: articles carry only a date, and structured data names the organisation as author. Do not add people back.
 
 ## AdSense
 
-Everything is wired but inactive until an account is approved:
+The publisher id is set; ad units stay off until their slot ids are filled in:
 
 1. Set `ADSENSE.client` (`ca-pub-` + 16 digits) and the slot ids in `src/config/site.ts`. The build fails on a malformed client or slot id; a placement whose slot is empty is simply not rendered.
 2. Deploy. That enables the AdSense script, the ad units and `/ads.txt`.
 3. In the AdSense dashboard: enable Auto ads **only** for anchor and vignette formats (in-page placements are manual), and set up the consent message under *Privacy & messaging*.
 
-Eligibility is decided in one place, `src/lib/ads.ts`: every page passes its `page` kind to `BaseLayout` (`home`, `listing`, `article`, `restricted-article`, `institutional`, `legal`, `crisis`, `profile`, `error`) and only the kinds listed in `ADSENSE.pageKinds` load AdSense. Articles that are `sensitive`, `noindex` or `draft` become `restricted-article` (no script, no slots, no in-article units).
+Eligibility is decided in one place, `src/lib/ads.ts`: every page passes its `page` kind to `BaseLayout` (`home`, `listing`, `article`, `restricted-article`, `institutional`, `legal`, `crisis`, `error`) and only the kinds listed in `ADSENSE.pageKinds` load AdSense. Articles that are `sensitive`, `noindex` or `draft` become `restricted-article` (no script, no slots, no in-article units).
 
 Placements (each container reserves its height up front to keep CLS at ~0):
 
@@ -49,7 +50,7 @@ Placements (each container reserves its height up front to keep CLS at ~0):
 | Front page | 1 horizontal after the featured story |
 | Category, archive | 1 horizontal after the lead story |
 | Article | in-article units (after the 2nd paragraph, then every ~400 words, max 3; inserted by `src/lib/rehype-in-article-ads.ts`), 1 in the right-margin rail on wide screens (≥88rem), 1 at the end |
-| Never | `sensitive` articles, `/ayuda/`, legal and institutional pages, author pages, 404 |
+| Never | `sensitive` articles, `/ayuda/`, legal and institutional pages, 404 |
 
 ## Architecture
 
@@ -57,7 +58,7 @@ Placements (each container reserves its height up front to keep CLS at ~0):
 src/
   config/site.ts          # brand, categories, helplines, disclaimer, AdSense: single source of truth
   content.config.ts       # collection schemas (frontmatter validation)
-  content/                # articles (.mdx + img/, _template.mdx) and authors (.json)
+  content/                # articles (.mdx + img/, _template.mdx)
   styles/index.css        # Tailwind v4: @theme tokens + shared component classes
   layouts/
     BaseLayout.astro      # <head> (SEO, fonts, JSON-LD, AdSense script), masthead, footer
@@ -65,11 +66,11 @@ src/
     ListingLayout.astro   # categories, archive and topics: header + listing + pagination + CollectionPage
     PageLayout.astro      # institutional and legal pages
   components/
-    ui/                   # generic building blocks: Logo, SectionHeading, PhoneIcon
+    ui/                   # generic building blocks: Logo, SectionHeading
     layout/               # Header (centered masthead, live date, category nav), Footer
     seo/                  # meta tags, Open Graph, JSON-LD
     article/              # ArticleCard (featured | stack | row | wide | text), ArticleHeader, ArticleFigure,
-                          # TableOfContents, ReadMore, Byline, ReviewedBy, TagLinks, Breadcrumbs
+                          # TableOfContents, ReadMore, Byline (dateline), TagLinks, Breadcrumbs
     home/                 # EssentialGuides, CategoryGrid, NewsletterStrip
     page/                 # PageHeader, ArticleListing, Pagination
     help/                 # HelplineBar, HelpBox
@@ -84,7 +85,7 @@ src/
   pages/                  # routes; folder names are URLs, so they stay in Spanish
     [seccion]/[...page].astro   # paginated category page
     [seccion]/[slug].astro      # one static HTML file per article
-    notas/ temas/ autores/      # archive, topic index + topic pages, author pages
+    notas/ temas/               # archive, topic index + topic pages
     ayuda.astro                 # crisis resources (never monetised)
     rss.xml.ts  news-sitemap.xml.ts  robots.txt.ts  ads.txt.ts  llms.txt.ts
 public/brand/             # logo and mark (regenerate PNGs with scripts/generate-brand-assets.mjs)
@@ -94,12 +95,11 @@ public/brand/             # logo and mark (regenerate PNGs with scripts/generate
 
 **Live date**: the masthead date is filled in by a tiny inline script in the browser, because a static build would otherwise freeze it on deploy day.
 
-**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`BlogPosting` or `NewsArticle` with `author`, `reviewedBy`, `lastReviewed`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`, author pages `ProfilePage`. Topic pages with fewer than 3 articles are `noindex` and excluded from the sitemap, which includes `lastmod`. `/llms.txt` gives AI assistants a Markdown map of the site. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and the only JavaScript is the date script (plus AdSense once enabled).
+**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`BlogPosting` or `NewsArticle` with the organisation as `author`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`. Topic pages with fewer than 3 articles are `noindex` and excluded from the sitemap, which includes `lastmod`. `/llms.txt` gives AI assistants a Markdown map of the site. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and the only JavaScript is the date script (plus AdSense once enabled).
 
-## Before launch
+## Operations
 
-- Confirm the domain in `astro.config.mjs` (`site`) and `src/config/site.ts`.
-- Verify the helplines in `HELPLINES` are current.
-- Configure the newsletter provider (`SITE.newsletterAction`).
-- Replace the sample content and add reviewers' real licence numbers.
-- Register in Google Search Console and Google News Publisher Center; apply for AdSense.
+- The canonical host is `https://www.imperaresibi.com` (`SITE.url`); the apex redirects to it on Vercel. Every canonical, sitemap and feed URL derives from that value.
+- `SITE.email` must be a generic mailbox on the site domain, never a personal address.
+- Verify the helplines in `HELPLINES` periodically.
+- Pending set-up and the recurring SEO routine: [`docs/PUBLISHING.md`](docs/PUBLISHING.md).

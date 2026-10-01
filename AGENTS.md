@@ -24,6 +24,8 @@ Consult these guides before working on related tasks:
 ## Project conventions
 
 - **Writing a new article? Read `docs/CONTENT_GUIDE.md` first and start from `src/content/articles/_template.mdx`.**
+- **After publishing, follow `docs/PUBLISHING.md`** (post-publication checklist and SEO routine).
+- **The blog is anonymous.** Never add author names, bylines, reviewers, team bios, personal emails or social profiles to pages, content or structured data, and never claim professional review.
 - Code, comments and docs in English; reader-facing copy and URLs in Spanish (es-AR).
 - Content lives in `src/content/` (schemas in `src/content.config.ts`); article URLs are `/{section}/{id}/`.
 - Everything configurable (categories, helplines, disclaimer, AdSense, brand) lives in `src/config/site.ts`; never hardcode it in components.
