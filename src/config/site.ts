@@ -36,7 +36,7 @@ export const SITE = {
 export const ADSENSE = {
   client: 'ca-pub-7493753362093860',
   slots: {
-    inArticle: '',
+    inArticle: '1545830546',
     rail: '',
     horizontal: '',
   },
