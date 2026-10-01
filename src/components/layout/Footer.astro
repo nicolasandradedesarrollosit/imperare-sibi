@@ -11,18 +11,18 @@ const columns = [
 ];
 ---
 
-<footer class="section border-t border-rule bg-paper-alt text-sm text-ink-2">
+<footer class="section border-t border-rule text-sm text-ink-2">
   <div class="wrap py-12">
-    <div class="flex flex-col items-center gap-3 text-center">
-      <a href="/" class="text-2xl no-underline" aria-label="Imperare Sibi, ir a la portada"><Logo /></a>
-      <p class="font-serif text-muted italic">{SITE.tagline}</p>
+    <div class="grid gap-2">
+      <a href="/" class="justify-self-start text-base no-underline" aria-label="Imperare Sibi, ir a la portada"><Logo /></a>
+      <p class="text-muted">{SITE.tagline}</p>
     </div>
 
     <div class="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-rule pt-10 md:grid-cols-4">
       {
         columns.map((col) => (
           <nav aria-label={`${col.title} (pie de página)`}>
-            <h2 class="label mb-3">{col.title}</h2>
+            <h2 class="label mb-3 text-muted">{col.title}</h2>
             <ul role="list" class="grid gap-2">
               {col.links.map((l) => (
                 <li>
@@ -36,12 +36,12 @@ const columns = [
         ))
       }
       <div>
-        <h2 class="label mb-3">Líneas de ayuda</h2>
+        <h2 class="label mb-3 text-muted">Líneas de ayuda</h2>
         <ul role="list" class="grid gap-2">
           {
             HELPLINES.map((l) => (
               <li class="grid">
-                <a class="font-bold text-ink link" href={l.href}>
+                <a class="font-semibold text-ink link tabular-nums" href={l.href}>
                   {l.number}
                 </a>
                 <span class="text-xs text-muted">{l.name}</span>
@@ -52,9 +52,9 @@ const columns = [
       </div>
     </div>
 
-    <p class="mx-auto mt-10 max-w-2xl border-t border-rule pt-6 text-center text-xs text-muted">{SITE.disclaimer}</p>
+    <p class="mt-10 max-w-3xl border-t border-rule pt-6 text-xs text-muted">{SITE.disclaimer}</p>
 
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted">
+    <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
       <span>© {year} {SITE.name}</span>
       <a class="link" href={SITE.social.instagram} rel="me noopener">Instagram</a>
       <a class="link" href={SITE.social.x} rel="me noopener">X</a>

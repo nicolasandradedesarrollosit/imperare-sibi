@@ -3,13 +3,16 @@ import { HELPLINE_LINES } from '../../config/site';
 const [local, national] = HELPLINE_LINES;
 ---
 
-<aside class="bg-calm text-ink-2" aria-label="Líneas de ayuda">
-  <p class="wrap flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 py-2 text-center text-xs">
-    <span>¿Necesitás hablar con alguien?</span>
+<aside class="bg-accent text-white [&_a:focus-visible]:outline-white" aria-label="Líneas de ayuda">
+  <p class="wrap flex flex-wrap items-center gap-x-3 gap-y-0.5 py-2 text-xs max-sm:justify-center max-sm:text-center">
+    <span class="text-white/80">Líneas de asistencia gratuitas, las 24 horas:</span>
     <span>
-      Llamá gratis al <a class="font-bold text-ink" href={local!.href}>{local!.number}</a> o al{' '}
-      <a class="font-bold text-ink" href={national!.href}>{national!.number}</a>
+      <a class="font-semibold text-white no-underline hover:underline" href={local!.href}>{local!.number}</a>
+      <span class="text-white/50" aria-hidden="true"> · </span>
+      <a class="font-semibold text-white no-underline hover:underline" href={national!.href}>{national!.number}</a>
     </span>
-    <a class="link-accent inline-block py-1" href="/ayuda/">Más recursos</a>
+    <a class="inline-block py-1 text-white underline decoration-white/40 hover:decoration-white sm:ml-auto" href="/ayuda/"
+      >Más recursos</a
+    >
   </p>
 </aside>

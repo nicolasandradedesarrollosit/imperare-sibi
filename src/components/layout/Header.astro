@@ -18,36 +18,35 @@ const currentFor = (slug: string) => {
 ---
 
 <header>
-  <div class="wrap grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-5 md:py-6">
-    <!--
-      Today's date is filled in by the browser (the site is static, so a build-time
-      date would freeze on deploy day). Width is reserved to avoid layout shift.
-    -->
-    <time data-today class="hidden min-w-64 text-xs text-muted md:block"></time>
-    <script is:inline>
-      (function () {
-        var el = document.querySelector('[data-today]');
-        if (!el) return;
-        var now = new Date();
-        var text = new Intl.DateTimeFormat('es-AR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          timeZone: 'America/Argentina/Buenos_Aires',
-        }).format(now);
-        el.textContent = text.charAt(0).toUpperCase() + text.slice(1);
-        el.setAttribute('datetime', now.toISOString().slice(0, 10));
-      })();
-    </script>
-
-    <a href="/" class="col-start-2 text-2xl no-underline md:text-[2.125rem]" aria-label="Imperare Sibi, ir a la portada">
+  <div class="wrap flex items-center justify-between gap-6 py-4 md:py-5">
+    <a href="/" class="text-base no-underline md:text-lg" aria-label="Imperare Sibi, ir a la portada">
       <Logo />
     </a>
 
-    <!-- Hidden on phones: the helpline bar above already links to /ayuda, and the logo stays alone at the centre. -->
-    <div class="col-start-3 hidden justify-end sm:flex">
-      <a href="/ayuda/" class="link inline-block py-1 text-xs font-semibold">Pedir ayuda</a>
+    <div class="flex items-center gap-6">
+      <!--
+        Today's date is filled in by the browser (the site is static, so a build-time
+        date would freeze on deploy day). Width is reserved to avoid layout shift.
+      -->
+      <time data-today class="hidden min-w-56 text-right text-xs text-muted md:block"></time>
+      <script is:inline>
+        (function () {
+          var el = document.querySelector('[data-today]');
+          if (!el) return;
+          var now = new Date();
+          var text = new Intl.DateTimeFormat('es-AR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            timeZone: 'America/Argentina/Buenos_Aires',
+          }).format(now);
+          el.textContent = text.charAt(0).toUpperCase() + text.slice(1);
+          el.setAttribute('datetime', now.toISOString().slice(0, 10));
+        })();
+      </script>
+      <!-- Hidden on phones: the helpline bar above already links to /ayuda. -->
+      <a href="/ayuda/" class="btn btn--ghost hidden px-3.5 py-1.5 text-xs sm:inline-flex">Pedir ayuda</a>
     </div>
   </div>
 
@@ -55,14 +54,14 @@ const currentFor = (slug: string) => {
     <div
       class="wrap overflow-x-auto [scrollbar-width:none] max-md:pr-8 max-md:[mask-image:linear-gradient(to_right,#000_85%,transparent)] [&::-webkit-scrollbar]:hidden"
     >
-      <ul role="list" class="mx-auto flex w-max min-w-full gap-6 md:justify-center">
+      <ul role="list" class="flex w-max min-w-full gap-7">
         {
           SECTIONS.map((s) => (
             <li>
               <a
                 href={sectionUrl(s.slug)}
                 aria-current={currentFor(s.slug)}
-                class="block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-semibold whitespace-nowrap no-underline hover:border-accent/40 hover:text-accent-dark aria-[current]:border-accent"
+                class="-mb-px block border-b-2 border-transparent pt-3 pb-2.5 text-sm font-medium whitespace-nowrap text-ink-2 no-underline hover:text-accent aria-[current]:border-accent aria-[current]:text-accent"
               >
                 {s.name}
               </a>
