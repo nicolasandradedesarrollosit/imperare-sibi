@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "redirects": [{ "source": "/autores/:path*", "destination": "/sobre-nosotros/", "permanent": true }],
+  "redirects": [{ "source": "/autores/(.*)", "destination": "/sobre-nosotros/", "permanent": true }],
   "headers": [
     {
       "source": "/_astro/(.*)",
