@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/page/PageHeader.astro';
-import PhoneIcon from '../components/ui/PhoneIcon.astro';
 import { HELPLINE_LINES } from '../config/site';
 import { breadcrumbLd, crumbs } from '../lib/seo';
 
@@ -17,7 +16,7 @@ const description =
   <div class="wrap grid gap-12">
     <!-- Emergency first -->
     <section
-      class="flex w-full max-w-3xl flex-col items-start gap-4 border-l-4 border-alert py-2 pl-5 sm:flex-row sm:items-center"
+      class="flex w-full max-w-3xl flex-col items-start gap-4 border-l-4 border-accent py-2 pl-5 sm:flex-row sm:items-center"
       aria-labelledby="emergency-title"
     >
       <div class="flex-1">
@@ -27,8 +26,8 @@ const description =
         </p>
       </div>
       <div class="flex gap-2">
-        <a class="btn border-alert bg-alert hover:border-ink hover:bg-ink" href="tel:911"><PhoneIcon /> 911</a>
-        <a class="btn btn--ghost" href="tel:107"><PhoneIcon /> 107</a>
+        <a class="btn" href="tel:911">Llamar al 911</a>
+        <a class="btn btn--ghost" href="tel:107">Llamar al 107</a>
       </div>
     </section>
 
@@ -48,7 +47,7 @@ const description =
               <p class="mt-1 text-3xl font-semibold text-ink tabular-nums">{l.number}</p>
               <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
               <a class="btn mt-auto self-start" href={l.href}>
-                <PhoneIcon /> Llamar al {l.number}
+                Llamar al {l.number}
               </a>
             </article>
           ))

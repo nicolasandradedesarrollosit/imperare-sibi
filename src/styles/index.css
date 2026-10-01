@@ -20,7 +20,6 @@
   --color-rule: #e2e4e7;
   --color-accent: #1f3a5f;
   --color-accent-dark: #152a45;
-  --color-alert: #9c3f22;
 
   /* Type: a single sans family from the Astro Fonts API (see astro.config.mjs) */
   --font-sans: var(--font-plex), Arial, 'Helvetica Neue', sans-serif;
