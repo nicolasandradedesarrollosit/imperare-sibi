@@ -143,6 +143,7 @@ export const EMERGENCY = HELPLINES.find((l) => l.kind === 'emergency')!;
 export const INSTITUTIONAL_NAV = [
   { href: '/notas/', label: 'Todas las notas' },
   { href: '/temas/', label: 'Temas' },
+  { href: '/buscar/', label: 'Buscar' },
   { href: '/sobre-nosotros/', label: 'Sobre nosotros' },
   { href: '/politica-editorial/', label: 'Política editorial' },
   { href: '/contacto/', label: 'Contacto' },

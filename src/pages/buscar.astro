@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/page/PageHeader.astro';
+import { breadcrumbLd, crumbs } from '../lib/seo';
+
+const title = 'Buscar';
+const description = 'Buscá entre todas las guías y noticias de salud mental del blog por tema, síntoma o palabra clave.';
+---
+
+<!--
+  On-site search with Pagefind. The index and the UI bundle live in /pagefind/, which
+  scripts/build-search.mjs generates after the build, so the box only works on a built
+  site (npm run build && npm run preview), not in `astro dev`.
+  This is one of the few pages with client JavaScript: search cannot work without it.
+-->
+<BaseLayout seo={{ title, description, noindex: true }} jsonLd={[breadcrumbLd(crumbs({ name: title, href: '/buscar/' }))]} page="institutional">
+  <PageHeader eyebrow="El blog" title={title} description={description} />
+  <div class="wrap">
+    <div class="w-full max-w-3xl">
+      <div id="search" class="search"></div>
+      <noscript>
+        <p class="text-sm text-ink-2">
+          El buscador necesita JavaScript. También podés recorrer <a class="underline" href="/notas/">todas las notas</a> o los
+          <a class="underline" href="/temas/">temas</a>.
+        </p>
+      </noscript>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    (function () {
+      if (typeof PagefindUI === 'undefined') return;
+      var ui = new PagefindUI({
+        element: '#search',
+        showImages: false,
+        showSubResults: false,
+        resetStyles: false,
+        pageSize: 10,
+      });
+      var query = new URLSearchParams(window.location.search).get('q');
+      if (query) ui.triggerSearch(query);
+    })();
+  </script>
+</BaseLayout>

@@ -21,10 +21,12 @@ Do this for every new article, in order.
 2. **Confirm it is anonymous.** No name under the headline, only the date and reading time. If a name appears anywhere other than the photo credit or a quoted public source, fix it before anything else.
 3. **Check the listings.** The article should appear on the front page or its section page, in `/notas/`, and on its topic pages (`/temas/...`).
 4. **Check the sitemap.** Open `/sitemap-index.xml` and find the URL in `sitemap-0.xml`. For `type: news`, also find it in `/news-sitemap.xml`. If it is missing, the article is probably still `draft: true` or `noindex: true`.
-5. **Request indexing in Google Search Console.** URL Inspection → paste the URL → *Request indexing*. There is a daily quota of roughly ten requests, so use it for new articles and materially updated ones, not for every page.
-6. **Validate the structured data** the first time you use a new article type or change a layout: paste the URL into the [Rich Results Test](https://search.google.com/test/rich-results). It should detect one `Article` item and one `Breadcrumbs` item with no errors.
-7. **Check the social preview** when you plan to share it: paste the URL into a WhatsApp chat with yourself, or into [opengraph.xyz](https://www.opengraph.xyz/). It should show the 1200×630 crop of the article photo, the title and the standfirst.
-8. **Add inbound links.** A new article with no internal links pointing at it is slow to be crawled and ranks poorly. Edit two or three older, related articles and link to the new one with descriptive anchor text. Set `updatedAt` on an older article only if you also changed its substance.
+5. **IndexNow runs by itself.** Every production deploy submits the home page and the articles published or updated in the last two days to Bing and the engines that share its index (look for `[indexnow] submitted N URLs: HTTP 200` or `202` in the Vercel build log). Nothing to do unless that line shows an error.
+6. **Request indexing in Google Search Console.** URL Inspection → paste the URL → *Request indexing*. There is a daily quota of roughly ten requests, so use it for new articles and materially updated ones, not for every page.
+7. **Validate the structured data** the first time you use a new article type or change a layout: paste the URL into the [Rich Results Test](https://search.google.com/test/rich-results). It should detect one `Article` item and one `Breadcrumbs` item with no errors, plus one `FAQ` item on guides.
+8. **Check the social preview** when you plan to share it: paste the URL into a WhatsApp chat with yourself, or into [opengraph.xyz](https://www.opengraph.xyz/). It should show the 1200×630 crop of the article photo, the title and the standfirst.
+9. **Check the search.** Open `/buscar/` and search for a word from the headline: the article should come up. The index is rebuilt on every deploy.
+10. **Add inbound links.** A new article with no internal links pointing at it is slow to be crawled and ranks poorly. Edit two or three older, related articles and link to the new one with descriptive anchor text. Set `updatedAt` on an older article only if you also changed its substance.
 
 ## 2. Within the first week
 
@@ -68,11 +70,14 @@ Done:
 
 - [x] Google AdSense publisher id (`ADSENSE.client`) and `/ads.txt`.
 - [x] Google Search Console domain property for `imperaresibi.com` (DNS CNAME in Cloudflare).
+- [x] Both sitemaps submitted in Search Console (`sitemap-index.xml` and `news-sitemap.xml`, on the `www` host).
+- [x] Contact mailbox: `contacto@imperaresibi.com` is routed with Cloudflare Email Routing. It only receives; a reply goes out from the destination inbox and shows that address, so reply from an account that does not carry a personal name.
+- [x] IndexNow: key file in `public/`, submission in `scripts/indexnow.mjs` (runs on production deploys).
+- [x] On-site search at `/buscar/` (Pagefind, `scripts/build-search.mjs`).
+- [x] `faq` frontmatter on guides, rendered with `FAQPage` markup.
 
 Still to do, roughly in order of value:
 
-- [ ] **Submit both sitemaps in Search Console**: Sitemaps → add `https://www.imperaresibi.com/sitemap-index.xml` and `https://www.imperaresibi.com/news-sitemap.xml`.
-- [ ] **Create the contact mailbox.** `SITE.email` is `contacto@imperaresibi.com`. In Cloudflare: Email → Email Routing → route `contacto@` to a private inbox. The address is published on the contact, privacy and terms pages, and AdSense expects a working contact. To stay anonymous, reply from an account that does not show a personal name or address.
 - [ ] **Bing Webmaster Tools.** Sign in at bing.com/webmasters and use *Import from Google Search Console*: it copies the verification and the sitemaps in one step. Bing's index also feeds DuckDuckGo, Yahoo and the search used by ChatGPT and Copilot, so it is worth the five minutes.
 - [ ] **Google News Publisher Center.** Create the publication at publishercenter.google.com with the site URL, the logo (`public/brand/`) and the sections mapped to the section URLs. It is not required to appear in Google News, but it controls how the publication is named and presented there.
 - [ ] **AdSense slot ids.** Create the three units (in-article, rail, horizontal) and fill `ADSENSE.slots` in `src/config/site.ts`. Until then only Auto ads can serve.
@@ -82,13 +87,12 @@ Still to do, roughly in order of value:
 
 Ranked by expected return. None of them needs analytics or monitoring.
 
-1. **IndexNow.** A key file in `public/` plus one request on deploy tells Bing, Yandex and the engines that share their index about new and updated URLs within minutes, instead of waiting for a crawl. Google does not use it, so the manual *Request indexing* step in §1 stays.
-2. **FAQ sections on guides, with `FAQPage` markup.** End each guide with three to five short questions and answers taken from Search Console queries and Google's "People also ask". Google rarely shows FAQ rich results any more, but the question-and-answer format is what AI answers and featured snippets quote.
-3. **Static search (Pagefind).** On-site search keeps readers on the site and lets the `WebSite` schema declare a `SearchAction`.
-4. **More articles per topic.** Several topics sit below the three-article threshold and are `noindex`. One more piece each ("Prevención del suicidio", "Sueño", "Soledad", "Crianza") turns them into indexable hub pages.
-5. **Backlinks.** The biggest lever left, and it cannot be automated. The assets most likely to earn links are the help-resources page (`/ayuda/`) and the practical guides on rights and coverage: universities, schools, NGOs, municipal sites and local media link to pages like these when asked. Outreach must go out from the generic mailbox, never a personal one.
-6. **Newsletter.** `SITE.newsletterAction` is empty, so the form is off. A provider (Buttondown, Brevo) gives returning traffic that does not depend on Google.
-7. **A brand profile on one social network**, only if it can be run under the blog's name with no personal account attached. Then list it in `Organization.sameAs` in `src/lib/seo.ts`. It is a minor signal; skip it if it puts the anonymity at risk.
+1. **Keep the FAQ sections fresh.** Every guide carries a `faq` block. Once Search Console has data, replace the weakest question in each guide with a real query the page is shown for. Google rarely shows FAQ rich results any more, but the question-and-answer format is what AI answers and featured snippets quote.
+2. **More articles per topic.** A topic page is indexed from three articles up. Check `/temas/` for tags with one or two articles ("Obras sociales", "Redes sociales", "Pánico") and write the piece that takes each to three.
+3. **Longer guides.** The guides run 300–750 words; the ones that rank for health queries are usually 900–1,500. Expand the strongest ones section by section, with sources.
+4. **Backlinks.** The biggest lever left, and it cannot be automated. The assets most likely to earn links are the help-resources page (`/ayuda/`) and the practical guides on rights and coverage: universities, schools, NGOs, municipal sites and local media link to pages like these when asked. Outreach must go out from the generic mailbox, never a personal one.
+5. **Newsletter.** `SITE.newsletterAction` is empty, so the form is off. A provider (Buttondown, Brevo) gives returning traffic that does not depend on Google.
+6. **A brand profile on one social network**, only if it can be run under the blog's name with no personal account attached. Then list it in `Organization.sameAs` in `src/lib/seo.ts`. It is a minor signal; skip it if it puts the anonymity at risk.
 
 Not worth doing: `meta keywords`, submitting to link directories, buying links, AMP, or generating many near-identical pages for keyword variants.
 

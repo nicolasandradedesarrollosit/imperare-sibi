@@ -366,6 +366,19 @@
     }
   }
 
+  /* ---- On-site search (/buscar/): Pagefind's default UI, restyled with the site tokens ---- */
+  .search {
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-ink);
+    --pagefind-ui-background: var(--color-paper);
+    --pagefind-ui-border: var(--color-rule);
+    --pagefind-ui-tag: var(--color-paper-alt);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 2px;
+    --pagefind-ui-font: var(--font-sans);
+  }
+
   /* ---- Long-form text (articles and institutional pages) ---- */
   .prose {
     @apply text-ink-2;

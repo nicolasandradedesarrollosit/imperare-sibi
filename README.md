@@ -14,7 +14,7 @@ The reader-facing site is in Spanish (es-AR). Code, comments and documentation a
 npm install
 npm run dev      # http://localhost:4321 (ad slots render as dashed placeholders)
 npm run check    # type check
-npm run build    # outputs dist/ and .vercel/output
+npm run build    # astro build + search index (Pagefind) + IndexNow ping on production deploys
 npm run preview
 ```
 
@@ -87,15 +87,18 @@ src/
     [seccion]/[slug].astro      # one static HTML file per article
     notas/ temas/               # archive, topic index + topic pages
     ayuda.astro                 # crisis resources (never monetised)
+    buscar.astro                # on-site search (Pagefind UI; index built by scripts/build-search.mjs)
     rss.xml.ts  news-sitemap.xml.ts  robots.txt.ts  ads.txt.ts  llms.txt.ts
 public/brand/             # logo and mark (regenerate PNGs with scripts/generate-brand-assets.mjs)
+public/<key>.txt          # IndexNow ownership key (must match KEY in scripts/indexnow.mjs)
+scripts/                  # build-search.mjs (Pagefind index), indexnow.mjs (notify Bing on deploy)
 ```
 
 **Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.link`, `.link-accent`, `.chip`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. IBM Plex Sans throughout, black on white with a single navy accent; light theme only.
 
 **Live date**: the masthead date is filled in by a tiny inline script in the browser, because a static build would otherwise freeze it on deploy day.
 
-**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`BlogPosting` or `NewsArticle` with the organisation as `author`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`. Topic pages with fewer than 3 articles are `noindex` and excluded from the sitemap, which includes `lastmod`. `/llms.txt` gives AI assistants a Markdown map of the site. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and the only JavaScript is the date script (plus AdSense once enabled).
+**SEO**: every article is a standalone static HTML file with its own title, description, canonical, Open Graph image (1200×630 crop of the article photo) and JSON-LD (`BlogPosting` or `NewsArticle` with the organisation as `author`, and 16:9, 4:3 and 1:1 images). Listing pages carry `CollectionPage` + `ItemList`. Topic pages with fewer than 3 articles are `noindex` and excluded from the sitemap, which includes `lastmod`. `/llms.txt` gives AI assistants a Markdown map of the site. CSS is inlined, fonts are static subsets with only above-the-fold faces preloaded, and the only JavaScript is the date script, the search box on `/buscar/` and AdSense. Guides carry a `faq` block rendered as "Preguntas frecuentes" with `FAQPage` markup, and `WebSite` declares a `SearchAction` pointing at `/buscar/`.
 
 ## Operations
 

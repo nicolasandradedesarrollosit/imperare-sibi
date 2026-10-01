@@ -12,7 +12,7 @@ import { getSection, SITE } from '../config/site';
 import { articlePageKind, pageAllowsAds } from '../lib/ads';
 import { articleUrl, getArticles, readMore, sectionUrl, wordCount, type Article } from '../lib/content';
 import { ogImage, schemaImages } from '../lib/images';
-import { articleLd, breadcrumbLd, crumbs as trail } from '../lib/seo';
+import { articleLd, breadcrumbLd, crumbs as trail, faqLd } from '../lib/seo';
 
 interface Props {
   article: Article;
@@ -55,9 +55,11 @@ const crumbs = trail(
   jsonLd={[
     articleLd({ article, images, sectionName: section.name, words: wordCount(article.body) }),
     breadcrumbLd(crumbs),
+    ...(data.faq.length > 0 ? [faqLd(article)] : []),
   ]}
 >
-  <article>
+  <!-- data-pagefind-body: only article pages are indexed by the on-site search. -->
+  <article data-pagefind-body>
     <ArticleHeader article={article} crumbs={crumbs} />
     <ArticleFigure article={article} />
 
@@ -75,16 +77,29 @@ const crumbs = trail(
 
         <div class="prose">
           <slot />
+          {
+            data.faq.length > 0 && (
+              <section aria-labelledby="preguntas-frecuentes">
+                <h2 id="preguntas-frecuentes">Preguntas frecuentes</h2>
+                {data.faq.map((item) => (
+                  <>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </>
+                ))}
+              </section>
+            )
+          }
         </div>
 
-        <footer class="mt-12 grid gap-8">
+        <footer class="mt-12 grid gap-8" data-pagefind-ignore>
           <TagLinks tags={data.tags} />
           <p class="border-t border-rule pt-4 text-xs text-muted">{SITE.disclaimer}</p>
           {!data.sensitive && <HelpBox />}
         </footer>
       </div>
 
-      <aside class="hidden min-[88rem]:col-start-3 min-[88rem]:block" aria-label="Complementos">
+      <aside class="hidden min-[88rem]:col-start-3 min-[88rem]:block" aria-label="Complementos" data-pagefind-ignore>
         <div class="sticky top-16 grid w-(--container-rail) gap-8">
           <TableOfContents headings={headings} variant="rail" />
           {ads && <AdSlot placement="rail" />}

@@ -34,6 +34,24 @@ export function websiteLd(): JsonLd {
     description: SITE.description,
     inLanguage: SITE.locale,
     publisher: { '@id': ORG_ID },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE.url}/buscar/?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
+
+/** Questions and answers shown at the end of an article (frontmatter `faq`). */
+export function faqLd(article: Article): JsonLd {
+  return {
+    '@type': 'FAQPage',
+    '@id': `${absUrl(articleUrl(article))}#faq`,
+    mainEntity: article.data.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
   };
 }
 

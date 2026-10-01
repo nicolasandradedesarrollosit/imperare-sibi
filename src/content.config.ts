@@ -25,6 +25,14 @@ const articles = defineCollection({
       image: image(),
       imageAlt: z.string().min(10),
       imageCredit: z.string().optional(),
+      /**
+       * Questions and answers rendered at the end of the article and exposed as FAQPage
+       * structured data. Plain text only; answers must restate what the article says.
+       */
+      faq: z
+        .array(z.object({ question: z.string().min(10), answer: z.string().min(40).max(600) }))
+        .max(6)
+        .default([]),
       featured: z.boolean().default(false),
       /** Suicide/self-harm coverage: helplines go first and no ads are served. */
       sensitive: z.boolean().default(false),

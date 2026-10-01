@@ -32,6 +32,9 @@ updatedAt: 2026-10-10 # optional
 image: ./img/man-head-hands.jpg
 imageAlt: 'Un hombre sentado en un sillón se cubre la cara con las manos'
 imageCredit: 'Foto: Nik Shuliahin / Unsplash'
+faq: # guides only; see the table
+  - question: '¿Un ataque de pánico es peligroso?'
+    answer: 'Es muy desagradable, pero no es peligroso en sí mismo y cede solo.'
 featured: false # optional
 sensitive: false # optional
 draft: false # optional
@@ -51,6 +54,7 @@ draft: false # optional
 | `image` | yes | Relative path `./img/<file>.jpg`, landscape, **≥1200px wide** (the build fails otherwise). |
 | `imageAlt` | yes | ≥10 chars. Literal description of the photo in Spanish; also shown as the caption. |
 | `imageCredit` | yes in practice | `'Foto: <Author> / Unsplash'`. |
+| `faq` | guides: yes | 3–5 questions people actually search, each with a plain-text answer of 40–600 characters. Rendered as a "Preguntas frecuentes" section at the end of the article and exposed as `FAQPage` structured data. **Every answer must restate something the article already says**: no new facts, figures or advice. Take the questions from Search Console queries and Google's "People also ask". In YAML, write an apostrophe inside single quotes as `''`. |
 | `featured` | no | `true` makes it a candidate for the front-page lead. Only one or two at a time. |
 | `sensitive` | no | `true` for suicide, self-harm or crisis-focused pieces: helplines appear first and **no ads are shown**. |
 | `draft` | no | `true` keeps it out of production builds. |
@@ -72,6 +76,7 @@ draft: false # optional
 2. 4–7 `##` sections phrased as the questions people search: "Qué es…", "Cómo se manifiesta", "Cuándo es un problema", "Qué ayuda", "Cómo acompañar", "Cuándo consultar".
 3. A `##` near the end about when and where to seek professional help.
 4. Close by linking to `/ayuda/` or a related guide.
+5. Add 3–5 `faq` entries in the frontmatter (see [§2](#2-frontmatter-reference)); do not write a "Preguntas frecuentes" heading in the body, the layout adds it.
 
 **News** (`type: news`, 400–800 words): what happened, why it matters for readers' mental health or access to care, what changes for them, source link. Use only verifiable, dated facts.
 
@@ -89,6 +94,7 @@ Every article: a `##` roughly every 150–300 words, so readers can scan it and 
 - [ ] 2–4 internal links to other articles or to `/ayuda/`, with descriptive anchor text (never "hacé clic acá"). Use root-relative URLs: `/ansiedad/que-es-la-ansiedad/`.
 - [ ] 1–2 outbound links to authoritative sources (WHO, Ministerio de Salud, the law text).
 - [ ] 2–4 tags reused from existing ones.
+- [ ] Guides: 3–5 `faq` entries phrased as real searches.
 - [ ] Image ≥1200px, descriptive `imageAlt`.
 - [ ] If you update an old article, set `updatedAt` and keep the same slug (never rename published slugs).
 
