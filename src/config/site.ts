@@ -38,7 +38,7 @@ export const ADSENSE = {
   slots: {
     inArticle: '1545830546',
     rail: '',
-    horizontal: '',
+    horizontal: '4652263624',
   },
   /** Max in-article units per article, and min words between them. */
   inArticleMax: 3,
