@@ -37,7 +37,7 @@ export const ADSENSE = {
   client: 'ca-pub-7493753362093860',
   slots: {
     inArticle: '1545830546',
-    rail: '',
+    rail: '4160299877',
     horizontal: '4652263624',
   },
   /** Max in-article units per article, and min words between them. */
