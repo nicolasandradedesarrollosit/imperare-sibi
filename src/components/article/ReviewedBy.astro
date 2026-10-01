@@ -9,7 +9,7 @@ interface Props {
 const { reviewer, date } = Astro.props;
 ---
 
-<p class="max-w-xl text-center text-xs text-muted">
+<p class="max-w-xl text-xs text-muted">
   Revisado por <a class="link font-semibold text-ink" href={authorUrl(reviewer.id)}>{reviewer.data.name}</a
   >{reviewer.data.credentials && <>, {reviewer.data.credentials}</>}{
     date && (

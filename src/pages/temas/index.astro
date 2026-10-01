@@ -18,7 +18,7 @@ const description = `Índice de todos los temas de ${SITE.name}: ansiedad, depre
         tags.map((t) => (
           <li class="break-inside-avoid border-b border-rule">
             <a href={tagUrl(t.name)} class="group flex items-baseline justify-between gap-4 py-3 no-underline">
-              <span class="font-serif text-lg font-semibold transition-colors group-hover:text-accent-dark">{t.name}</span>
+              <span class="text-base font-medium transition-colors group-hover:text-accent">{t.name}</span>
               <span class="text-xs text-muted tabular-nums">{t.articles.length}</span>
             </a>
           </li>

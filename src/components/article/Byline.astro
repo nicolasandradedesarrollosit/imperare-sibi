@@ -12,13 +12,13 @@ interface Props {
 const { author, publishedAt, updatedAt, minutes } = Astro.props;
 ---
 
-<div class="flex items-center justify-center gap-3 text-sm">
-  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="size-11 rounded-full object-cover" />}
-  <div class="grid justify-items-center gap-0.5">
+<div class="flex items-center gap-3 justify-self-stretch border-t border-rule pt-4 text-sm">
+  {author.data.photo && <Image src={author.data.photo} alt="" width={44} height={44} class="size-10 rounded-sm object-cover" />}
+  <div class="grid gap-0.5">
     <p>
-      Por <a class="font-bold link" href={authorUrl(author.id)} rel="author">{author.data.name}</a>
+      Por <a class="font-semibold link" href={authorUrl(author.id)} rel="author">{author.data.name}</a>
     </p>
-    <p class="meta justify-center">
+    <p class="meta">
       <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
       {
         updatedAt && (

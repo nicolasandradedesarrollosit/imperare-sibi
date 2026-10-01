@@ -34,8 +34,8 @@ const social = Object.entries(author.data.social).filter(([, url]) => url) as [s
   page="profile"
 >
   <PageHeader eyebrow={author.data.role} title={author.data.name} description={author.data.bio}>
-    {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="rounded-full" />}
-    {author.data.credentials && <p class="font-bold text-accent-dark">{author.data.credentials}</p>}
+    {author.data.photo && <Image src={author.data.photo} alt={author.data.name} width={96} height={96} class="rounded-sm" />}
+    {author.data.credentials && <p class="font-semibold text-accent">{author.data.credentials}</p>}
     {
       social.length > 0 && (
         <ul role="list" class="flex gap-4 text-sm capitalize">
@@ -53,7 +53,7 @@ const social = Object.entries(author.data.social).filter(([, url]) => url) as [s
   <div class="wrap grid gap-16">
     {
       lists.map((list) => (
-        <section class="mx-auto w-full max-w-3xl" aria-labelledby={list.id}>
+        <section class="w-full max-w-3xl" aria-labelledby={list.id}>
           <SectionHeading id={list.id} title={list.title} />
           <div class="stacked">
             {list.articles.map((a) => (

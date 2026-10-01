@@ -11,16 +11,16 @@ const trail = items.slice(0, -1);
 ---
 
 <nav aria-label="Ruta de navegación" class={className}>
-  <ol role="list" class="flex flex-wrap justify-center gap-2 text-sm font-semibold">
+  <ol role="list" class="flex flex-wrap gap-2 text-2xs font-semibold tracking-wider uppercase">
     {
       trail.map((it, i) => (
         <li class="flex gap-2">
           {i > 0 && (
             <span class="font-normal text-muted" aria-hidden="true">
-              ›
+              /
             </span>
           )}
-          <a href={it.href} class="link text-accent">
+          <a href={it.href} class="link text-accent hover:text-ink">
             {it.name}
           </a>
         </li>

@@ -8,12 +8,12 @@ const enabled = SITE.newsletterAction.length > 0;
 {
   enabled && (
     <section id="newsletter" class="wrap section" aria-labelledby="newsletter-title">
-      <div class="mx-auto max-w-2xl border-y border-ink py-10 text-center">
-        <h2 id="newsletter-title" class="text-title">
+      <div class="max-w-2xl border-t-2 border-ink pt-4">
+        <h2 id="newsletter-title" class="text-xl">
           Newsletter
         </h2>
-        <p class="mt-2 text-ink-2">Las notas de la semana, cada domingo en tu correo.</p>
-        <form class="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row" method="post" action={SITE.newsletterAction}>
+        <p class="mt-1 text-sm text-muted">Las notas de la semana, cada domingo en tu correo.</p>
+        <form class="mt-5 flex max-w-md flex-col gap-2 sm:flex-row" method="post" action={SITE.newsletterAction}>
           <label for="newsletter-email" class="sr-only">
             Correo electrónico
           </label>
@@ -24,7 +24,7 @@ const enabled = SITE.newsletterAction.length > 0;
             required
             placeholder="tu@correo.com"
             autocomplete="email"
-            class="min-w-0 flex-1 rounded border border-muted bg-paper px-4 py-2.5 text-ink"
+            class="min-w-0 flex-1 rounded-sm border border-muted bg-paper px-4 py-2.5 text-ink"
           />
           <button class="btn" type="submit">
             Suscribirme

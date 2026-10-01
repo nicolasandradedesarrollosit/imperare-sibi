@@ -11,10 +11,10 @@ interface Props {
 const { eyebrow, title, description, crumbs } = Astro.props;
 ---
 
-<header class="wrap grid justify-items-center gap-3 pt-10 pb-10 text-center">
+<header class="wrap grid justify-items-start gap-3 pt-10 pb-10">
   {crumbs && crumbs.length > 1 && <Breadcrumbs items={crumbs} />}
-  {eyebrow && <p class="kicker kicker--block">{eyebrow}</p>}
-  <h1 class="text-display tracking-tight">{title}</h1>
-  {description && <p class="max-w-2xl font-serif text-lg leading-normal text-ink-2">{description}</p>}
+  {eyebrow && <p class="kicker">{eyebrow}</p>}
+  <h1 class="max-w-4xl text-display">{title}</h1>
+  {description && <p class="max-w-2xl text-lg leading-normal text-muted">{description}</p>}
   <slot />
 </header>

@@ -9,7 +9,7 @@ const { tags } = Astro.props;
 {
   tags.length > 0 && (
     <p class="text-sm">
-      <span class="label mr-2">Temas</span>
+      <span class="label mr-2 text-muted">Temas</span>
       {tags.map((t, i) => (
         <>
           <a class="link-accent" href={tagUrl(t)}>

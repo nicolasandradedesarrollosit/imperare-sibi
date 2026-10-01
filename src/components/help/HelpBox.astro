@@ -10,11 +10,9 @@ interface Props {
 const { showMore = true, class: className } = Astro.props;
 ---
 
-<aside class:list={['border-y border-ink py-6', className]} aria-labelledby="help-title">
-  <h2 id="help-title" class="text-2xl">Si estás pasando por un momento difícil</h2>
-  <p class="mt-2 text-sm text-ink-2">
-    No tenés que atravesarlo en soledad. Estas líneas son gratuitas y atienden todos los días:
-  </p>
+<aside class:list={['border-t-2 border-ink pt-4 pb-2', className]} aria-labelledby="help-title">
+  <h2 id="help-title" class="text-xl">Líneas de asistencia</h2>
+  <p class="mt-1 text-sm text-muted">Atención gratuita, anónima y confidencial, las 24 horas.</p>
   <ul role="list" class="mt-4 border-t border-rule">
     {
       HELPLINE_LINES.map((l) => (
@@ -22,7 +20,7 @@ const { showMore = true, class: className } = Astro.props;
           <a href={l.href} class="group flex min-h-14 items-center gap-4 py-3 no-underline">
             <PhoneIcon class="size-5 flex-none text-accent" />
             <span class="grid">
-              <span class="text-xl leading-tight font-bold text-ink tabular-nums transition-colors group-hover:text-accent-dark">
+              <span class="text-xl leading-tight font-semibold text-ink tabular-nums transition-colors group-hover:text-accent">
                 {l.number}
               </span>
               <span class="text-xs text-muted">
@@ -36,7 +34,7 @@ const { showMore = true, class: className } = Astro.props;
   </ul>
   <p class="mt-4 text-sm text-ink-2">
     Si hay riesgo inmediato, llamá al{' '}
-    <a class="font-bold text-alert" href={EMERGENCY.href}>{EMERGENCY.number}</a>.
+    <a class="font-semibold text-alert" href={EMERGENCY.href}>{EMERGENCY.number}</a>.
     {
       showMore && (
         <>

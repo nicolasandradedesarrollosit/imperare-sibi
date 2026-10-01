@@ -5,15 +5,15 @@ import { sectionUrl } from '../lib/content';
 ---
 
 <BaseLayout seo={{ title: 'Página no encontrada', description: 'La página que buscás no existe o fue movida.', noindex: true }} page="error">
-  <section class="wrap grid justify-items-center gap-5 py-24 text-center">
+  <section class="wrap grid justify-items-start gap-5 py-20">
     <p class="label text-muted">Error 404</p>
-    <h1 class="text-display">No encontramos esta página</h1>
-    <p class="max-w-xl text-ink-2">Puede que se haya movido o que el enlace tenga un error. Probá con alguna de estas categorías:</p>
-    <ul role="list" class="flex flex-wrap justify-center gap-x-5 gap-y-2">
+    <h1 class="text-display">Página no encontrada</h1>
+    <p class="max-w-xl text-ink-2">La dirección no existe o fue modificada. Podés consultar las siguientes categorías:</p>
+    <ul role="list" class="flex flex-wrap gap-x-5 gap-y-2">
       {
         SECTIONS.map((s) => (
           <li>
-            <a class="font-bold text-accent-dark" href={sectionUrl(s.slug)}>
+            <a class="link-accent" href={sectionUrl(s.slug)}>
               {s.name}
             </a>
           </li>

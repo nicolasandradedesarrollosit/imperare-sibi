@@ -7,7 +7,7 @@ import { breadcrumbLd, crumbs } from '../lib/seo';
 
 const title = 'Dónde pedir ayuda';
 const description =
-  'Líneas gratuitas y recursos de salud mental en toda la Argentina. Si estás pasando por un momento difícil, no tenés que atravesarlo en soledad.';
+  'Líneas de asistencia gratuitas, servicios de emergencia y recursos de atención en salud mental en toda la Argentina.';
 
 ---
 
@@ -17,13 +17,13 @@ const description =
   <div class="wrap grid gap-12">
     <!-- Emergency first -->
     <section
-      class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 border-y border-ink py-6 text-center sm:flex-row sm:text-left"
+      class="flex w-full max-w-3xl flex-col items-start gap-4 border-l-4 border-alert py-2 pl-5 sm:flex-row sm:items-center"
       aria-labelledby="emergency-title"
     >
       <div class="flex-1">
-        <h2 id="emergency-title" class="text-2xl">Si hay riesgo inmediato</h2>
+        <h2 id="emergency-title" class="text-xl">Emergencias</h2>
         <p class="mt-1 text-sm text-ink-2">
-          Si vos o alguien cercano está en peligro ahora, llamá a emergencias. Atienden las 24 horas en todo el país.
+          Ante un riesgo inmediato para vos o para otra persona, llamá a emergencias. Atención las 24 horas en todo el país.
         </p>
       </div>
       <div class="flex gap-2">
@@ -33,19 +33,19 @@ const description =
     </section>
 
     <!-- Free helplines -->
-    <section class="mx-auto w-full max-w-3xl" aria-labelledby="lines-title">
-      <h2 id="lines-title" class="text-center text-heading">Líneas gratuitas para hablar con alguien</h2>
-      <p class="mx-auto mt-2 max-w-xl text-center text-sm text-muted">
-        Personas capacitadas te escuchan de forma anónima y confidencial. No hace falta estar en una situación extrema para
+    <section class="w-full max-w-3xl" aria-labelledby="lines-title">
+      <h2 id="lines-title" class="border-t-2 border-ink pt-3 text-xl">Líneas de asistencia gratuitas</h2>
+      <p class="mt-1 max-w-xl text-sm text-muted">
+        Atención anónima y confidencial a cargo de personas capacitadas. No es necesario estar en una situación extrema para
         llamar.
       </p>
-      <div class="mt-8 border-y border-rule py-6">
+      <div class="mt-6 border-b border-rule pb-6">
         <div class="ruled ruled--2 max-sm:[&>*+*]:border-t max-sm:[&>*+*]:border-rule max-sm:[&>*+*]:pt-6">
         {
           HELPLINE_LINES.map((l) => (
             <article class="flex flex-col">
-              <p class="kicker kicker--block text-accent-dark">{l.name}</p>
-              <p class="mt-2 font-serif text-4xl font-semibold text-ink tabular-nums">{l.number}</p>
+              <p class="kicker">{l.name}</p>
+              <p class="mt-1 text-3xl font-semibold text-ink tabular-nums">{l.number}</p>
               <p class="mt-1 mb-5 text-sm text-ink-2">{l.detail}.</p>
               <a class="btn mt-auto self-start" href={l.href}>
                 <PhoneIcon /> Llamar al {l.number}
@@ -58,8 +58,8 @@ const description =
     </section>
 
     <!-- Guidance -->
-    <div class="prose mx-auto max-w-read">
-      <h2>Si estás acompañando a alguien</h2>
+    <div class="prose max-w-read">
+      <h2>Si acompañás a otra persona</h2>
       <p>
         Escuchá sin juzgar y sin apurarte a dar soluciones. Preguntá de forma directa cómo se siente: hablar del malestar no
         lo empeora. Ofrecé ayuda concreta, como buscar juntos un turno o acompañar a una consulta, y no te quedes con la
@@ -80,8 +80,8 @@ const description =
       </p>
     </div>
 
-    <p class="mx-auto max-w-read text-center text-xs text-muted italic">
-      Verificamos estos datos periódicamente. Si encontrás información desactualizada, <a href="/contacto/">avisanos</a>.
+    <p class="max-w-read border-t border-rule pt-4 text-xs text-muted">
+      Estos datos se verifican periódicamente. Para informar un dato desactualizado, <a class="underline" href="/contacto/">escribinos</a>.
     </p>
   </div>
 </BaseLayout>

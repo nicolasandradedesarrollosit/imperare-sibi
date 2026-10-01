@@ -6,7 +6,7 @@ import { TYPE_LABEL } from '../../config/site';
 import { readingTime, type Article, type Author } from '../../lib/content';
 import type { Crumb } from '../../lib/seo';
 
-/** Centered article header: breadcrumbs, type, headline, standfirst, byline and reviewer. */
+/** Article header (left-aligned with the lead photo): breadcrumbs, type, headline, standfirst, byline and reviewer. */
 interface Props {
   article: Article;
   author: Author;
@@ -17,13 +17,15 @@ const { article, author, reviewer, crumbs } = Astro.props;
 const { data } = article;
 ---
 
-<header class="wrap grid justify-items-center gap-5 pt-10 pb-8 text-center">
-  <div class="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-    <Breadcrumbs items={crumbs} />
-    {data.type !== 'news' && <span class="text-sm font-bold">· {TYPE_LABEL[data.type]}</span>}
+<header class="wrap pt-10 pb-8">
+  <div class="mx-auto grid max-w-5xl justify-items-start gap-4">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <Breadcrumbs items={crumbs} />
+      {data.type !== 'news' && <span class="text-2xs font-semibold tracking-wider text-muted uppercase">{TYPE_LABEL[data.type]}</span>}
+    </div>
+    <h1 class="max-w-4xl text-display">{data.title}</h1>
+    <p class="max-w-3xl text-lg leading-snug text-muted">{data.description}</p>
+    <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
+    {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
   </div>
-  <h1 class="max-w-4xl text-display tracking-tight">{data.title}</h1>
-  <p class="max-w-2xl font-serif text-xl leading-snug text-ink-2">{data.description}</p>
-  <Byline author={author} publishedAt={data.publishedAt} updatedAt={data.updatedAt} minutes={readingTime(article.body)} />
-  {reviewer && <ReviewedBy reviewer={reviewer} date={data.reviewedAt} />}
 </header>

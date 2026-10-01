@@ -6,7 +6,7 @@
 
 export const SITE = {
   name: 'Imperare Sibi',
-  tagline: 'Salud mental en Argentina, con rigor y cercanía.',
+  tagline: 'Información sobre salud mental en Argentina, revisada por profesionales.',
   description:
     'Blog de salud mental para toda la Argentina: guías claras, experiencias y novedades revisadas por profesionales. Ansiedad, depresión, vínculos, sueño y más.',
   url: 'https://imperaresibi.com.ar',
