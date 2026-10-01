@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Imperare Sibi">
-  <circle cx="32" cy="32" r="30" fill="#1f2421"/>
-  <path d="M21 19v26" fill="none" stroke="#faf7f2" stroke-width="5.5" stroke-linecap="round"/>
-  <path d="M45 22c-2-2.8-4.8-4.2-7.9-4.2-4.3 0-7.3 2.6-7.3 6.1 0 8.3 15.7 5.7 15.7 14.4 0 4.4-3.7 7.5-8.5 7.5-3.6 0-6.7-1.6-8.6-4.6" fill="none" stroke="#9cc0aa" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="32" r="30" fill="#1f3a5f"/>
+  <path d="M21 19v26" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M45 22c-2-2.8-4.8-4.2-7.9-4.2-4.3 0-7.3 2.6-7.3 6.1 0 8.3 15.7 5.7 15.7 14.4 0 4.4-3.7 7.5-8.5 7.5-3.6 0-6.7-1.6-8.6-4.6" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
