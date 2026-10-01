@@ -66,20 +66,11 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: 'Newsreader',
-      cssVariable: '--font-newsreader',
-      // Static weights: the variable build (with optical-size axis) is ~140 KB per file.
-      weights: [400, 600],
+      name: 'IBM Plex Sans',
+      cssVariable: '--font-plex',
+      weights: [400, 500, 600],
+      // Italic only for <em> inside article bodies.
       styles: ['normal', 'italic'],
-      subsets: ['latin', 'latin-ext'],
-      fallbacks: ['Georgia', 'serif'],
-    },
-    {
-      provider: fontProviders.fontsource(),
-      name: 'Libre Franklin',
-      cssVariable: '--font-franklin',
-      weights: [400, 600, 700],
-      styles: ['normal'],
       subsets: ['latin', 'latin-ext'],
       fallbacks: ['Arial', 'sans-serif'],
     },

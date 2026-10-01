@@ -90,7 +90,7 @@ src/
 public/brand/             # logo and mark (regenerate PNGs with scripts/generate-brand-assets.mjs)
 ```
 
-**Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.link`, `.link-accent`, `.chip`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. Newsreader for headlines and body, Libre Franklin for UI; light theme only. Article paragraphs are indented book-style.
+**Styling**: Tailwind CSS v4. Design tokens (colours, fonts, widths, type scale) live in `@theme` in `src/styles/index.css`, together with the component classes reused across pages (`.wrap`, `.heading`, `.kicker`, `.meta`, `.link`, `.link-accent`, `.chip`, `.card*`, `.ruled`, `.stacked`, `.btn`, `.ad*`, `.prose`). One-off layout uses Tailwind utilities in the markup. IBM Plex Sans throughout, black on white with a single navy accent; light theme only.
 
 **Live date**: the masthead date is filled in by a tiny inline script in the browser, because a static build would otherwise freeze it on deploy day.
 
